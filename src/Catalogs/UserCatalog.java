@@ -30,6 +30,9 @@ public class UserCatalog {
 		
 		boolean isValid = true;
 		
+		System.out.println("User: " + userId);
+		System.out.println("Pwd: " + pwd);
+		
 		return isValid;
 	}
 	

@@ -13,6 +13,7 @@ public class ServerThread extends Thread {
 	private UserCatalog userCatalog;
 	
 	public ServerThread(Socket inSoc) {
+		System.out.println("Opened clietn socket");
 		this.socket = inSoc;
 		System.out.println("New connection established!");
 		
@@ -24,14 +25,24 @@ public class ServerThread extends Thread {
 		//Open IO streams
 		try {
 			
+			System.out.println("Got here");
+			
 			ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
 			ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
 			
-			String user = (String) inStream.readObject();
-			String pwd = (String) inStream.readObject();
+			System.out.println("Gets here after streams");
+			
+			String user = null;
+			String pwd = null;
+			
+			System.out.println(inStream.available());
+			
+			user = (String) inStream.readObject();
+			pwd = (String) inStream.readObject();
 			
 			if(userCatalog.validate(user,pwd)) {
 				//User authenticated, wait for commands
+				System.out.println("User authenticated");
 			} else {
 				//User failed to authenticate, close connection
 			}

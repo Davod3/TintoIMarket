@@ -30,8 +30,11 @@ public class Server {
 		while(!this.close) {
 			
 			try {
+				
+				System.out.println("Client socket ");
 				Socket inSoc = sSoc.accept();
 				ServerThread workerThread = new ServerThread(inSoc);
+				workerThread.start();
 				
 			} catch (IOException e) {
 				
