@@ -18,6 +18,7 @@ public class Server {
 		ServerSocket sSoc = null;
 		
 		try {
+			System.out.println("Listening on port " + sPort);
 			sSoc = new ServerSocket(this.sPort);
 		} catch (IOException e) {
 			
