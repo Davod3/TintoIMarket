@@ -8,9 +8,18 @@ import domain.Wine;
 public class TintoIMarket {
 	
 	public static final String COMMAND_INSTRUCTIONS =
-			"To use the application, use the comands below: \n" +
-			"add <wine> <image> - adds a new wine identified by <wine> and associated to the image <image> \n" +
-			"sell <wine> <value> <quantity> - puts ";
+			"To use the application, use the commands below (either full command word or first letter): \n" +
+			"\n" +
+			"add <wine> <image> 		- add a new wine identified by <wine> and associated to the image <image> \n" +
+			"sell <wine> <value> <quantity>  - put up for sell <quantity> units of wine with the price <value> \n" +
+			"view <wine> 			- get the <wine> information \n" +
+			"buy <wine> <seller> <quantity>  - buy <quantity> units of wine to user <seller> \n" +
+			"wallet 				- get the current balance \n" +
+			"classify <wine> <stars>		- assign the classification <stars> (1 to 5) to wine <wine> \n" +
+			"talk <user> <message>		- send a private message <message> to user <user> \n" +
+			"read				- read new received messages \n" +
+			"\n" +
+			"Your command: ";
 	
 	public static void main(String[] args) {
 		String address = "";
