@@ -56,7 +56,7 @@ public class SessionHandler {
 				netClient.classify(command[1], command[2]);
 			}
 			else if (command[0].equals("talk") || command[0].equals("t")) {
-				netClient.talk(command[1], command[2]);
+				netClient.talk(user, command[1], command[2]);
 			}
 			else {
 				System.out.println(COMMAND_ERROR);
