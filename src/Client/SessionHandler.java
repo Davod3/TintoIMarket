@@ -19,36 +19,43 @@ public class SessionHandler {
 		sessionValid = netClient.validateSession(user, password);
 	}
 	
-	public void add(Wine wine, String imageFile) {
-		
+	public void add(String wine, String imageFile) {
+		System.out.println("add");
 	}
 	
-	public void sell(Wine wine, double value, int quantity) {
-		
+	public void sell(String wine, String value, String quantity) {
+		System.out.println("sell");
+
 	}
 	
-	public void view(Wine wine) {
-		
+	public void view(String wine) {
+		System.out.println("view");
+
 	}
 	
-	public void buy(Wine wine, User seller, int quantity) {
-		
+	public void buy(String wine, String seller, String quantity) {
+		System.out.println("buy");
+
 	}
 	
 	public void wallet() {
-		
+		System.out.println("wallet");
+
 	}
 	
-	public void classify(Wine wine, int starts) {
-		
+	public void classify(String wine, String starts) {
+		System.out.println("classify");
+
 	}
 	
-	public void talk(User user, Message message) {
-		
+	public void talk(String user, String message) {
+		System.out.println("talk");
+
 	}
 	
 	public void read() {
-		
+		System.out.println("read");
+
 	}
 	
 	public boolean getSessionValid() {
