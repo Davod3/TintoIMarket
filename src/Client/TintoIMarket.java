@@ -1,12 +1,23 @@
 package Client;
 
+import java.util.Scanner;
+
+import domain.Message;
+import domain.Wine;
+
 public class TintoIMarket {
+	
+	public static final String COMMAND_INSTRUCTIONS =
+			"To use the application, use the comands below: \n" +
+			"add <wine> <image> - adds a new wine identified by <wine> and associated to the image <image> \n" +
+			"sell <wine> <value> <quantity> - puts ";
 	
 	public static void main(String[] args) {
 		String address = "";
 		String clientID ="";
 		String password = "";
 		SessionHandler sessionHandler = null;
+		
 		try {
 			address = args[0];
 			clientID = args[1];
@@ -17,17 +28,23 @@ public class TintoIMarket {
 		}
 		System.out.println("Cliente: " + clientID + " Password: " + password + " ipPort: " + address);
 		
-		if(sessionHandler.getSessionValid()) 
-			runClient();
-		else {
+		if(sessionHandler.getSessionValid()) {
+			runClient(sessionHandler);
+		} else {
 			System.out.println("User or password incorrect");
 		}
 	}
-	
-	public static void runClient() {
-		System.out.print("Type a command:");
-		while(true) {
-			
+
+	private static void runClient(SessionHandler sessionHandler) {
+		System.out.println("Welcome to TintoIMarket!");
+		Scanner sc = new Scanner(System.in);
+		
+		while (true) {
+			System.out.println(COMMAND_INSTRUCTIONS);
+			if(sc.hasNext()) {
+				String[] command = sc.nextLine().split(" ");
+				sessionHandler.processCommand(command);
+			}
 		}
 	}
 }
