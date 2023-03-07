@@ -19,8 +19,9 @@ public class TintoIMarket {
 		
 		if(sessionHandler.getSessionValid()) 
 			runClient();
-		else
+		else {
 			System.out.println("User or password incorrect");
+		}
 	}
 	
 	public static void runClient() {

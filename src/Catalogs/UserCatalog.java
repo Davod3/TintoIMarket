@@ -39,7 +39,11 @@ public class UserCatalog {
 			
 			String[] splitData = line.split(":");
 			
-			users.put(splitData[0], new User(splitData[0], splitData[1]));
+			if( splitData.length >= 2) {
+				
+				users.put(splitData[0], new User(splitData[0], splitData[1]));
+				
+			}
 			
 		}
 		
