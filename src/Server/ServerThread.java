@@ -6,13 +6,15 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import Catalogs.UserCatalog;
+import Elements.User;
 
 public class ServerThread extends Thread {
 	
 	private Socket socket = null;
 	private UserCatalog userCatalog;
+	private User loggedUser = null;
 	
-	public ServerThread(Socket inSoc) {
+	public ServerThread(Socket inSoc) throws IOException {
 		System.out.println("Opened clietn socket");
 		this.socket = inSoc;
 		System.out.println("New connection established!");
@@ -25,12 +27,9 @@ public class ServerThread extends Thread {
 		//Open IO streams
 		try {
 			
-			System.out.println("Got here");
-			
 			ObjectOutputStream outStream = new ObjectOutputStream(socket.getOutputStream());
 			ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
-			
-			System.out.println("Gets here after streams");
+		
 			
 			String user = null;
 			String pwd = null;
@@ -42,7 +41,7 @@ public class ServerThread extends Thread {
 			
 			boolean value = false;
 			
-			if(value = userCatalog.validate(user,pwd)) {
+			if(value = (this.loggedUser = userCatalog.validate(user,pwd)) != null) {
 				//User authenticated, wait for commands
 				System.out.println("User authenticated");
 				outStream.writeObject(value);
@@ -51,11 +50,7 @@ public class ServerThread extends Thread {
 				System.out.println("Authentication failed");
 				outStream.writeObject(value);
 			}
-//			outStream.close();
-//			inStream.close();
-			
-			
-			
+		
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
