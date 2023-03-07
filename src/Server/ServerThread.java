@@ -40,11 +40,16 @@ public class ServerThread extends Thread {
 			user = (String) inStream.readObject();
 			pwd = (String) inStream.readObject();
 			
-			if(userCatalog.validate(user,pwd)) {
+			boolean value = false;
+			
+			if(value = userCatalog.validate(user,pwd)) {
 				//User authenticated, wait for commands
 				System.out.println("User authenticated");
+				outStream.writeObject(value);
 			} else {
 				//User failed to authenticate, close connection
+				System.out.println("Authentication failed");
+				
 			}
 			
 			

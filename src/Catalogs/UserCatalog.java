@@ -28,12 +28,7 @@ public class UserCatalog {
 
 	public boolean validate(String userId, String pwd) {
 		
-		boolean isValid = true;
-		
-		System.out.println("User: " + userId);
-		System.out.println("Pwd: " + pwd);
-		
-		return isValid;
+		return true;
 	}
 	
 }
