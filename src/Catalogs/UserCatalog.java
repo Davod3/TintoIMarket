@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import Elements.User;
+import domain.User;
 
 public class UserCatalog {
 

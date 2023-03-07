@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import Catalogs.UserCatalog;
-import Elements.User;
+import domain.User;
 
 public class ServerThread extends Thread {
 	
