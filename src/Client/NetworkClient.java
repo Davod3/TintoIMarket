@@ -19,7 +19,7 @@ public class NetworkClient {
 		try {
 			clientSocket = new Socket(host, port);
 		} catch (IOException e) {
-			System.out.println("A criação da socket cliente falhou");
+			System.out.println("Error creating socket");
 		}
 		createStreams();
 	}
@@ -35,15 +35,23 @@ public class NetworkClient {
 	}
 	
 	public boolean validateSession(String user, String password) {
+		boolean validation = false;
 		try {
 			
 			outStream.writeObject(user);
 			outStream.writeObject(password);
-			outStream.close();
+			validation = (boolean) inStream.readObject();
+			System.out.println(validation);
+//			outStream.close();
+//			inStream.close();
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar user e password para a socket");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
-		return true;
+
+		return validation;
 	}
 
 }

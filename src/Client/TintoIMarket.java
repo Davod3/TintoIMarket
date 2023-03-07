@@ -16,6 +16,17 @@ public class TintoIMarket {
 			System.err.println("Missing 1 argument. Try again");
 		}
 		System.out.println("Cliente: " + clientID + " Password: " + password + " ipPort: " + address);
+		
+		if(sessionHandler.getSessionValid()) 
+			runClient();
+		else
+			System.out.println("User or password incorrect");
 	}
 	
+	public static void runClient() {
+		System.out.print("Type a command:");
+		while(true) {
+			
+		}
+	}
 }

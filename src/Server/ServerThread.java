@@ -49,9 +49,10 @@ public class ServerThread extends Thread {
 			} else {
 				//User failed to authenticate, close connection
 				System.out.println("Authentication failed");
-				
+				outStream.writeObject(value);
 			}
-			
+//			outStream.close();
+//			inStream.close();
 			
 			
 			
