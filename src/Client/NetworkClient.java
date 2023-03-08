@@ -130,18 +130,22 @@ public class NetworkClient {
 		return result;
 	}
 	
-	public void classify(String wine, String stars) {
+	public String classify(String wine, String stars) {
+		String result = "";
 		try {
 			outStream.writeObject("classify");
 			outStream.writeObject(wine);
 			outStream.writeObject(Integer.parseInt(stars));
 			System.out.println("Classifying wine: " + wine);
-		} catch (IOException e) {
+			result = (String) inStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error classifying wine");
-		}
+		}  
+		return result;
 	}
 	
-	public void talk(String userFrom, String userTo, String message) {
+	public String talk(String userFrom, String userTo, String message) {
+		String result = "";
 		try {
 			outStream.writeObject("talk");
 			outStream.writeObject(userFrom);
@@ -149,18 +153,23 @@ public class NetworkClient {
 			Message m = new Message(userFrom, userTo, message);
 			outStream.writeObject(m);
 			System.out.println("Talking to user: " + userTo);
-		} catch (IOException e) {
+			result = (String) inStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error talking to user");
-		}
+		}  
+		return result;
 	}
 	
-	public void read() {
+	public String read() {
+		String result = "";
 		try {
 			outStream.writeObject("read");
 			System.out.println("Reading new messages");
-		} catch (IOException e) {
+			result = (String) inStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error reading messages");
-		}
+		}  
+		return result;
 	}
 	
 	private void sendFile(String fileName) {
