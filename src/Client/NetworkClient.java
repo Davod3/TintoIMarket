@@ -1,6 +1,8 @@
 package Client;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -58,58 +60,74 @@ public class NetworkClient {
 		return validation;
 	}
 	
-	public void add(String wine, String imageFile) {
+	public String add(String wine, String imageFile) {
+		String result = "";
 		try {
 			outStream.writeObject("add");
 			outStream.writeObject(wine);
 			sendFile(imageFile);
 			System.out.println("Adding wine: " + wine);
-		} catch (IOException e) {
+			result = (String) inStream.readObject();
+			System.out.println("RESULT: "+result);
+		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error adding wine");
-		}
+		} 
+		return result;
 	}
 	
-	public void sell(String wine, String value, String quantity) {
+	public String sell(String wine, String value, String quantity) {
+		String result = "";
 		try {
 			outStream.writeObject("sell");
 			outStream.writeObject(wine);
 			outStream.writeObject(Double.parseDouble(value));
 			outStream.writeObject(Integer.parseInt(quantity));
 			System.out.println("Selling wine: " + wine);
-		} catch (IOException e) {
+			result = (String) inStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error selling wine");
-		}
+		}  
+		return result;
 	}
 	
-	public void view(String wine) {
+	public String view(String wine) {
+		String result = "";
 		try {
 			outStream.writeObject("view");
 			outStream.writeObject(wine);
 			System.out.println("Viewing wine: " + wine);
-		} catch (IOException e) {
+			result = (String) inStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error viewing wine");
-		}
+		}  
+		return result;
 	}
 	
-	public void buy(String wine, String seller, String quantity) {
+	public String buy(String wine, String seller, String quantity) {
+		String result = "";
 		try {
 			outStream.writeObject("buy");
 			outStream.writeObject(wine);
 			outStream.writeObject(seller);
 			outStream.writeObject(Integer.parseInt(quantity));
 			System.out.println("Bought wine: " + wine);
-		} catch (IOException e) {
+			result = (String) inStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error buying wine");
-		}
+		}  
+		return result;
 	}
 	
-	public void wallet() {
+	public String wallet() {
+		String result = "";
 		try {
 			outStream.writeObject("wallet");
 			System.out.println("Getting wallet");
-		} catch (IOException e) {
-			System.out.println("Error getting wallet");
-		}
+			result = (String) inStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			System.out.println("Error buying wine");
+		}  
+		return result;
 	}
 	
 	public void classify(String wine, String stars) {
@@ -146,15 +164,35 @@ public class NetworkClient {
 	}
 	
 	private void sendFile(String fileName) {
-		File image = new File(fileName);
-		int imageSize = (int)image.length();
+		File file = new File(fileName);
+		int size = (int)file.length();
 		try {
 			outStream.writeObject(fileName);
-	        outStream.writeObject(imageSize);
-	        byte[] buffer = Files.readAllBytes(image.toPath());
-	        outStream.write(buffer, 0, imageSize);
+	        outStream.writeObject(size);
+	        byte[] buffer = new byte[size];
+	        FileInputStream fin = new FileInputStream(file);
+	        fin.read(buffer);
+	        outStream.write(buffer, 0, size);
+	        fin.close();
 		} catch (IOException e) {
 			System.out.println("Error sending file: " + fileName);
 		}
+	}
+	
+	private File receiveFile() throws ClassNotFoundException, IOException {
+		
+		String name = (String) inStream.readObject();
+		int size = (Integer) inStream.readObject();
+		
+		byte[] bytes = new byte[size];
+		
+		inStream.read(bytes, 0, size);
+		
+		File outFile = new File(name);
+		
+		FileOutputStream fout = new FileOutputStream(outFile);
+		fout.write(bytes);
+		
+		return outFile;
 	}
 }
