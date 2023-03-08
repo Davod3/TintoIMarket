@@ -31,7 +31,6 @@ public class Server {
 			
 			try {
 				
-				System.out.println("Client socket ");
 				Socket inSoc = sSoc.accept();
 				ServerThread workerThread = new ServerThread(inSoc);
 				workerThread.start();

@@ -61,18 +61,19 @@ public class UserCatalog {
 
 	}
 
-	public User validate(String userId, String pwd) throws IOException {
+	public String validate(String userId, String pwd) throws IOException {
 
-		User loggedUser;
+		String loggedUser = null;
 
 		if (this.userList.containsKey(userId)) {
 			// Check if pwd is valid
-			loggedUser = this.userList.get(userId);
+			User user = this.userList.get(userId);
 
-			if (!pwd.equals(loggedUser.getPassword())) {
+			if (pwd.equals(user.getPassword())) {
 				//Validation failed
-				loggedUser = null;
+				loggedUser = userId;
 			}
+					
 		} else {
 			
 			//New user, register it
@@ -85,7 +86,7 @@ public class UserCatalog {
 
 	}
 
-	public User registerUser(String userId, String pwd) throws IOException {
+	public String registerUser(String userId, String pwd) throws IOException {
 		
 		User registering = new User(userId, pwd);
 		
@@ -96,7 +97,7 @@ public class UserCatalog {
 		bw.append(entry);
 		bw.close();
 		
-		return registering;
+		return userId;
 		
 	}
 
