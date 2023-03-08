@@ -8,6 +8,7 @@ public class Wine {
 	private String name;
 	private File image;
 	private int rating;
+	private int numberOfReviews;
 	private List<Sale> sales;
 	
 	public Wine(String name, File image, String author) {
@@ -30,5 +31,21 @@ public class Wine {
 	
 	public void addSale(Sale sale) {
 		sales.add(sale);
+	}
+	
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+	
+	public int getRating() {
+		return rating;
+	}
+	
+	public int getNumberOfReviews() {
+		return numberOfReviews;
+	}
+	
+	public void setNumberOfReviews(int numberOfReviews) {
+		this.numberOfReviews = numberOfReviews;
 	}
 }

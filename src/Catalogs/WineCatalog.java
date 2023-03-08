@@ -44,6 +44,20 @@ public class WineCatalog {
 		
 	}
 	
+	public void rate(String wine, int rating) {
+		Wine wineToRate = getWine(wine);
+		wineToRate.setRating(calculateRating(wine, rating));
+		wineToRate.setNumberOfReviews(wineToRate.getNumberOfReviews()+1);
+	}
+	
+	private int calculateRating(String wine, int rating) {
+		int result = 0;
+		Wine wineToRate = getWine(wine);
+		result = wineToRate.getRating() * wineToRate.getNumberOfReviews() + rating;
+		result /= wineToRate.getNumberOfReviews() + 1;
+		return result;
+	}
+	
 	public boolean wineExists(String wine) {
 		return wineList.containsKey(wine);
 	}
@@ -51,6 +65,4 @@ public class WineCatalog {
 	public Wine getWine(String wine) {
 		return wineList.get(wine);
 	}
-
-	
 }

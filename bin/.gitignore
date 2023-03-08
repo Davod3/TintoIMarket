@@ -1,7 +1,5 @@
 /Client/
-/Catalogs/
-/Elements/
 /Server/
-/domain/
-/handler/
 /handlers/
+/domain/
+/Catalogs/

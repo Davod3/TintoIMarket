@@ -1,10 +1,13 @@
 package domain;
 
+import java.util.List;
+
 public class User {
 	
 	private String id;
 	private double balance;
 	private String password;
+	private List<Message> messages;
 	
 	public User(String id, String pwd) {
 		
