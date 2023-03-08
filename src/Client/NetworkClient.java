@@ -64,7 +64,9 @@ public class NetworkClient {
 		String result = "";
 		try {
 			outStream.writeObject("add");
+			outStream.flush();
 			outStream.writeObject(wine);
+			outStream.flush();
 			sendFile(imageFile);
 			System.out.println("Adding wine: " + wine);
 			result = (String) inStream.readObject();
@@ -174,15 +176,17 @@ public class NetworkClient {
 	
 	private void sendFile(String fileName) {
 		File file = new File(fileName);
-		int size = (int)file.length();
+		long size = file.length();
 		try {
 			outStream.writeObject(fileName);
-	        outStream.writeObject(size);
-	        byte[] buffer = new byte[size];
+			byte[] buffer = new byte[(int) size];
+	        outStream.writeObject(buffer.length);
+	        System.out.println();
 	        FileInputStream fin = new FileInputStream(file);
 	        fin.read(buffer);
-	        outStream.write(buffer, 0, size);
-	        fin.close();
+	        outStream.write(buffer, 0, buffer.length);
+	        outStream.flush();
+	        //fin.close();
 		} catch (IOException e) {
 			System.out.println("Error sending file: " + fileName);
 		}
