@@ -49,10 +49,10 @@ public class TintoIMarket {
 		Scanner sc = new Scanner(System.in);
 		
 		while (true) {
-			System.out.println(COMMAND_INSTRUCTIONS);
+			System.out.print(COMMAND_INSTRUCTIONS);
 			if(sc.hasNext()) {
 				String[] command = sc.nextLine().split(" ");
-				sessionHandler.processCommand(command);
+				System.out.println(sessionHandler.processCommand(command));
 			}
 		}
 	}
