@@ -42,5 +42,14 @@ public class WineCatalog {
 		
 	}
 	
+	public void sellWine(String wine, int quantity) {
+		Wine wineToSell = getWine(wine);
+		wineToSell.setWineStock(wineToSell.getWineStock()-quantity);
+	}
+	
+	public Wine getWine(String wine) {
+		return wineList.get(wine);
+	}
 
+	
 }

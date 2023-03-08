@@ -16,4 +16,12 @@ public class Wine {
 		this.rating = 0;
 		this.stock = 0;
 	}
+	
+	public void setWineStock(int stock) {
+		this.stock = stock;
+	}
+
+	public int getWineStock() {
+		return stock;
+	}
 }

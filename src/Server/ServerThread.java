@@ -10,6 +10,7 @@ import java.net.Socket;
 import Catalogs.UserCatalog;
 import Catalogs.WineCatalog;
 import domain.User;
+import handlers.*;
 
 public class ServerThread extends Thread {
 
@@ -81,54 +82,22 @@ public class ServerThread extends Thread {
 			switch (command) {
 			
 			case "add":
-				
-				System.out.println("Gets here 1");
-				String wine = (String) inStream.readObject();
-				System.out.println("Gets here 2");
-				File received = receiveFile();
-				
-				System.out.println("gets here 5");
-				
-				boolean result = wineCatalog.createWine(wine, received, loggedUser);
-				
-				System.out.println("gets here 6 " + result);
-				
-				if(result) {
-					outStream.writeObject("Wine " + wine + " succesfully registered!");
-				} else {
-					outStream.writeObject("Failed to add wine. " + wine + " already exists.");
-				}
-				
-				break;
-			
+				AddHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "sell":
-				
-				break;
-
+				SellHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "view":
-				
-				break;
-			
+				ViewHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "buy":
-				
-				break;
-			
+				BuyHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "wallet":
-				
-				break;
-			
+				WalletHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "classify":
-				
-				break;
-				
+				ClassifyHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "talk":
-				
-				break;
-			
+				TalkHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "read":
-				
-				break;
-				
+				ReadHandler.getInstance().run(inStream, outStream, loggedUser);
+
 			default:
 				
 				//Default case for wrong command message
@@ -139,42 +108,4 @@ public class ServerThread extends Thread {
 		}
 
 	}
-
-	private File receiveFile() throws ClassNotFoundException, IOException {
-		
-		System.out.println("gets here 3");
-		
-		String name = (String) inStream.readObject();
-		int size = (int) inStream.readObject();
-		
-		System.out.println(name);
-		System.out.println(size);
-		
-		byte[] bytes = new byte[size];
-		
-		System.out.println("gets here 3.5");
-		
-		inStream.read(bytes);
-		//inStream.read(bytes, 0, size); //Error
-		
-		System.out.println("gets here 3.6");
-		
-		File outFile = new File(name);
-		
-		System.out.println("gets here 3.7");
-		
-		FileOutputStream fout = new FileOutputStream(outFile);
-		
-		System.out.println("gets here 3.8");
-		fout.write(bytes);
-		
-		System.out.println("gets here 3.9");
-		
-		fout.close();
-		
-		System.out.println("Gets here 4");
-		
-		return outFile;
-	}
-
 }
