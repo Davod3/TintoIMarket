@@ -70,10 +70,9 @@ public class AddHandler {
 	}
 	
 	public static AddHandler getInstance() throws IOException {
-
+		
 		if (instance == null) 
 			instance = new AddHandler();
 		return instance;
-
 	}
 }

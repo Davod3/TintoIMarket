@@ -3,7 +3,7 @@ package domain;
 public class User {
 	
 	private String id;
-	private int balance;
+	private double balance;
 	private String password;
 	
 	public User(String id, String pwd) {
@@ -22,8 +22,12 @@ public class User {
 		return this.password;
 	}
 	
-	public int getBalance() {
+	public double getBalance() {
 		return this.balance;
+	}
+	
+	public void setBalance(double d) {
+		this.balance = d;
 	}
 	
 }

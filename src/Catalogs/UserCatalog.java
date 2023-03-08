@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.element.QualifiedNameable;
+
 import domain.User;
 
 public class UserCatalog {
@@ -53,6 +55,17 @@ public class UserCatalog {
 		
 	}
 
+	public boolean hasEnoughMoney(String user, double value) {
+		return getUser(user).getBalance() >= value;
+	}
+	
+	public void transfer(String buyer, String seller, double value) {
+		User buyerUser = getUser(buyer);
+		User sellerUser = getUser(seller);
+		buyerUser.setBalance(buyerUser.getBalance() - value);
+		sellerUser.setBalance(sellerUser.getBalance() + value);
+	}
+	
 	public static UserCatalog getInstance() throws IOException {
 
 		if (instance == null)
@@ -99,6 +112,10 @@ public class UserCatalog {
 		
 		return userId;
 		
+	}
+	
+	private User getUser(String user) {
+		return userList.get(user);
 	}
 
 }

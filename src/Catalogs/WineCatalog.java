@@ -1,11 +1,13 @@
 package Catalogs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import domain.Sale;
 import domain.Wine;
 
 public class WineCatalog {
@@ -42,9 +44,8 @@ public class WineCatalog {
 		
 	}
 	
-	public void sellWine(String wine, int quantity) {
-		Wine wineToSell = getWine(wine);
-		wineToSell.setWineStock(wineToSell.getWineStock()-quantity);
+	public boolean wineExists(String wine) {
+		return wineList.containsKey(wine);
 	}
 	
 	public Wine getWine(String wine) {
