@@ -46,8 +46,7 @@ public class AddHandler {
 		
 		System.out.println("gets here 3.5");
 		
-		inStream.read(bytes);
-		//inStream.read(bytes, 0, size); //Error
+		inStream.readFully(bytes, 0, size);
 		
 		System.out.println("gets here 3.6");
 		
