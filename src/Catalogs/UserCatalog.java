@@ -2,6 +2,7 @@ package Catalogs;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -24,6 +25,7 @@ public class UserCatalog {
 	
 	private static final String USER_FILE_PATH = "users.txt";
 	private static final String EOL = System.lineSeparator();
+	private static final String SEPARATOR = ":";
 
 	private UserCatalog() throws IOException {
 
@@ -35,13 +37,16 @@ public class UserCatalog {
 		
 		Map<String, User> users = new HashMap<String, User>();
 		
+		File userFile = new File(USER_FILE_PATH);
+		userFile.createNewFile(); //Make sure file exists before reading
+		
 		BufferedReader br = new BufferedReader(new FileReader(USER_FILE_PATH));
 		
 		String line;
 		
 		while((line = br.readLine()) != null) {
 			
-			String[] splitData = line.split(":");
+			String[] splitData = line.split(SEPARATOR);
 			
 			if( splitData.length >= 2) {
 				
@@ -108,7 +113,7 @@ public class UserCatalog {
 		userList.put(userId, registering);
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(USER_FILE_PATH, true));
-		String entry = EOL + userId + ":" + pwd;
+		String entry = EOL + userId + SEPARATOR + pwd;
 		bw.append(entry);
 		bw.close();
 		

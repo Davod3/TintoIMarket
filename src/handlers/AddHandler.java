@@ -21,7 +21,7 @@ public class AddHandler {
 		
 		System.out.println("gets here 5");
 		
-		boolean result = WineCatalog.getInstance().createWine(wine, received, loggedUser);
+		boolean result = WineCatalog.getInstance().createWine(wine, received);
 		
 		System.out.println("gets here 6 " + result);
 		
