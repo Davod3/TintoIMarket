@@ -12,7 +12,7 @@ public class ClassifyHandler {
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
 		String wine = (String) inStream.readObject();
-		int rating = (int) inStream.readObject();
+		double rating = (double) (int)inStream.readObject();
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		String result = "";
 		if(!wineCatalog.wineExists(wine)) {
