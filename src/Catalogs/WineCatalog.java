@@ -93,7 +93,7 @@ public class WineCatalog {
 		br.close();
 	}
 
-	private void updateWines() throws IOException {
+	public void updateWines() throws IOException {
 
 		Set<String> keys = wineList.keySet();
 		StringBuilder sbWines = new StringBuilder();
