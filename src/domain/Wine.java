@@ -17,6 +17,10 @@ public class Wine {
 		this.rating = 0;
 	}
 	
+	public String getImageName() {
+		return image.getName();
+	}
+	
 	public List<Sale> getSales(){
 		return sales;
 	}

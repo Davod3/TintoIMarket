@@ -90,7 +90,7 @@ public class ServerThread extends Thread {
 			case "buy":
 				BuyHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "wallet":
-				WalletHandler.getInstance().run(inStream, outStream, loggedUser);
+				WalletHandler.getInstance().run(outStream, loggedUser);
 			case "classify":
 				ClassifyHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "talk":

@@ -84,7 +84,6 @@ public class NetworkClient {
 			outStream.writeObject(wine);
 			outStream.writeObject(Double.parseDouble(value));
 			outStream.writeObject(Integer.parseInt(quantity));
-			System.out.println("Selling wine: " + wine);
 			result = (String) inStream.readObject();
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error selling wine");
@@ -97,7 +96,7 @@ public class NetworkClient {
 		try {
 			outStream.writeObject("view");
 			outStream.writeObject(wine);
-			System.out.println("Viewing wine: " + wine);
+			File f = receiveFile();
 			result = (String) inStream.readObject();
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error viewing wine");
@@ -152,9 +151,7 @@ public class NetworkClient {
 			outStream.writeObject("talk");
 			outStream.writeObject(userFrom);
 			outStream.writeObject(userTo);
-			Message m = new Message(userFrom, userTo, message);
-			outStream.writeObject(m);
-			System.out.println("Talking to user: " + userTo);
+			outStream.writeObject(message);
 			result = (String) inStream.readObject();
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error talking to user");
