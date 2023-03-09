@@ -147,7 +147,7 @@ public class WineCatalog {
 
 	}
 	
-	public void rate(String wine, double rating) {
+	public void rate(String wine, double rating) throws IOException {
 		Wine wineToRate = getWine(wine);
 		wineToRate.setRating(calculateRating(wine, rating));
 		wineToRate.setNumberOfReviews(wineToRate.getNumberOfReviews() + 1);

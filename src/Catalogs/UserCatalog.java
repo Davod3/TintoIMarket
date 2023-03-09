@@ -123,7 +123,7 @@ public class UserCatalog {
 		sb.append("You have: " + userInbox.size() + " new messages" + EOL);
 		while(!userInbox.isEmpty()) {
 			Message message = userInbox.pop();
-			sb.append("-->From: " + message.getFrom() + "; Message: " + message.getContent());
+			sb.append("-->From: " + message.getFrom() + "; Message: " + message.getContent() + EOL);
 		}
 		return sb.toString();
 	}
