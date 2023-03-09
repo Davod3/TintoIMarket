@@ -16,7 +16,7 @@ public class AddHandler {
 	
 		String wine = (String) inStream.readObject();
 		File received = receiveFile(inStream);		
-		boolean result = WineCatalog.getInstance().createWine(wine, received, loggedUser);
+		boolean result = WineCatalog.getInstance().createWine(wine, received);
 				
 		if(result) {
 			outStream.writeObject("Wine " + wine + " succesfully registered!");

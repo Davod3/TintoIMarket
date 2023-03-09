@@ -12,11 +12,15 @@ public class Wine {
 	private int numberOfReviews;
 	private List<Sale> sales;
 	
-	public Wine(String name, File image, String author) {
+	public Wine(String name, File image) {
 		this.name = name;
 		this.image = image;
 		this.rating = 0;
 		sales = new ArrayList<Sale>();
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public String getImageName() {
