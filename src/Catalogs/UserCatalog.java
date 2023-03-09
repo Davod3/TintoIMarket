@@ -23,7 +23,7 @@ public class UserCatalog {
 	private static final String USER_FILE_PATH = "users.txt";
 	private static final String USER_MESSAGES_PATH = "users/";
 	private static final String USER_MESSAGES_EXTENSION = ".txt";
-	private static final String EOL = System.lineSeparator();
+	private static final String EOL = "/n";
 	private static final String SEPARATOR = ":";
 
 	private UserCatalog() throws IOException {
