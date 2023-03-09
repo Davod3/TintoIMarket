@@ -1,6 +1,8 @@
 package Client;
 
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import domain.Message;
 import domain.Wine;
@@ -51,8 +53,19 @@ public class TintoIMarket {
 		while (true) {
 			System.out.print(COMMAND_INSTRUCTIONS);
 			if(sc.hasNext()) {
-				String[] command = sc.nextLine().split(" ");
-				System.out.println(sessionHandler.processCommand(command));
+				
+				String line = sc.nextLine();
+				
+				Pattern pattern = Pattern.compile(":");
+				Matcher matcher = pattern.matcher(line);
+				
+				if (!matcher.find()) {
+					String[] command = line.split(" ");
+					System.out.println(sessionHandler.processCommand(command));
+				}
+				else {
+					System.out.println("Don't use colon (:). Try again \n");
+				}
 			}
 		}
 	}
