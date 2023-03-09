@@ -93,7 +93,7 @@ public class WineCatalog {
 		br.close();
 	}
 
-	private void updateWines() throws IOException {
+	public void updateWines() throws IOException {
 
 		Set<String> keys = wineList.keySet();
 		StringBuilder sbWines = new StringBuilder();
@@ -147,7 +147,7 @@ public class WineCatalog {
 
 	}
 	
-	public void rate(String wine, double rating) {
+	public void rate(String wine, double rating) throws IOException {
 		Wine wineToRate = getWine(wine);
 		wineToRate.setRating(calculateRating(wine, rating));
 		wineToRate.setNumberOfReviews(wineToRate.getNumberOfReviews() + 1);
