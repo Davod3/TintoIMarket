@@ -1,1 +1,2 @@
-wine1:wine1.jpg:5:7
+vinho2:vinho2.png:5.0:1
+vinho1:vino1.png:0.0:0
