@@ -98,6 +98,7 @@ public class ServerThread extends Thread {
 
 			case "wallet":
 				WalletHandler.getInstance().run(outStream, loggedUser);
+				break;
 			case "classify":
 				ClassifyHandler.getInstance().run(inStream, outStream, loggedUser);
 				break;

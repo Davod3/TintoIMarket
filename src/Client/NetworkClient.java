@@ -48,8 +48,6 @@ public class NetworkClient {
 			outStream.writeObject(password);
 			validation = (boolean) inStream.readObject();
 			System.out.println(validation);
-//			outStream.close();
-//			inStream.close();
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar user e password para a socket");
 			e.printStackTrace();
@@ -70,7 +68,6 @@ public class NetworkClient {
 			sendFile(imageFile);
 			System.out.println("Adding wine: " + wine);
 			result = (String) inStream.readObject();
-			System.out.println("RESULT: "+result);
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error adding wine");
 		} 
@@ -98,7 +95,6 @@ public class NetworkClient {
 			outStream.writeObject(wine);
 			File f = receiveFile();
 			result = (String) inStream.readObject();
-			System.out.println(result);
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error viewing wine");
 		}  
@@ -113,7 +109,6 @@ public class NetworkClient {
 			outStream.writeObject(seller);
 			outStream.writeObject(Integer.parseInt(quantity));
 			result = (String) inStream.readObject();
-			System.out.println(result);
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error buying wine");
 		}  
@@ -148,7 +143,6 @@ public class NetworkClient {
 		String result = "";
 		try {
 			outStream.writeObject("talk");
-			outStream.writeObject(userFrom);
 			outStream.writeObject(userTo);
 			outStream.writeObject(message);
 			result = (String) inStream.readObject();

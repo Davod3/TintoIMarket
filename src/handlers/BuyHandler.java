@@ -27,7 +27,7 @@ public class BuyHandler {
 			result = "Wine: " + wine + " doesn't exist, try again with another wine";
 		} else if(!wineAvailable) {
 			result = "Only " + sale.getQuantity() + " units available";
-		}else if(buyerHasEnoughMoney) {
+		}else if(!buyerHasEnoughMoney) {
 			result = "You don't have enough money";
 		}else {
 			sale.setQuantity(sale.getQuantity() - quantity);

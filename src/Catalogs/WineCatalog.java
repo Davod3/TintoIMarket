@@ -146,15 +146,15 @@ public class WineCatalog {
 		}
 
 	}
-
-	public void rate(String wine, int rating) throws IOException {
+	
+	public void rate(String wine, double rating) {
 		Wine wineToRate = getWine(wine);
 		wineToRate.setRating(calculateRating(wine, rating));
 		wineToRate.setNumberOfReviews(wineToRate.getNumberOfReviews() + 1);
 		updateWines();
 	}
-
-	private double calculateRating(String wine, int rating) {
+	
+	private double calculateRating(String wine, double rating) {
 		double result = 0;
 		Wine wineToRate = getWine(wine);
 		result = wineToRate.getRating() * wineToRate.getNumberOfReviews() + rating;
