@@ -19,6 +19,10 @@ public class Wine {
 		sales = new ArrayList<Sale>();
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public String getImageName() {
 		return image.getName();
 	}
