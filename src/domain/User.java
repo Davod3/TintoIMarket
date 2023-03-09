@@ -14,7 +14,7 @@ public class User {
 		this.id = id;
 		this.balance = 200;
 		this.password = pwd;
-		
+		inbox = new Stack<Message>();
 	}
 	
 	public String getID() {
