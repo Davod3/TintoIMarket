@@ -50,8 +50,8 @@ public class WineCatalog {
 		wineToRate.setNumberOfReviews(wineToRate.getNumberOfReviews()+1);
 	}
 	
-	private int calculateRating(String wine, int rating) {
-		int result = 0;
+	private double calculateRating(String wine, int rating) {
+		double result = 0;
 		Wine wineToRate = getWine(wine);
 		result = wineToRate.getRating() * wineToRate.getNumberOfReviews() + rating;
 		result /= wineToRate.getNumberOfReviews() + 1;

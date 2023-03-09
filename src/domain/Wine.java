@@ -7,7 +7,7 @@ public class Wine {
 	
 	private String name;
 	private File image;
-	private int rating;
+	private double rating;
 	private int numberOfReviews;
 	private List<Sale> sales;
 	
@@ -33,11 +33,11 @@ public class Wine {
 		sales.add(sale);
 	}
 	
-	public void setRating(int rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 	
-	public int getRating() {
+	public double getRating() {
 		return rating;
 	}
 	

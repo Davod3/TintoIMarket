@@ -4,7 +4,7 @@ public class Sale {
 	
 	private String seller;
 	private double value;
-	private int quantity;
+	private double quantity;
 	
 	public Sale(String seller, double value, int quantity) {
 		this.seller = seller;
@@ -16,11 +16,11 @@ public class Sale {
 		return seller;
 	}
 	
-	public int getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 	
-	public void setQuantity(int quantity) {
+	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
 	
