@@ -148,7 +148,6 @@ public class NetworkClient {
 		String result = "";
 		try {
 			outStream.writeObject("talk");
-			outStream.writeObject(userFrom);
 			outStream.writeObject(userTo);
 			outStream.writeObject(message);
 			result = (String) inStream.readObject();
