@@ -1,5 +1,6 @@
 package Client;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 import domain.Message;
@@ -57,7 +58,7 @@ public class SessionHandler {
 				result = netClient.classify(command[1], command[2]);
 			}
 			else if (command[0].equals("talk") || command[0].equals("t")) {
-				result = netClient.talk(user, command[1], command[2]);
+				result = netClient.talk(user, command[1], Arrays.copyOfRange(command,2,command.length).toString());
 			}
 			else {
 				System.out.println(COMMAND_ERROR);
