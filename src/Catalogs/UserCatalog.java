@@ -128,7 +128,7 @@ public class UserCatalog {
 		return sb.toString();
 	}
 	
-	private User getUser(String user) {
+	public User getUser(String user) {
 		return userList.get(user);
 	}
 }

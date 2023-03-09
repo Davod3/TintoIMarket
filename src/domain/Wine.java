@@ -48,4 +48,8 @@ public class Wine {
 	public void setNumberOfReviews(int numberOfReviews) {
 		this.numberOfReviews = numberOfReviews;
 	}
+	
+	public boolean hasSales() {
+		return !sales.isEmpty();
+	}
 }

@@ -186,7 +186,7 @@ public class NetworkClient {
 	        fin.read(buffer);
 	        outStream.write(buffer, 0, buffer.length);
 	        outStream.flush();
-	        //fin.close();
+	        fin.close();
 		} catch (IOException e) {
 			System.out.println("Error sending file: " + fileName);
 		}
@@ -199,7 +199,7 @@ public class NetworkClient {
 		
 		byte[] bytes = new byte[size];
 		
-		inStream.read(bytes, 0, size);
+		inStream.readFully(bytes, 0, size);
 		
 		File outFile = new File(name);
 		
