@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import Catalogs.WineCatalog;
+import utils.FileUtils;
 
 public class AddHandler {
 	
@@ -15,7 +16,7 @@ public class AddHandler {
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
 	
 		String wine = (String) inStream.readObject();
-		File received = receiveFile(inStream);		
+		File received = FileUtils.receiveFile(inStream);		
 		boolean result = WineCatalog.getInstance().createWine(wine, received);
 				
 		if(result) {
@@ -23,21 +24,6 @@ public class AddHandler {
 		} else {
 			outStream.writeObject("Failed to add wine. " + wine + " already exists.");
 		}
-	}
-	
-	private File receiveFile(ObjectInputStream inStream) throws ClassNotFoundException, IOException {
-
-		String name = (String) inStream.readObject();
-		int size = (int) inStream.readObject();
-		byte[] bytes = new byte[size];			
-		inStream.readFully(bytes, 0, size);
-				
-		File outFile = new File(name);
-				
-		FileOutputStream fout = new FileOutputStream(outFile);
-		fout.write(bytes);			
-		fout.close();		
-		return outFile;
 	}
 	
 	public static AddHandler getInstance() throws IOException {

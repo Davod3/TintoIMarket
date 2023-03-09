@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 
 import domain.Message;
+import utils.FileUtils;
 
 public class NetworkClient {
 
@@ -65,7 +66,7 @@ public class NetworkClient {
 			outStream.flush();
 			outStream.writeObject(wine);
 			outStream.flush();
-			sendFile(imageFile);
+			FileUtils.sendFile(imageFile, outStream);
 			System.out.println("Adding wine: " + wine);
 			result = (String) inStream.readObject();
 		} catch (IOException | ClassNotFoundException e) {
@@ -93,7 +94,7 @@ public class NetworkClient {
 		try {
 			outStream.writeObject("view");
 			outStream.writeObject(wine);
-			File f = receiveFile();
+			File f = FileUtils.receiveFile(inStream);
 			result = (String) inStream.readObject();
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error viewing wine");
@@ -161,40 +162,5 @@ public class NetworkClient {
 			System.out.println("Error reading messages");
 		}  
 		return result;
-	}
-	
-	private void sendFile(String fileName) {
-		File file = new File(fileName);
-		long size = file.length();
-		try {
-			outStream.writeObject(fileName);
-			byte[] buffer = new byte[(int) size];
-	        outStream.writeObject(buffer.length);
-	        System.out.println();
-	        FileInputStream fin = new FileInputStream(file);
-	        fin.read(buffer);
-	        outStream.write(buffer, 0, buffer.length);
-	        outStream.flush();
-	        fin.close();
-		} catch (IOException e) {
-			System.out.println("Error sending file: " + fileName);
-		}
-	}
-	
-	private File receiveFile() throws ClassNotFoundException, IOException {
-		
-		String name = (String) inStream.readObject();
-		int size = (Integer) inStream.readObject();
-		
-		byte[] bytes = new byte[size];
-		
-		inStream.readFully(bytes, 0, size);
-		
-		File outFile = new File(name);
-		
-		FileOutputStream fout = new FileOutputStream(outFile);
-		fout.write(bytes);
-		
-		return outFile;
 	}
 }
