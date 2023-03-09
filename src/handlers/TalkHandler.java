@@ -18,11 +18,10 @@ public class TalkHandler {
 		String user = (String) inStream.readObject();
 		String msg = (String) inStream.readObject();
 		UserCatalog userCatalog = UserCatalog.getInstance();
-		User toUser = userCatalog.getUser(user);
 		
-		if (toUser != null) {
+		if (userCatalog.exists(user)) {
 			Message msgTosend = new Message(loggedUser, user, msg);
-			toUser.addMessage(msgTosend);
+			userCatalog.addMessageToUser(user, msgTosend);
 			result = "Message successfully sent to " + user;
 		}
 		else {
