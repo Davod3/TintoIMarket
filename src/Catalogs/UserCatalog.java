@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -19,6 +21,8 @@ public class UserCatalog {
 	private Map<String, User> userList;
 	
 	private static final String USER_FILE_PATH = "users.txt";
+	private static final String USER_MESSAGES_PATH = "users/";
+	private static final String USER_MESSAGES_EXTENSION = ".txt";
 	private static final String EOL = System.lineSeparator();
 	private static final String SEPARATOR = ":";
 
@@ -45,7 +49,11 @@ public class UserCatalog {
 			
 			if( splitData.length >= 2) {
 				
-				users.put(splitData[0], new User(splitData[0], splitData[1]));
+				User user = new User(splitData[0], splitData[1]);
+				
+				loadMessages(user);
+				
+				users.put(splitData[0], user);
 				
 			}
 			
@@ -54,6 +62,32 @@ public class UserCatalog {
 		br.close();
 		
 		return users;
+		
+	}
+
+	private void loadMessages(User user) throws IOException {
+
+		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
+		
+		File messageDir = new File(filePath);
+		messageDir.getParentFile().mkdirs(); //Create parent directory if non existent
+		messageDir.createNewFile(); //Create file before reading
+		
+		BufferedReader br = new BufferedReader(new FileReader(filePath));
+		
+		String line;
+		
+		while((line = br.readLine()) != null) {
+			
+			//from:to:content
+			
+			String[] splitData = line.split(SEPARATOR);
+			
+			Message message = new Message(splitData[0], splitData[1], splitData[3]);
+			
+			user.addMessage(message);
+			
+		}
 		
 	}
 
@@ -117,18 +151,48 @@ public class UserCatalog {
 	}
 	
 	public String readMessages(String loggedUser) {
+		
 		User user = getUser(loggedUser);
 		StringBuilder sb = new StringBuilder();
 		Stack<Message> userInbox = user.getInbox();
 		sb.append("You have: " + userInbox.size() + " new messages" + EOL);
+		
 		while(!userInbox.isEmpty()) {
 			Message message = userInbox.pop();
 			sb.append("-->From: " + message.getFrom() + "; Message: " + message.getContent() + EOL);
 		}
+		
 		return sb.toString();
 	}
 	
 	public User getUser(String user) {
 		return userList.get(user);
+	}
+
+	public boolean exists(String user) {
+		return this.userList.containsKey(user);
+	}
+
+	public void addMessageToUser(String username, Message msgToSend) throws IOException {
+		User user = userList.get(username);
+		user.addMessage(msgToSend);
+		
+		updateMessages(user);
+		
+	}
+
+	private void updateMessages(User user) throws IOException {
+		
+		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
+		
+		BufferedWriter bf = new BufferedWriter(new FileWriter(filePath));
+		
+		List<Message> messages = user.getInbox();
+		
+		for(Message msg : messages) {
+			bf.append(msg.getFrom() + SEPARATOR + msg.getTo() + SEPARATOR + msg.getContent() + EOL);
+		}
+		
+		
 	}
 }
