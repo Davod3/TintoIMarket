@@ -23,14 +23,16 @@ public class ViewHandler {
 			//Image
 			
 			//Average classification
+			result.append(wineToView.getRating());
+			
 			//outStream.writeObject(wineToView.get);
 			
 			if (wineToView.hasSales()) {
 				for (Sale sale: wineToView.getSales()) {
 					result.append("User " + sale.getSeller()
 					+ " is selling " + sale.getQuantity()
-					+ " units of " + wine + " for "
-					+ );
+					+ " units of " + wine + " for the price of "
+					+ sale.getValue() + " each unit.");
 				}
 			}
 		}
