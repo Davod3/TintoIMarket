@@ -185,6 +185,10 @@ public class UserCatalog {
 		
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
 		
+		File messageDir = new File(filePath);
+		messageDir.getParentFile().mkdirs(); //Create parent directory if non existent
+		messageDir.createNewFile(); //Create file before reading
+		
 		BufferedWriter bf = new BufferedWriter(new FileWriter(filePath));
 		
 		List<Message> messages = user.getInbox();
@@ -192,6 +196,8 @@ public class UserCatalog {
 		for(Message msg : messages) {
 			bf.append(msg.getFrom() + SEPARATOR + msg.getTo() + SEPARATOR + msg.getContent() + EOL);
 		}
+		
+		bf.close();
 		
 		
 	}
