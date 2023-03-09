@@ -23,8 +23,8 @@ public class SellHandler {
 		String result = null;
 		//If wine exists
 		if (wineCatalog.wineExists(wine)) {
-			Wine wineToSell = wineCatalog.getWine(wine);
-			Sale sale = wineToSell.getSaleBySeller(loggedUser);
+			//Wine wineToSell = wineCatalog.getWine(wine);
+			Sale sale = wineCatalog.getWineSaleBySeller(wine, loggedUser);
 			
 			//If sale already exists
 			if (sale != null) {
@@ -36,8 +36,8 @@ public class SellHandler {
 				}
 			}
 			else {
-				sale = new Sale(loggedUser, value, quantity, wineToSell.getName());
-				wineToSell.addSale(sale);
+				sale = new Sale(loggedUser, value, quantity, wine);
+				wineCatalog.addSaleToWine(wine, sale);
 			}
 			result = "Wine sold successfully";
 		}
