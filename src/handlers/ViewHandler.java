@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import Catalogs.WineCatalog;
 import domain.Sale;
 import domain.Wine;
+import utils.FileUtils;
 
 public class ViewHandler {
 	
@@ -23,7 +24,7 @@ public class ViewHandler {
 		if (wineCatalog.wineExists(wine)) {
 			Wine wineToView = wineCatalog.getWine(wine);
 			//Image
-			sendFile(inStream, outStream, wineToView.getImageName());
+			FileUtils.sendFile(wineToView.getImageName(), outStream);
 			
 			//Average classification
 			result.append("Wine " + wine + " has a classification of " + wineToView.getRating() + " stars. \n");
@@ -42,24 +43,6 @@ public class ViewHandler {
 		}
 		
 		outStream.writeObject(result.toString());
-	}
-	
-	private void sendFile(ObjectInputStream inStream, ObjectOutputStream outStream, String fileName) {
-		File file = new File(fileName);
-		long size = file.length();
-		try {
-			outStream.writeObject(fileName);
-			byte[] buffer = new byte[(int) size];
-	        outStream.writeObject(buffer.length);
-	        System.out.println();
-	        FileInputStream fin = new FileInputStream(file);
-	        fin.read(buffer);
-	        outStream.write(buffer, 0, buffer.length);
-	        outStream.flush();
-	        fin.close();
-		} catch (IOException e) {
-			System.out.println("Error sending file: " + fileName);
-		}
 	}
 	
 	public static ViewHandler getInstance() throws IOException {
