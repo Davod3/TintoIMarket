@@ -11,7 +11,7 @@ public class WalletHandler {
 	
 	public void run(ObjectOutputStream outStream, String loggedUser) throws IOException {
 		UserCatalog userCatalog = UserCatalog.getInstance();
-		outStream.writeObject(userCatalog.getUser(loggedUser).getBalance());
+		outStream.writeObject("Your current balance is " + userCatalog.getUser(loggedUser).getBalance() + ".");
 	}
 	
 	public static WalletHandler getInstance() throws IOException {

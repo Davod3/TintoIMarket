@@ -14,13 +14,13 @@ public class SellHandler {
 	private static SellHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
-		String result = null;
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		
 		String wine = (String) inStream.readObject();
 		double value = (double) inStream.readObject();
 		int quantity = (int) inStream.readObject();
 		
+		String result = null;
 		//If wine exists
 		if (wineCatalog.wineExists(wine)) {
 			Wine wineToSell = wineCatalog.getWine(wine);
@@ -39,9 +39,10 @@ public class SellHandler {
 				sale = new Sale(loggedUser, value, quantity, wineToSell.getName());
 				wineToSell.addSale(sale);
 			}
+			result = "Wine sold successfully";
 		}
 		else {
-			result = "Wine: " + wine + " doesn't exist, try again with another wine";
+			result  = "Wine: " + wine + " doesn't exist, try again with another wine";
 		}
 		outStream.writeObject(result);
 	}
