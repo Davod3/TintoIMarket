@@ -36,4 +36,8 @@ public class User {
 	public Stack<Message> getInbox() {
 		return inbox;
 	}
+	
+	public void addMessage(Message msg) {
+		inbox.push(msg);
+	}
 }
