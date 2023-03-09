@@ -23,6 +23,7 @@ public class TalkHandler {
 		if (toUser != null) {
 			Message msgTosend = new Message(loggedUser, user, msg);
 			toUser.addMessage(msgTosend);
+			result = "Message successfully sent to " + user;
 		}
 		else {
 			result = "User: " + user + " doesn't exist, try again with another user";
