@@ -11,4 +11,12 @@ public class Message {
 		this.to = to;
 		this.content = content;
 	}
+	
+	public String getContent() {
+		return content;
+	}
+	
+	public String getFrom() {
+		return from;
+	}
 }

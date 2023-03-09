@@ -96,7 +96,7 @@ public class ServerThread extends Thread {
 			case "talk":
 				TalkHandler.getInstance().run(inStream, outStream, loggedUser);
 			case "read":
-				ReadHandler.getInstance().run(inStream, outStream, loggedUser);
+				ReadHandler.getInstance().run(outStream, loggedUser);
 
 			default:
 				

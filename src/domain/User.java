@@ -1,13 +1,13 @@
 package domain;
 
-import java.util.List;
+import java.util.Stack;
 
 public class User {
 	
 	private String id;
 	private double balance;
 	private String password;
-	private List<Message> messages;
+	private Stack<Message> inbox;
 	
 	public User(String id, String pwd) {
 		
@@ -33,4 +33,7 @@ public class User {
 		this.balance = d;
 	}
 	
+	public Stack<Message> getInbox() {
+		return inbox;
+	}
 }

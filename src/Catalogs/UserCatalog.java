@@ -10,9 +10,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.lang.model.element.QualifiedNameable;
 
+import domain.Message;
 import domain.User;
 
 public class UserCatalog {
@@ -114,8 +116,19 @@ public class UserCatalog {
 		
 	}
 	
+	public String readMessages(String loggedUser) {
+		User user = getUser(loggedUser);
+		StringBuilder sb = new StringBuilder();
+		Stack<Message> userInbox = user.getInbox();
+		sb.append("You have: " + userInbox.size() + " new messages" + EOL);
+		while(!userInbox.isEmpty()) {
+			Message message = userInbox.pop();
+			sb.append("-->From: " + message.getFrom() + "; Message: " + message.getContent());
+		}
+		return sb.toString();
+	}
+	
 	private User getUser(String user) {
 		return userList.get(user);
 	}
-
 }
