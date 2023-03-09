@@ -1,6 +1,7 @@
 package domain;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Wine {
@@ -15,6 +16,11 @@ public class Wine {
 		this.name = name;
 		this.image = image;
 		this.rating = 0;
+		sales = new ArrayList<Sale>();
+	}
+	
+	public String getImageName() {
+		return image.getName();
 	}
 	
 	public List<Sale> getSales(){

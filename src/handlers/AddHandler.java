@@ -14,17 +14,10 @@ public class AddHandler {
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
 	
-		System.out.println("Gets here 1");
 		String wine = (String) inStream.readObject();
-		System.out.println("Gets here 2");
-		File received = receiveFile(inStream);
-		
-		System.out.println("gets here 5");
-		
+		File received = receiveFile(inStream);		
 		boolean result = WineCatalog.getInstance().createWine(wine, received);
-		
-		System.out.println("gets here 6 " + result);
-		
+				
 		if(result) {
 			outStream.writeObject("Wine " + wine + " succesfully registered!");
 		} else {
@@ -33,38 +26,17 @@ public class AddHandler {
 	}
 	
 	private File receiveFile(ObjectInputStream inStream) throws ClassNotFoundException, IOException {
-		
-		System.out.println("gets here 3");
-		
+
 		String name = (String) inStream.readObject();
 		int size = (int) inStream.readObject();
-		
-		System.out.println(name);
-		System.out.println(size);
-		
-		byte[] bytes = new byte[size];
-		
-		System.out.println("gets here 3.5");
-		
+		byte[] bytes = new byte[size];			
 		inStream.readFully(bytes, 0, size);
-		
-		System.out.println("gets here 3.6");
-		
+				
 		File outFile = new File(name);
-		
-		System.out.println("gets here 3.7");
-		
+				
 		FileOutputStream fout = new FileOutputStream(outFile);
-		
-		System.out.println("gets here 3.8");
-		fout.write(bytes);
-		
-		System.out.println("gets here 3.9");
-		
-		fout.close();
-		
-		System.out.println("Gets here 4");
-		
+		fout.write(bytes);			
+		fout.close();		
 		return outFile;
 	}
 	

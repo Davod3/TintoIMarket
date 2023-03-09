@@ -1,15 +1,17 @@
 package handlers;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import Catalogs.UserCatalog;
 
 public class WalletHandler {
 	
 	private static WalletHandler instance = null;
 	
-	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) {
-		
+	public void run(ObjectOutputStream outStream, String loggedUser) throws IOException {
+		UserCatalog userCatalog = UserCatalog.getInstance();
+		outStream.writeObject(userCatalog.getUser(loggedUser).getBalance());
 	}
 	
 	public static WalletHandler getInstance() throws IOException {
