@@ -36,7 +36,7 @@ public class SellHandler {
 				}
 			}
 			else {
-				sale = new Sale(loggedUser, value, quantity);
+				sale = new Sale(loggedUser, value, quantity, wineToSell.getName());
 				wineToSell.addSale(sale);
 			}
 			result = "Wine sold successfully";

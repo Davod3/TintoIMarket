@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import domain.Sale;
 import domain.Wine;
@@ -56,16 +57,56 @@ public class WineCatalog {
 			
 			loadSales(newWine);
 			
+			map.put(splitData[0], newWine);
+			
 			
 		
 		}
+		
+		br.close();
 		
 		return map;
 		
 	}
 	
-	private void loadSales(Wine wine) {
+	private void loadSales(Wine wine) throws IOException {
 		
+		File saleFile = new File(SALES_FILE_PATH);
+		saleFile.createNewFile();
+		
+		BufferedReader br = new BufferedReader(new FileReader(SALES_FILE_PATH));
+		
+		String line;
+		
+		while((line = br.readLine()) != null) {
+			
+			String[] splitData = line.split(SEPARATOR);
+			
+			if(splitData[0].equals(wine.getName())) {
+				
+				Sale newSale = new Sale(splitData[1], Double.parseDouble(splitData[2]), Integer.parseInt(splitData[3]), splitData[0]);
+				wine.addSale(newSale);
+				
+			}
+		}
+		
+		br.close();
+	}
+	
+	private void updateWines() {
+		
+		Set<String> keys = wineList.keySet();
+		
+		for(String key : keys) {
+			
+			Wine wine = wineList.get(key);
+			
+			
+		}
+		
+	}
+	
+	private void updateSales() {
 		
 	}
 
