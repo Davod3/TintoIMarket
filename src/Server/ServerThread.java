@@ -77,26 +77,38 @@ public class ServerThread extends Thread {
 
 			String command = (String) inStream.readObject();
 			
-			System.out.println(command);
+			System.out.println("Command: " + command);
 			
 			switch (command) {
 			
 			case "add":
 				AddHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
 			case "sell":
 				SellHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
 			case "view":
 				ViewHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
 			case "buy":
 				BuyHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
 			case "wallet":
 				WalletHandler.getInstance().run(outStream, loggedUser);
 			case "classify":
 				ClassifyHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
 			case "talk":
 				TalkHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
 			case "read":
 				ReadHandler.getInstance().run(outStream, loggedUser);
+				break;
 
 			default:
 				
