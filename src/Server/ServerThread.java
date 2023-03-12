@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import Catalogs.UserCatalog;
 import Catalogs.WineCatalog;
@@ -58,10 +59,14 @@ public class ServerThread extends Thread {
 				outStream.writeObject(value);
 			}
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (SocketException e) {
+			try {
+				System.out.println("User exited");
+				socket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
