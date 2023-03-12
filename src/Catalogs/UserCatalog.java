@@ -81,9 +81,15 @@ public class UserCatalog {
 			
 			//from:to:content
 			
+			System.out.println(line);
+			
 			String[] splitData = line.split(SEPARATOR);
 			
-			Message message = new Message(splitData[0], splitData[1], splitData[3]);
+			for(String s : splitData) {
+				System.out.println(s);
+			}
+			
+			Message message = new Message(splitData[0], splitData[1], splitData[2]);
 			
 			user.addMessage(message);
 			
