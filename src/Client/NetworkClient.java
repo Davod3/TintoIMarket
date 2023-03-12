@@ -105,7 +105,10 @@ public class NetworkClient {
 		try {
 			outStream.writeObject("view");
 			outStream.writeObject(wine);
-			File f = FileUtils.receiveFile(inStream);
+			boolean wineExists = (boolean) inStream.readObject();
+			File f = null;
+			if(wineExists)
+				f = FileUtils.receiveFile(inStream);
 			result = (String) inStream.readObject();
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("Error viewing wine");
