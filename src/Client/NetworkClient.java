@@ -20,7 +20,7 @@ public class NetworkClient {
 	private ObjectOutputStream outStream;
 	private static final String DEFAULT_PORT = "12345";
 	
-	public NetworkClient(String serverAddress) {
+	public NetworkClient(String serverAddress) throws UnknownHostException, IOException {
 		
 		//Check if address contains port, otherwise use default
 		
@@ -38,12 +38,8 @@ public class NetworkClient {
 		
 		String host = addressSplit[0];
 		int port = Integer.parseInt(addressSplit[1]);
-		try {
-			clientSocket = new Socket(host, port);
-			createStreams();
-		} catch (IOException e) {
-			System.out.println("Error creating socket");
-		}
+		clientSocket = new Socket(host, port);
+		createStreams();
 	}
 
 	private void createStreams() {

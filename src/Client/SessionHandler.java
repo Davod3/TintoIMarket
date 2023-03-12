@@ -1,5 +1,7 @@
 package Client;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -17,7 +19,7 @@ public class SessionHandler {
 	private NetworkClient netClient;
 	public static final String COMMAND_ERROR = "Invalid command.";
 	
-	public SessionHandler(String user, String password, String serverAdress) {
+	public SessionHandler(String user, String password, String serverAdress) throws UnknownHostException, IOException {
 		this.user = user;
 		this.password = password;
 		this.netClient = new NetworkClient(serverAdress);
