@@ -18,17 +18,32 @@ public class NetworkClient {
 	private Socket clientSocket;
 	private ObjectInputStream inStream;
 	private ObjectOutputStream outStream;
+	private static final String DEFAULT_PORT = "12345";
 	
 	public NetworkClient(String serverAddress) {
-		String[] addressSplit = serverAddress.split(":");
+		
+		//Check if address contains port, otherwise use default
+		
+		String[] addressSplit;
+		
+		if(serverAddress.contains(":")) {
+			addressSplit = serverAddress.split(":");
+		} else {
+			
+			addressSplit = new String[2];
+			addressSplit[0] = serverAddress;
+			addressSplit[1] = DEFAULT_PORT;
+		}
+		
+		
 		String host = addressSplit[0];
 		int port = Integer.parseInt(addressSplit[1]);
 		try {
 			clientSocket = new Socket(host, port);
+			createStreams();
 		} catch (IOException e) {
 			System.out.println("Error creating socket");
 		}
-		createStreams();
 	}
 
 	private void createStreams() {
