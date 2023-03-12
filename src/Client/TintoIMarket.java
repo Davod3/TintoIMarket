@@ -34,16 +34,21 @@ public class TintoIMarket {
 			clientID = args[1];
 			password = args[2];
 			sessionHandler = new SessionHandler(clientID, password, address);
+			
+			System.out.println("Cliente: " + clientID + " Password: " + password + " ipPort: " + address);
+			
+			if(sessionHandler.getSessionValid()) {
+				runClient(sessionHandler);
+			} else {
+				System.out.println("User or password incorrect");
+			}
+			
+			
+			
 		} catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println("Missing 1 argument. Try again");
+			System.out.println("Missing arguments. Correct usage: ...");
 		}
-		System.out.println("Cliente: " + clientID + " Password: " + password + " ipPort: " + address);
-		
-		if(sessionHandler.getSessionValid()) {
-			runClient(sessionHandler);
-		} else {
-			System.out.println("User or password incorrect");
-		}
+	
 	}
 
 	private static void runClient(SessionHandler sessionHandler) {
