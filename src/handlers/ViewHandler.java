@@ -20,7 +20,7 @@ public class ViewHandler {
 		String wine = (String) inStream.readObject();
 		
 		if (wineCatalog.wineExists(wine)) {
-			outStream.writeBoolean(true); //changed
+			outStream.writeBoolean(true);
 			Wine wineToView = wineCatalog.getWine(wine);
 			//Image
 			FileUtils.sendFile(wineToView.getImageName(), outStream);

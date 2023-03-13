@@ -41,6 +41,7 @@ public class FileUtils {
 		
 		FileOutputStream fout = new FileOutputStream(outFile);
 		fout.write(bytes);
+		fout.close();
 		
 		return outFile;
 	}

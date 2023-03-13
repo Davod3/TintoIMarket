@@ -105,7 +105,7 @@ public class NetworkClient {
 		try {
 			outStream.writeObject("view");
 			outStream.writeObject(wine);
-			boolean wineExists = (boolean) inStream.readObject();
+			boolean wineExists = inStream.readBoolean();
 			File f = null;
 			if(wineExists)
 				f = FileUtils.receiveFile(inStream);
