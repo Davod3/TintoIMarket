@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 
 import Catalogs.UserCatalog;
 import domain.Message;
-import domain.User;
 
 public class TalkHandler {
 	
