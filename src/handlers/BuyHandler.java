@@ -25,7 +25,7 @@ public class BuyHandler {
 		boolean wineAvailable = sale.getQuantity() >= quantity;
 		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * sale.getQuantity());
 		if (!wineExists) {
-			result = "Wine: " + wine + " doesn't exist, try again with another wine";
+			result = "Wine " + wine + " doesn't exist, try again with another wine";
 		} else if (!wineAvailable) {
 			result = "Only " + sale.getQuantity() + " units available";
 		} else if (!buyerHasEnoughMoney) {

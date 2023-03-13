@@ -37,10 +37,10 @@ public class SellHandler {
 				sale = new Sale(loggedUser, value, quantity, wine);
 				wineCatalog.addSaleToWine(wine, sale);
 			}
-			result = "Wine sold successfully";
+			result = "Wine " + wine + " has been successfully put on sale";
 		}
 		else {
-			result  = "Wine: " + wine + " doesn't exist, try again with another wine";
+			result  = "Wine " + wine + " doesn't exist, try again with another wine";
 		}
 		outStream.writeObject(result);
 	}

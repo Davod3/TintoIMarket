@@ -39,7 +39,7 @@ public class ViewHandler {
 		}
 		else {
 			outStream.writeBoolean(false);
-			result.append("Wine: " + wine + " doesn't exist, try again with another wine");
+			result.append("Wine " + wine + " doesn't exist, try again with another wine");
 		}
 		
 		outStream.writeObject(result.toString());

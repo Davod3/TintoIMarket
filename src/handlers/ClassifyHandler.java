@@ -16,7 +16,7 @@ public class ClassifyHandler {
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		String result = "";
 		if(!wineCatalog.wineExists(wine)) {
-			result = "Wine: " + wine + " doesn't exist, try again with another wine";
+			result = "Wine " + wine + " doesn't exist, try again with another wine";
 		}else {
 			wineCatalog.rate(wine, rating);
 			result = "Successfully classified wine: " + wine;

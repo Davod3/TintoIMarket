@@ -24,7 +24,7 @@ public class TalkHandler {
 			result = "Message successfully sent to " + user;
 		}
 		else {
-			result = "User: " + user + " doesn't exist, try again with another user";
+			result = "User " + user + " doesn't exist, try again with another user";
 		}
 		
 		outStream.writeObject(result);
