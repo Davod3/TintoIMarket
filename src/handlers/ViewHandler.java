@@ -20,7 +20,7 @@ public class ViewHandler {
 		String wine = (String) inStream.readObject();
 		
 		if (wineCatalog.wineExists(wine)) {
-			outStream.writeObject(true);
+			outStream.writeBoolean(true);
 			Wine wineToView = wineCatalog.getWine(wine);
 			//Image
 			FileUtils.sendFile(wineToView.getImageName(), outStream);
@@ -38,7 +38,7 @@ public class ViewHandler {
 			}
 		}
 		else {
-			outStream.writeObject(false);
+			outStream.writeBoolean(false);
 			result.append("Wine: " + wine + " doesn't exist, try again with another wine");
 		}
 		
