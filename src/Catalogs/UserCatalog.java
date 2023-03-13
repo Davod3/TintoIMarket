@@ -73,13 +73,7 @@ public class UserCatalog {
 			
 			//from:to:content
 			
-			System.out.println(line);
-			
 			String[] splitData = line.split(SEPARATOR);
-			
-			for(String s : splitData) {
-				System.out.println(s);
-			}
 			
 			Message message = new Message(splitData[0], splitData[1], splitData[2]);
 			

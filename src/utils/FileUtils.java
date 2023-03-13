@@ -17,7 +17,6 @@ public class FileUtils {
 			outStream.writeObject(fileName);
 			byte[] buffer = new byte[(int) size];
 	        outStream.writeObject(buffer.length);
-	        System.out.println();
 	        FileInputStream fin = new FileInputStream(file);
 	        fin.read(buffer);
 	        outStream.write(buffer, 0, buffer.length);

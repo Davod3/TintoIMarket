@@ -54,7 +54,6 @@ public class NetworkClient {
 			outStream.writeObject(user);
 			outStream.writeObject(password);
 			validation = (boolean) inStream.readObject();
-			System.out.println(validation);
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar user e password para a socket");
 			e.printStackTrace();
