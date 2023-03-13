@@ -17,7 +17,7 @@ public class TintoIMarket {
 			+ "wallet 				- get the current balance \n"
 			+ "classify <wine> <stars>		- assign the classification <stars> (1 to 5) to wine <wine> \n"
 			+ "talk <user> <message>		- send a private message <message> to user <user> \n"
-			+ "read				- read new received messages \n" + "\n" + "Your command: ";
+			+ "read				- read new received messages \n \n";
 
 	public static void main(String[] args) {
 		String address = "";
@@ -55,21 +55,37 @@ public class TintoIMarket {
 	private static void runClient(SessionHandler sessionHandler) {
 		System.out.println("Welcome to TintoIMarket!");
 		Scanner sc = new Scanner(System.in);
-
+		System.out.print(COMMAND_INSTRUCTIONS);
+		boolean help = false;
+		System.out.print("Your command: ");
+		
 		while (true) {
-			System.out.print(COMMAND_INSTRUCTIONS);
+			
+			if(help) {
+				System.out.println("Type help to see commands");
+				System.out.print("Your command: ");
+			}
+			else {
+				help = true;
+			}
+			
 			if (sc.hasNext()) {
 
 				String line = sc.nextLine();
 
-				Pattern pattern = Pattern.compile(":");
-				Matcher matcher = pattern.matcher(line);
-
-				if (!matcher.find()) {
-					String[] command = line.split(" ");
-					System.out.println(sessionHandler.processCommand(command));
-				} else {
-					System.out.println("Don't use colon (:). Try again \n");
+				if (line.equals("help")) {
+					System.out.print(COMMAND_INSTRUCTIONS);
+				}
+				else {
+					Pattern pattern = Pattern.compile(":");
+					Matcher matcher = pattern.matcher(line);
+	
+					if (!matcher.find()) {
+						String[] command = line.split(" ");
+						System.out.println(sessionHandler.processCommand(command));
+					} else {
+						System.out.println("Don't use colon (:). Try again \n");
+					}
 				}
 			}
 		}
