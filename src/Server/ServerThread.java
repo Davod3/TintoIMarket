@@ -7,15 +7,12 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import Catalogs.UserCatalog;
-import Catalogs.WineCatalog;
-import domain.User;
 import handlers.*;
 
 public class ServerThread extends Thread {
 
 	private Socket socket = null;
 	private UserCatalog userCatalog;
-	private WineCatalog wineCatalog;
 	private String loggedUser = null;
 	private ObjectOutputStream outStream;
 	private ObjectInputStream inStream;
@@ -24,7 +21,6 @@ public class ServerThread extends Thread {
 	public ServerThread(Socket inSoc) throws IOException {
 		this.socket = inSoc;
 		this.userCatalog = UserCatalog.getInstance();
-		this.wineCatalog = WineCatalog.getInstance();
 		this.outStream = new ObjectOutputStream(socket.getOutputStream());
 		this.inStream = new ObjectInputStream(socket.getInputStream());
 

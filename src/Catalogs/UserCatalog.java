@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -49,20 +48,13 @@ public class UserCatalog {
 			
 			if( splitData.length >= 2) {
 				
-				User user = new User(splitData[0], splitData[1]);
-				
-				loadMessages(user);
-				
-				users.put(splitData[0], user);
-				
+				User user = new User(splitData[0], splitData[1]);			
+				loadMessages(user);		
+				users.put(splitData[0], user);	
 			}
-			
 		}
-		
 		br.close();
-		
 		return users;
-		
 	}
 
 	private void loadMessages(User user) throws IOException {
@@ -91,10 +83,8 @@ public class UserCatalog {
 			
 			Message message = new Message(splitData[0], splitData[1], splitData[2]);
 			
-			user.addMessage(message);
-			
-		}
-		
+			user.addMessage(message);	
+		}	
 	}
 
 	public boolean hasEnoughMoney(String user, double value) {

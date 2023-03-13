@@ -6,9 +6,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import domain.Message;
-import domain.Wine;
-
 public class TintoIMarket {
 
 	public static final String COMMAND_INSTRUCTIONS = "To use the application, use the commands below (either full command word or first letter): \n"
