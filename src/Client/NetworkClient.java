@@ -70,111 +70,94 @@ public class NetworkClient {
 		return validation;
 	}
 	
-	public String add(String wine, String imageFile) {
+	public String add(String wine, String imageFile) throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("add");
-			outStream.flush();
-			outStream.writeObject(wine);
-			outStream.flush();
-			FileUtils.sendFile(imageFile, outStream);
-			System.out.println("Adding wine: " + wine);
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error adding wine");
-		} 
+		
+		outStream.writeObject("add");
+		outStream.flush();
+		outStream.writeObject(wine);
+		outStream.flush();
+		FileUtils.sendFile(imageFile, outStream);
+		System.out.println("Adding wine: " + wine);
+		result = (String) inStream.readObject();
+		
 		return result;
 	}
 	
-	public String sell(String wine, String value, String quantity) {
+	public String sell(String wine, String value, String quantity) throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("sell");
-			outStream.writeObject(wine);
-			outStream.writeObject(Double.parseDouble(value));
-			outStream.writeObject(Integer.parseInt(quantity));
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error selling wine");
-		}  
+		
+		outStream.writeObject("sell");
+		outStream.writeObject(wine);
+		outStream.writeObject(Double.parseDouble(value));
+		outStream.writeObject(Integer.parseInt(quantity));
+		result = (String) inStream.readObject();
+
 		return result;
 	}
 	
-	public String view(String wine) {
+	public String view(String wine) throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("view");
-			outStream.writeObject(wine);
-			boolean wineExists = inStream.readBoolean();
-			File f = null;
-			if(wineExists)
-				f = FileUtils.receiveFile(inStream);
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error viewing wine");
-		}  
+
+		outStream.writeObject("view");
+		outStream.writeObject(wine);
+		boolean wineExists = inStream.readBoolean();
+		if(wineExists)
+			FileUtils.receiveFile(inStream);
+		result = (String) inStream.readObject();
+
 		return result;
 	}
 	
-	public String buy(String wine, String seller, String quantity) {
+	public String buy(String wine, String seller, String quantity) throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("buy");
-			outStream.writeObject(wine);
-			outStream.writeObject(seller);
-			outStream.writeObject(Integer.parseInt(quantity));
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error buying wine");
-		}  
+		
+		outStream.writeObject("buy");
+		outStream.writeObject(wine);
+		outStream.writeObject(seller);
+		outStream.writeObject(Integer.parseInt(quantity));
+		result = (String) inStream.readObject();
+		 
 		return result;
 	}
 	
-	public String wallet() {
+	public String wallet() throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("wallet");
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error buying wine");
-		}  
+		
+		outStream.writeObject("wallet");
+		result = (String) inStream.readObject();
+			
 		return result;
 	}
 	
-	public String classify(String wine, String stars) {
+	public String classify(String wine, String stars) throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("classify");
-			outStream.writeObject(wine);
-			outStream.writeObject(Integer.parseInt(stars));
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error classifying wine");
-		}  
+		
+		outStream.writeObject("classify");
+		outStream.writeObject(wine);
+		outStream.writeObject(Integer.parseInt(stars));
+		result = (String) inStream.readObject();
+		 
 		return result;
 	}
 	
-	public String talk(String userFrom, String userTo, String message) {
+	public String talk(String userFrom, String userTo, String message) throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("talk");
-			outStream.writeObject(userTo);
-			outStream.writeObject(message);
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error talking to user");
-		}  
+		
+		outStream.writeObject("talk");
+		outStream.writeObject(userTo);
+		outStream.writeObject(message);
+		result = (String) inStream.readObject();
+		
 		return result;
 	}
 	
-	public String read() {
+	public String read() throws IOException, ClassNotFoundException {
 		String result = "";
-		try {
-			outStream.writeObject("read");
-			result = (String) inStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Error reading messages");
-		}  
+		
+		outStream.writeObject("read");
+		result = (String) inStream.readObject();
+			
 		return result;
 	}
 }
