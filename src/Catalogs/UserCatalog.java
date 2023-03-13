@@ -84,7 +84,9 @@ public class UserCatalog {
 			Message message = new Message(splitData[0], splitData[1], splitData[2]);
 			
 			user.addMessage(message);	
-		}	
+		}
+		
+		br.close();
 	}
 
 	public boolean hasEnoughMoney(String user, double value) {
