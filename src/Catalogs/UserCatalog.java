@@ -23,7 +23,7 @@ public class UserCatalog {
 	private static final String USER_FILE_PATH = "users.txt";
 	private static final String USER_MESSAGES_PATH = "users/";
 	private static final String USER_MESSAGES_EXTENSION = ".txt";
-	private static final String EOL = "/n";
+	private static final String EOL = "\n";
 	private static final String SEPARATOR = ":";
 
 	private UserCatalog() throws IOException {
@@ -156,7 +156,7 @@ public class UserCatalog {
 		
 	}
 	
-	public String readMessages(String loggedUser) {
+	public String readMessages(String loggedUser) throws IOException {
 		
 		User user = getUser(loggedUser);
 		StringBuilder sb = new StringBuilder();
@@ -167,6 +167,8 @@ public class UserCatalog {
 			Message message = userInbox.pop();
 			sb.append("-->From: " + message.getFrom() + "; Message: " + message.getContent() + EOL);
 		}
+		
+		updateMessages(user);
 		
 		return sb.toString();
 	}
