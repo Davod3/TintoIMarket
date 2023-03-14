@@ -19,20 +19,33 @@ public class BuyHandler {
 		String seller = (String) inStream.readObject();
 		int quantity = (int) inStream.readObject();
 		WineCatalog wineCatalog = WineCatalog.getInstance();
-		Sale sale = wineCatalog.getWineSaleBySeller(wine, seller);
+
+		
 		String result = "";
 		boolean wineExists = wineCatalog.wineExists(wine);
-		boolean wineAvailable = sale.getQuantity() >= quantity;
-		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * sale.getQuantity());
+		
 		if (!wineExists) {
-			result = "Wine " + wine + " doesn't exist, try again with another wine";
-		} else if (!wineAvailable) {
-			result = "Only " + sale.getQuantity() + " units available";
-		} else if (!buyerHasEnoughMoney) {
+			outStream.writeObject("Wine " + wine + " doesn't exist, try again with another wine");
+			return;
+		} 
+		
+		Sale sale = wineCatalog.getWineSaleBySeller(wine, seller);	
+		boolean wineAvailable = sale.getQuantity() >= quantity;
+		
+		if(!wineAvailable) {
+			outStream.writeObject("Only " + sale.getQuantity() + " units available");
+			return;
+		}
+		
+		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * sale.getQuantity());
+
+		if (!buyerHasEnoughMoney) {
 			result = "You don't have enough money";
 		} else {
 			sale.setQuantity(sale.getQuantity() - quantity);
 			UserCatalog.getInstance().transfer(loggedUser, seller, sale.getValue() * quantity);
+			if(sale.getQuantity() == 0)
+				wineCatalog.removeSaleFromSeller(wine, seller);
 			result = "Wine " + wine + " successfully bought!";
 			wineCatalog.updateWines();
 		}

@@ -168,4 +168,9 @@ public class WineCatalog {
 		wine.addSale(sale);
 		updateWines();
 	}
+
+	public synchronized void removeSaleFromSeller(String wine, String seller) throws IOException {
+		wineList.get(wine).getSales().remove(getWineSaleBySeller(wine, seller));
+		updateWines();
+	}
 }
