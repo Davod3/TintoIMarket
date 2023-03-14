@@ -27,11 +27,11 @@ public class Wine {
 		return image.getName();
 	}
 	
-	public List<Sale> getSales(){
+	public synchronized List<Sale> getSales(){
 		return sales;
 	}
 	
-	public Sale getSaleBySeller(String seller) {
+	public synchronized Sale getSaleBySeller(String seller) {
 		for(Sale sale : sales) {
 			if(sale.getSeller().equals(seller))
 				return sale;
@@ -39,27 +39,27 @@ public class Wine {
 		return null;
 	}
 	
-	public void addSale(Sale sale) {
+	public synchronized void addSale(Sale sale) {
 		sales.add(sale);
 	}
 	
-	public void setRating(double rating) {
+	public synchronized void setRating(double rating) {
 		this.rating = rating;
 	}
 	
-	public double getRating() {
+	public synchronized double getRating() {
 		return rating;
 	}
 	
-	public int getNumberOfReviews() {
+	public synchronized int getNumberOfReviews() {
 		return numberOfReviews;
 	}
 	
-	public void setNumberOfReviews(int numberOfReviews) {
+	public synchronized void setNumberOfReviews(int numberOfReviews) {
 		this.numberOfReviews = numberOfReviews;
 	}
 	
-	public boolean hasSales() {
+	public synchronized boolean hasSales() {
 		return !sales.isEmpty();
 	}
 }

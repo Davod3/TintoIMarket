@@ -19,19 +19,19 @@ public class Sale {
 		return seller;
 	}
 	
-	public int getQuantity() {
+	public synchronized int getQuantity() {
 		return quantity;
 	}
 	
-	public void setQuantity(int quantity) {
+	public synchronized void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 	
-	public double getValue() {
+	public synchronized double getValue() {
 		return value;
 	}
 	
-	public void setValue(double value) {
+	public synchronized void setValue(double value) {
 		this.value = value;
 	}
 	

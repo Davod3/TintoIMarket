@@ -25,19 +25,19 @@ public class User {
 		return this.password;
 	}
 	
-	public double getBalance() {
+	public synchronized double getBalance() {
 		return this.balance;
 	}
 	
-	public void setBalance(double d) {
+	public synchronized void setBalance(double d) {
 		this.balance = d;
 	}
 	
-	public Stack<Message> getInbox() {
+	public synchronized Stack<Message> getInbox() {
 		return inbox;
 	}
 	
-	public void addMessage(Message msg) {
+	public synchronized void addMessage(Message msg) {
 		inbox.push(msg);
 	}
 }

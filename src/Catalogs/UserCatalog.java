@@ -30,7 +30,7 @@ public class UserCatalog {
 		this.userList = loadUsers();
 	}
 
-	private Map<String, User> loadUsers() throws IOException {
+	private synchronized Map<String, User> loadUsers() throws IOException {
 		
 		Map<String, User> users = new HashMap<String, User>();
 		
@@ -165,7 +165,7 @@ public class UserCatalog {
 		updateMessages(user);	
 	}
 
-	private void updateMessages(User user) throws IOException {
+	private synchronized void updateMessages(User user) throws IOException {
 		
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
 		

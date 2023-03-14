@@ -35,7 +35,7 @@ public class WineCatalog {
 		return instance;
 	}
 
-	private  synchronized HashMap<String, Wine> loadWines() throws IOException {
+	private synchronized HashMap<String, Wine> loadWines() throws IOException {
 
 		HashMap<String, Wine> map = new HashMap<String, Wine>();
 
@@ -61,7 +61,7 @@ public class WineCatalog {
 		return map;
 	}
 
-	private void loadSales(Wine wine) throws IOException {
+	private synchronized void loadSales(Wine wine) throws IOException {
 
 		File saleFile = new File(SALES_FILE_PATH);
 		saleFile.createNewFile();
@@ -110,7 +110,7 @@ public class WineCatalog {
 		bwSales.close();
 	}
 
-	private void getSales(StringBuilder sb, Wine wine) {
+	private synchronized void getSales(StringBuilder sb, Wine wine) {
 		
 		List<Sale> sales = wine.getSales();
 		
@@ -135,14 +135,14 @@ public class WineCatalog {
 		}
 	}
 	
-	public void rate(String wine, double rating) throws IOException {
+	public synchronized void rate(String wine, double rating) throws IOException {
 		Wine wineToRate = getWine(wine);
 		wineToRate.setRating(calculateRating(wine, rating));
 		wineToRate.setNumberOfReviews(wineToRate.getNumberOfReviews() + 1);
 		updateWines();
 	}
 	
-	private double calculateRating(String wine, double rating) {
+	private synchronized double calculateRating(String wine, double rating) {
 		double result = 0;
 		Wine wineToRate = getWine(wine);
 		result = wineToRate.getRating() * wineToRate.getNumberOfReviews() + rating;
