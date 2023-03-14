@@ -10,6 +10,7 @@ import utils.FileUtils;
 
 public class AddHandler {
 	
+	public final String EOL = System.lineSeparator();
 	private static AddHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
@@ -19,9 +20,9 @@ public class AddHandler {
 		boolean result = WineCatalog.getInstance().createWine(wine, received);
 				
 		if(result) {
-			outStream.writeObject("Wine " + wine + " succesfully registered!");
+			outStream.writeObject("Wine " + wine + " succesfully registered!" + EOL);
 		} else {
-			outStream.writeObject("Failed to add wine. " + wine + " already exists.");
+			outStream.writeObject("Failed to add wine. " + wine + " already exists." + EOL);
 		}
 	}
 	

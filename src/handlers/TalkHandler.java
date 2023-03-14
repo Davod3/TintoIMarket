@@ -9,6 +9,7 @@ import domain.Message;
 
 public class TalkHandler {
 	
+	public final String EOL = System.lineSeparator();
 	private static TalkHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
@@ -21,10 +22,10 @@ public class TalkHandler {
 		if (userCatalog.exists(user)) {
 			Message msgTosend = new Message(loggedUser, user, msg);
 			userCatalog.addMessageToUser(user, msgTosend);
-			result = "Message successfully sent to " + user;
+			result = "Message successfully sent to " + user + EOL;
 		}
 		else {
-			result = "User " + user + " doesn't exist, try again with another user";
+			result = "User " + user + " doesn't exist, try again with another user" + EOL;
 		}
 		
 		outStream.writeObject(result);

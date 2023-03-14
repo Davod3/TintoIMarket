@@ -11,6 +11,7 @@ import utils.FileUtils;
 
 public class ViewHandler {
 	
+	public final String EOL = System.lineSeparator();
 	private static ViewHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
@@ -26,20 +27,20 @@ public class ViewHandler {
 			FileUtils.sendFile(wineToView.getImageName(), outStream);
 			
 			//Average classification
-			result.append("Wine " + wine + " has a classification of " + wineToView.getRating() + " stars. \n");
+			result.append("Wine " + wine + " has a classification of " + wineToView.getRating() + " stars." + EOL);
 			
 			if (wineToView.hasSales()) {
 				for (Sale sale: wineToView.getSales()) {
 					result.append("User " + sale.getSeller()
 					+ " is selling " + sale.getQuantity()
 					+ " units of " + wine + " for the price of "
-					+ sale.getValue() + " each unit. \n");
+					+ sale.getValue() + " each unit." + EOL);
 				}
 			}
 		}
 		else {
 			outStream.writeBoolean(false);
-			result.append("Wine " + wine + " doesn't exist, try again with another wine");
+			result.append("Wine " + wine + " doesn't exist, try again with another wine" + EOL);
 		}
 		
 		outStream.writeObject(result.toString());

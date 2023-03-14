@@ -8,6 +8,7 @@ import catalogs.WineCatalog;
 
 public class ClassifyHandler {
 
+	public final String EOL = System.lineSeparator();
 	private static ClassifyHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
@@ -16,15 +17,15 @@ public class ClassifyHandler {
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		String result = "";
 		if(!wineCatalog.wineExists(wine)) {
-			result = "Wine " + wine + " doesn't exist, try again with another wine";
+			result = "Wine " + wine + " doesn't exist, try again with another wine" + EOL;
 		}else {
 			wineCatalog.rate(wine, rating);
-			result = "Successfully classified wine: " + wine;
+			result = "Successfully classified wine: " + wine + EOL;
 		}
 		outStream.writeObject(result);
 	}
 	
-	public static ClassifyHandler getInstance() throws IOException {
+	public static ClassifyHandler getInstance() {
 		if (instance == null) 
 			instance = new ClassifyHandler();
 		return instance;

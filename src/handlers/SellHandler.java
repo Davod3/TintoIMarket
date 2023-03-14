@@ -9,6 +9,7 @@ import domain.Sale;
 
 public class SellHandler {
 	
+	public final String EOL = System.lineSeparator();
 	private static SellHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
@@ -21,7 +22,6 @@ public class SellHandler {
 		String result = null;
 		//If wine exists
 		if (wineCatalog.wineExists(wine)) {
-			//Wine wineToSell = wineCatalog.getWine(wine);
 			Sale sale = wineCatalog.getWineSaleBySeller(wine, loggedUser);
 			
 			//If sale already exists
@@ -37,10 +37,10 @@ public class SellHandler {
 				sale = new Sale(loggedUser, value, quantity, wine);
 				wineCatalog.addSaleToWine(wine, sale);
 			}
-			result = "Wine " + wine + " has been successfully put on sale";
+			result = "Wine " + wine + " has been successfully put on sale" + EOL;
 		}
 		else {
-			result  = "Wine " + wine + " doesn't exist, try again with another wine";
+			result  = "Wine " + wine + " doesn't exist, try again with another wine" + EOL;
 		}
 		outStream.writeObject(result);
 	}
