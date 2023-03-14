@@ -3,7 +3,7 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import Catalogs.UserCatalog;
+import catalogs.UserCatalog;
 
 public class WalletHandler {
 	

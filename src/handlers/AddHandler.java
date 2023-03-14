@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import Catalogs.WineCatalog;
+import catalogs.WineCatalog;
 import utils.FileUtils;
 
 public class AddHandler {

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import Catalogs.UserCatalog;
-import Catalogs.WineCatalog;
+import catalogs.UserCatalog;
+import catalogs.WineCatalog;
 import domain.Sale;
 
 public class BuyHandler {

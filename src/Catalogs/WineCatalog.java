@@ -1,4 +1,4 @@
-package Catalogs;
+package catalogs;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
