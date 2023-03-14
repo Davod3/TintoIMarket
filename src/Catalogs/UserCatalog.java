@@ -28,7 +28,6 @@ public class UserCatalog {
 	private UserCatalog() throws IOException {
 
 		this.userList = loadUsers();
-		
 	}
 
 	private Map<String, User> loadUsers() throws IOException {
@@ -99,10 +98,9 @@ public class UserCatalog {
 		if (instance == null)
 			instance = new UserCatalog();
 		return instance;
-
 	}
 
-	public String validate(String userId, String pwd) throws IOException {
+	public synchronized String validate(String userId, String pwd) throws IOException {
 
 		String loggedUser = null;
 
@@ -113,21 +111,15 @@ public class UserCatalog {
 			if (pwd.equals(user.getPassword())) {
 				//Validation failed
 				loggedUser = userId;
-			}
-					
-		} else {
-			
+			}		
+		} else {	
 			//New user, register it
 			loggedUser = registerUser(userId, pwd);
-			
-
 		}
-
 		return loggedUser;
-
 	}
 
-	public String registerUser(String userId, String pwd) throws IOException {
+	public synchronized String registerUser(String userId, String pwd) throws IOException {
 		
 		User registering = new User(userId, pwd);
 		
@@ -138,8 +130,7 @@ public class UserCatalog {
 		bw.append(entry);
 		bw.close();
 		
-		return userId;
-		
+		return userId;	
 	}
 	
 	public String readMessages(String loggedUser) throws IOException {
@@ -159,20 +150,19 @@ public class UserCatalog {
 		return sb.toString();
 	}
 	
-	public User getUser(String user) {
+	public synchronized User getUser(String user) {
 		return userList.get(user);
 	}
 
-	public boolean exists(String user) {
+	public synchronized boolean exists(String user) {
 		return this.userList.containsKey(user);
 	}
 
-	public void addMessageToUser(String username, Message msgToSend) throws IOException {
+	public synchronized void addMessageToUser(String username, Message msgToSend) throws IOException {
 		User user = userList.get(username);
 		user.addMessage(msgToSend);
 		
-		updateMessages(user);
-		
+		updateMessages(user);	
 	}
 
 	private void updateMessages(User user) throws IOException {
@@ -191,8 +181,6 @@ public class UserCatalog {
 			bf.append(msg.getFrom() + SEPARATOR + msg.getTo() + SEPARATOR + msg.getContent() + EOL);
 		}
 		
-		bf.close();
-		
-		
+		bf.close();	
 	}
 }

@@ -24,9 +24,8 @@ public class WineCatalog {
 	private static final String EOL = System.lineSeparator();
 
 	private WineCatalog() throws IOException {
-
+		
 		wineList = loadWines();
-
 	}
 
 	public static WineCatalog getInstance() throws IOException {
@@ -34,10 +33,9 @@ public class WineCatalog {
 		if (instance == null)
 			instance = new WineCatalog();
 		return instance;
-
 	}
 
-	private HashMap<String, Wine> loadWines() throws IOException {
+	private  synchronized HashMap<String, Wine> loadWines() throws IOException {
 
 		HashMap<String, Wine> map = new HashMap<String, Wine>();
 
@@ -58,13 +56,9 @@ public class WineCatalog {
 			loadSales(newWine);
 
 			map.put(splitData[0], newWine);
-
 		}
-
 		br.close();
-
 		return map;
-
 	}
 
 	private void loadSales(Wine wine) throws IOException {
@@ -85,14 +79,12 @@ public class WineCatalog {
 				Sale newSale = new Sale(splitData[1], Double.parseDouble(splitData[2]), Integer.parseInt(splitData[3]),
 						splitData[0]);
 				wine.addSale(newSale);
-
 			}
 		}
-
 		br.close();
 	}
 
-	public void updateWines() throws IOException {
+	public synchronized void updateWines() throws IOException {
 
 		Set<String> keys = wineList.keySet();
 		StringBuilder sbWines = new StringBuilder();
@@ -127,12 +119,10 @@ public class WineCatalog {
 			sb.append(sale.getWineName() + SEPARATOR + sale.getSeller() + SEPARATOR + 
 					sale.getValue() + SEPARATOR +
 					sale.getQuantity() + EOL);
-			
 		}
-
 	}
 
-	public boolean createWine(String wine, File received) throws IOException {
+	public synchronized boolean createWine(String wine, File received) throws IOException {
 
 		Wine newWine = new Wine(wine, received);
 
@@ -143,7 +133,6 @@ public class WineCatalog {
 		} else {
 			return false;
 		}
-
 	}
 	
 	public void rate(String wine, double rating) throws IOException {
@@ -161,20 +150,20 @@ public class WineCatalog {
 		return result;
 	}
 
-	public boolean wineExists(String wine) {
+	public synchronized boolean wineExists(String wine) {
 		return wineList.containsKey(wine);
 	}
 
-	public Wine getWine(String wine) {
+	public synchronized Wine getWine(String wine) {
 		return wineList.get(wine);
 	}
 
-	public Sale getWineSaleBySeller(String wineName, String loggedUser) {
+	public synchronized Sale getWineSaleBySeller(String wineName, String loggedUser) {
 		Wine wine = wineList.get(wineName);
 		return wine.getSaleBySeller(loggedUser);
 	}
 
-	public void addSaleToWine(String wineName, Sale sale) throws IOException {
+	public synchronized void addSaleToWine(String wineName, Sale sale) throws IOException {
 		Wine wine = wineList.get(wineName);
 		wine.addSale(sale);
 		updateWines();
