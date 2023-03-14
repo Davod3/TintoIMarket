@@ -61,7 +61,6 @@ public class ServerThread extends Thread {
 				e1.printStackTrace();
 			}
 		} catch (IOException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -81,14 +80,14 @@ public class ServerThread extends Thread {
 			switch (command) {
 			
 			case "add":
-				AddHandler.getInstance().run(inStream, outStream, loggedUser);
+				AddHandler.getInstance().run(inStream, outStream);
 				break;
 			case "sell":
 				SellHandler.getInstance().run(inStream, outStream, loggedUser);
 				break;
 
 			case "view":
-				ViewHandler.getInstance().run(inStream, outStream, loggedUser);
+				ViewHandler.getInstance().run(inStream, outStream);
 				break;
 
 			case "buy":
@@ -99,7 +98,7 @@ public class ServerThread extends Thread {
 				WalletHandler.getInstance().run(outStream, loggedUser);
 				break;
 			case "classify":
-				ClassifyHandler.getInstance().run(inStream, outStream, loggedUser);
+				ClassifyHandler.getInstance().run(inStream, outStream);
 				break;
 
 			case "talk":

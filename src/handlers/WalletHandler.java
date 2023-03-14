@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 import catalogs.UserCatalog;
+import utils.FileUtils;
 
 public class WalletHandler {
 	
-	public final String EOL = System.lineSeparator();
 	private static WalletHandler instance = null;
 	
 	public void run(ObjectOutputStream outStream, String loggedUser) throws IOException {
 		UserCatalog userCatalog = UserCatalog.getInstance();
-		outStream.writeObject("Your current balance is " + userCatalog.getUser(loggedUser).getBalance() + EOL);
+		outStream.writeObject("Your current balance is " + userCatalog.getUser(loggedUser).getBalance() + FileUtils.EOL);
 	}
 	
-	public static WalletHandler getInstance() throws IOException {
+	public static WalletHandler getInstance() {
 
 		if (instance == null)
 			instance = new WalletHandler();

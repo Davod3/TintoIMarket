@@ -11,10 +11,9 @@ import utils.FileUtils;
 
 public class ViewHandler {
 	
-	public final String EOL = System.lineSeparator();
 	private static ViewHandler instance = null;
 	
-	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
+	public void run(ObjectInputStream inStream, ObjectOutputStream outStream) throws ClassNotFoundException, IOException {
 		StringBuilder result = new StringBuilder();
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		
@@ -27,26 +26,26 @@ public class ViewHandler {
 			FileUtils.sendFile(wineToView.getImageName(), outStream);
 			
 			//Average classification
-			result.append("Wine " + wine + " has a classification of " + wineToView.getRating() + " stars." + EOL);
+			result.append("Wine " + wine + " has a classification of " + wineToView.getRating() + " stars." + FileUtils.EOL);
 			
 			if (wineToView.hasSales()) {
 				for (Sale sale: wineToView.getSales()) {
 					result.append("User " + sale.getSeller()
 					+ " is selling " + sale.getQuantity()
 					+ " units of " + wine + " for the price of "
-					+ sale.getValue() + " each unit." + EOL);
+					+ sale.getValue() + " each unit." + FileUtils.EOL);
 				}
 			}
 		}
 		else {
 			outStream.writeBoolean(false);
-			result.append("Wine " + wine + " doesn't exist, try again with another wine" + EOL);
+			result.append("Wine " + wine + " doesn't exist, try again with another wine" + FileUtils.EOL);
 		}
 		
 		outStream.writeObject(result.toString());
 	}
 	
-	public static ViewHandler getInstance() throws IOException {
+	public static ViewHandler getInstance() {
 
 		if (instance == null)
 			instance = new ViewHandler();

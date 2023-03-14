@@ -6,10 +6,10 @@ import java.io.ObjectOutputStream;
 
 import catalogs.WineCatalog;
 import domain.Sale;
+import utils.FileUtils;
 
 public class SellHandler {
 	
-	public final String EOL = System.lineSeparator();
 	private static SellHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
@@ -37,15 +37,15 @@ public class SellHandler {
 				sale = new Sale(loggedUser, value, quantity, wine);
 				wineCatalog.addSaleToWine(wine, sale);
 			}
-			result = "Wine " + wine + " has been successfully put on sale" + EOL;
+			result = "Wine " + wine + " has been successfully put on sale" + FileUtils.EOL;
 		}
 		else {
-			result  = "Wine " + wine + " doesn't exist, try again with another wine" + EOL;
+			result  = "Wine " + wine + " doesn't exist, try again with another wine" + FileUtils.EOL;
 		}
 		outStream.writeObject(result);
 	}
 	
-	public static SellHandler getInstance() throws IOException {
+	public static SellHandler getInstance() {
 
 		if (instance == null)
 			instance = new SellHandler();

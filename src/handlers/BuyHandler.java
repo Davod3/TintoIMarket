@@ -7,10 +7,10 @@ import java.io.ObjectOutputStream;
 import catalogs.UserCatalog;
 import catalogs.WineCatalog;
 import domain.Sale;
+import utils.FileUtils;
 
 public class BuyHandler {
-
-	public final String EOL = System.lineSeparator();
+	
 	private static BuyHandler instance = null;
 
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
@@ -26,7 +26,7 @@ public class BuyHandler {
 		boolean wineExists = wineCatalog.wineExists(wine);
 		
 		if (!wineExists) {
-			outStream.writeObject("Wine " + wine + " doesn't exist, try again with another wine" + EOL);
+			outStream.writeObject("Wine " + wine + " doesn't exist, try again with another wine" + FileUtils.EOL);
 			return;
 		} 
 		
@@ -34,26 +34,26 @@ public class BuyHandler {
 		boolean wineAvailable = sale.getQuantity() >= quantity;
 		
 		if(!wineAvailable) {
-			outStream.writeObject("Only " + sale.getQuantity() + " units available" + EOL);
+			outStream.writeObject("Only " + sale.getQuantity() + " units available" + FileUtils.EOL);
 			return;
 		}
 		
 		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * sale.getQuantity());
 
 		if (!buyerHasEnoughMoney) {
-			result = "You don't have enough money" + EOL;
+			result = "You don't have enough money" + FileUtils.EOL;
 		} else {
 			sale.setQuantity(sale.getQuantity() - quantity);
 			UserCatalog.getInstance().transfer(loggedUser, seller, sale.getValue() * quantity);
 			if(sale.getQuantity() == 0)
 				wineCatalog.removeSaleFromSeller(wine, seller);
-			result = "Wine " + wine + " successfully bought!" + EOL;
+			result = "Wine " + wine + " successfully bought!" + FileUtils.EOL;
 			wineCatalog.updateWines();
 		}
 		outStream.writeObject(result);
 	}
 
-	public static BuyHandler getInstance() throws IOException {
+	public static BuyHandler getInstance() {
 
 		if (instance == null)
 			instance = new BuyHandler();

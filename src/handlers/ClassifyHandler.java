@@ -5,22 +5,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import catalogs.WineCatalog;
+import utils.FileUtils;
 
 public class ClassifyHandler {
 
-	public final String EOL = System.lineSeparator();
 	private static ClassifyHandler instance = null;
 	
-	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
+	public void run(ObjectInputStream inStream, ObjectOutputStream outStream) throws ClassNotFoundException, IOException {
 		String wine = (String) inStream.readObject();
-		double rating = (double) (int)inStream.readObject();
+		double rating = (int) inStream.readObject();
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		String result = "";
 		if(!wineCatalog.wineExists(wine)) {
-			result = "Wine " + wine + " doesn't exist, try again with another wine" + EOL;
+			result = "Wine " + wine + " doesn't exist, try again with another wine" + FileUtils.EOL;
 		}else {
 			wineCatalog.rate(wine, rating);
-			result = "Successfully classified wine: " + wine + EOL;
+			result = "Successfully classified wine: " + wine + FileUtils.EOL;
 		}
 		outStream.writeObject(result);
 	}

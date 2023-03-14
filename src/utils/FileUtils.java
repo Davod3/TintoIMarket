@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 
 public class FileUtils {
 
+	public static final String EOL = System.lineSeparator();
 	
 	public static void sendFile(String fileName, ObjectOutputStream outStream) {
 		File file = new File(fileName);

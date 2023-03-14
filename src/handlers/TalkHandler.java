@@ -6,10 +6,10 @@ import java.io.ObjectOutputStream;
 
 import catalogs.UserCatalog;
 import domain.Message;
+import utils.FileUtils;
 
 public class TalkHandler {
 	
-	public final String EOL = System.lineSeparator();
 	private static TalkHandler instance = null;
 	
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser) throws ClassNotFoundException, IOException {
@@ -22,16 +22,16 @@ public class TalkHandler {
 		if (userCatalog.exists(user)) {
 			Message msgTosend = new Message(loggedUser, user, msg);
 			userCatalog.addMessageToUser(user, msgTosend);
-			result = "Message successfully sent to " + user + EOL;
+			result = "Message successfully sent to " + user + FileUtils.EOL;
 		}
 		else {
-			result = "User " + user + " doesn't exist, try again with another user" + EOL;
+			result = "User " + user + " doesn't exist, try again with another user" + FileUtils.EOL;
 		}
 		
 		outStream.writeObject(result);
 	}
 	
-	public static TalkHandler getInstance() throws IOException {
+	public static TalkHandler getInstance() {
 
 		if (instance == null)
 			instance = new TalkHandler();
