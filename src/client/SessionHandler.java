@@ -1,26 +1,55 @@
 package client;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
+/**
+ * This class represents the session handler for the client of this application.
+ * It digests the user commands for the NetworkClient class. Also sends error messages
+ * when receiving exceptions resulting of entered commands.
+ * 
+ * @author André Dias 		nº 55314
+ * @author David Pereira 	nº 56361
+ * @author Miguel Cut		nº 56339
+ */
 public class SessionHandler {
 	
-	private String user;
 	private boolean sessionValid;
 	private NetworkClient netClient;
 	public static final String COMMAND_ERROR = "Invalid command.";
 	
-	public SessionHandler(String user, String password, String serverAdress) throws UnknownHostException, IOException {
-		this.user = user;
+	/**
+	 * Creates a new SessionHandler given the user, password
+	 * and the address of the server to connect to.
+	 * 
+	 * @param user						The user who's trying to log in
+	 * @param password					The user's password
+	 * @param serverAdress				The address of the server to connect to
+	 * @throws IOException				When an I/O error occurs while reading/writing to a file
+	 */
+	public SessionHandler(String user, String password, String serverAdress)
+			throws IOException {
 		this.netClient = new NetworkClient(serverAdress);
 		
 		sessionValid = netClient.validateSession(user, password);
 	}
 	
+	/**
+	 * Checks if the session is still valid.
+	 * 
+	 * @return	True if the session is still valid, false otherwise
+	 */
 	public boolean getSessionValid() {
 		return sessionValid;
 	}
 	
+	/**
+	 * Sends the respective commands to NetworkClient class.
+	 * This function sanitizes the commands as well and receives
+	 * the answer from the server.
+	 * 
+	 * @param command		The command entered by the current user
+	 * @return				Result message received by NetworkClient
+	 */
 	public String processCommand(String[] command) {
 		String result = "";
 		
@@ -30,7 +59,7 @@ public class SessionHandler {
 				builder.append(command[i] + " ");
 			}
 			try {
-				result = netClient.talk(user, command[1], builder.toString());
+				result = netClient.talk( command[1], builder.toString());
 			} catch (ClassNotFoundException | IOException e) {
 				System.out.println("Error sending message\n");
 				System.exit(-1);

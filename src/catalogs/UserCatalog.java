@@ -49,7 +49,7 @@ public class UserCatalog {
 	 */
 	private synchronized Map<String, User> loadUsers() throws IOException {
 		//Create a map to load users
-		Map<String, User> users = new HashMap<String, User>();
+		Map<String, User> users = new HashMap<>();
 		//Open the file that contains all the users information
 		File userFile = new File(USER_FILE_PATH);
 		userFile.createNewFile(); //Make sure file exists before reading

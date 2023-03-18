@@ -15,7 +15,7 @@ import domain.Sale;
 import domain.Wine;
 
 /**
- * The WineCatalog class represents the catalog with all wines
+ * The WineCatalog class represents the catalog with all wines.
  * 
  * @author André Dias 		nº 55314
  * @author David Pereira 	nº 56361
@@ -31,7 +31,7 @@ public class WineCatalog {
 	private static final String EOL = System.lineSeparator();
 
 	/**
-	 * Creates a WineCatalog and loads all wines from a specific file
+	 * Creates a WineCatalog and loads all wines from a specific file.
 	 * 
 	 * @throws IOException	When an I/O error occurs while loading all wines
 	 */
@@ -53,7 +53,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Loads all wines from a specific file
+	 * Loads all wines from a specific file.
 	 * 
 	 * @return					A map with all wines
 	 * @throws IOException		When an I/O error occurs
@@ -86,7 +86,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Loads all sales of a given wine from a specific file
+	 * Loads all sales of a given wine from a specific file.
 	 * 
 	 * @param wine				The wine for which we want the sales
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
@@ -114,7 +114,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Updates all sales and wines to wine/sales file
+	 * Updates all sales and wines to wine/sales file.
 	 * 
 	 * @throws IOException	When an I/O error occurs while reading/writing to a file
 	 */
@@ -145,7 +145,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Writes all sales information of a given wine to the given stringBuilder
+	 * Writes all sales information of a given wine to the given stringBuilder.
 	 * 
 	 * @param sb		The stringBuilder
 	 * @param wine		The wine for which we want all the sales
@@ -163,7 +163,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Adds a new wine to wine catalog
+	 * Adds a new wine to wine catalog.
 	 * 
 	 * @param wine				The name of the wine we want to add
 	 * @param received			The image associated to the wine
@@ -206,7 +206,7 @@ public class WineCatalog {
 	}
 	
 	/**
-	 * Recalculates the rating of a given wine, given a new rating
+	 * Recalculates the rating of a given wine, given a new rating.
 	 * 
 	 * @param wine			The wine for which we want to calculate the rating
 	 * @param rating		The rating for the calculus
@@ -224,7 +224,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Checks if a given wine exists in dataBase
+	 * Checks if a given wine exists in dataBase.
 	 * 
 	 * @param wine		The wine for which we want to check
 	 * @return			True if the given wine already exists in dataBase,
@@ -235,7 +235,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Returns the wine associated to the given wine name
+	 * Returns the wine associated to the given wine name.
 	 * 
 	 * @param wine		The wine we want to look for
 	 * @return			The respective wine
@@ -245,9 +245,9 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Returns a wine's sale associated to the given seller
+	 * Returns a wine's sale associated to the given seller.
 	 * 
-	 * @param wineName		Wine's name
+	 * @param wine			The name of the wine
 	 * @param loggedUser	The current user/seller
 	 * @return				The wine's sale of that seller
 	 */
@@ -257,10 +257,10 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Adds a given sale to the given wine
+	 * Adds a given sale to the given wine.
 	 * 
-	 * @param wineName			Wine's name
-	 * @param sale				The sale we want to add to wine's sale list
+	 * @param wineName			The name of the wine
+	 * @param sale				The sale we want to add to the sale list of the wine
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 */
 	public synchronized void addSaleToWine(String wineName, Sale sale)
@@ -271,7 +271,7 @@ public class WineCatalog {
 	}
 
 	/**
-	 * Removes a wine's sale from the given seller
+	 * Removes a wine's sale from the given seller.
 	 * 
 	 * @param wine				The wine for which we want to get the sale
 	 * @param seller			The user for which we want to delete the sale

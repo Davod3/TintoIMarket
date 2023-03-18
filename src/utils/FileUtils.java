@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 
 /**
  * The FileUtils class has some functions
- * and strings that are often used in this project
+ * and strings that are often used in this project.
  * 
  * @author André Dias 		nº 55314
  * @author David Pereira 	nº 56361
@@ -20,7 +20,7 @@ public class FileUtils {
 	public static final String EOL = System.lineSeparator();
 	
 	/**
-	 * Sends a file through a given stream
+	 * Sends a file through a given stream.
 	 * 
 	 * @param fileName		The filename
 	 * @param outStream		Stream for outputting the file
@@ -47,7 +47,7 @@ public class FileUtils {
 	}
 	
 	/**
-	 * Receives a file from a given stream
+	 * Receives a file from a given stream.
 	 * 
 	 * @param inStream					Stream for receiving the file
 	 * @return							The file received

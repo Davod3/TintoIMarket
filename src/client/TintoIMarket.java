@@ -6,6 +6,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class represents the client of this application.
+ * 
+ * @author André Dias 		nº 55314
+ * @author David Pereira 	nº 56361
+ * @author Miguel Cut		nº 56339
+ */
 public class TintoIMarket {
 
 	public static final String COMMAND_INSTRUCTIONS = "To use the application, use the commands below (either full command word or first letter): \n"
@@ -26,6 +33,7 @@ public class TintoIMarket {
 		SessionHandler sessionHandler = null;
 
 		try {
+			//Get client arguments
 			address = args[0];
 			clientID = args[1];
 			password = args[2];
@@ -40,18 +48,20 @@ public class TintoIMarket {
 			}
 
 		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("Missing arguments. Correct usage: ...");
+			System.out.println("Missing arguments. Correct usage: <serverAddress> <userID> <password>");
 		} catch (UnknownHostException e) {
-			
 			System.out.println(e.getMessage());
-			
 		} catch (IOException e) {
-			
 			System.out.println("Unknown host. Wrong IP or Port used.");
 		}
 
 	}
 
+	/**
+	 * Runs the client's engine
+	 * 
+	 * @param sessionHandler	The handler for this session/connection
+	 */
 	private static void runClient(SessionHandler sessionHandler) {
 		System.out.println("Welcome to TintoIMarket!");
 		Scanner sc = new Scanner(System.in);

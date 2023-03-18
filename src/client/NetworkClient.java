@@ -4,10 +4,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import utils.FileUtils;
 
+/**
+ * This class represents the network for the client of this application.
+ * It communicates directly with the server through sockets opened early.
+ * 
+ * @author André Dias 		nº 55314
+ * @author David Pereira 	nº 56361
+ * @author Miguel Cut		nº 56339
+ */
 public class NetworkClient {
 
 	private Socket clientSocket;
@@ -15,44 +22,58 @@ public class NetworkClient {
 	private ObjectOutputStream outStream;
 	private static final String DEFAULT_PORT = "12345";
 	
-	public NetworkClient(String serverAddress) throws UnknownHostException, IOException {
-		
+	/**
+	 * Creates a new network for the client
+	 * 
+	 * @param serverAddress				The address of the server to connect to
+	 * @throws IOException				When an I/O error occurs while 
+	 * 									reading/writing to a file
+	 */
+	public NetworkClient(String serverAddress) throws IOException {
 		//Check if address contains port, otherwise use default
-		
 		String[] addressSplit;
-		
 		if(serverAddress.contains(":")) {
 			addressSplit = serverAddress.split(":");
 		} else {
-			
+			//Use default port
 			addressSplit = new String[2];
 			addressSplit[0] = serverAddress;
 			addressSplit[1] = DEFAULT_PORT;
 		}
-		
-		
+		//Get address
 		String host = addressSplit[0];
 		int port = Integer.parseInt(addressSplit[1]);
+		//Connect to server
 		clientSocket = new Socket(host, port);
 		createStreams();
 	}
 
+	/**
+	 * Creates the streams for further communication between client and server
+	 */
 	private void createStreams() {
 		try {
 			inStream = new ObjectInputStream(clientSocket.getInputStream());
 			outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-
 		} catch (IOException e) {
 			System.out.println("Erro a criar streams");
 		}
 	}
 	
+	/**
+	 * Validates the session of the current user
+	 * 
+	 * @param user			The current user
+	 * @param password		User's password
+	 * @return				True if user can log in, false otherwise
+	 */
 	public boolean validateSession(String user, String password) {
 		boolean validation = false;
 		try {
-			
+			//Send user and password
 			outStream.writeObject(user);
 			outStream.writeObject(password);
+			//Check if user is logged in
 			validation = (boolean) inStream.readObject();
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar user e password para a socket");
@@ -60,98 +81,207 @@ public class NetworkClient {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
 		return validation;
 	}
 	
-	public String add(String wine, String imageFile) throws IOException, ClassNotFoundException {
+	/**
+	 * Adds a new wine to the market by sending the add command to the server
+	 * 
+	 * @param wine							The name of the wine
+	 * @param imageFile						The path to the image of the wine
+	 * @return								A message confirming that the wine was 
+	 * 										successfully added to the market
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist
+	 */
+	public String add(String wine, String imageFile)
+			throws IOException, ClassNotFoundException {
 		String result = "";
-		
+		//Send add command
 		outStream.writeObject("add");
-		outStream.flush();
+		//Send the name of the wine
 		outStream.writeObject(wine);
-		outStream.flush();
+		//Send image of the wine
 		FileUtils.sendFile(imageFile, outStream);
-		System.out.println("Adding wine: " + wine);
 		result = (String) inStream.readObject();
-		
 		return result;
 	}
 	
-	public String sell(String wine, String value, String quantity) throws IOException, ClassNotFoundException {
+	/**
+	 * Sells the given units of wine for the given price by sending
+	 * the sell command to the server
+	 * 
+	 * @param wine							The name of the wine
+	 * @param value							The price of each unit
+	 * @param quantity						The quantity of wine to sell
+	 * @return								A message confirming that the wine was 
+	 * 										successfully put on sale
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist
+	 */
+	public String sell(String wine, String value, String quantity)
+			throws IOException, ClassNotFoundException {
 		String result = "";
-		
+		//Send sell command
 		outStream.writeObject("sell");
+		//Send the name of the wine
 		outStream.writeObject(wine);
+		//Send value of each unit
 		outStream.writeObject(Double.parseDouble(value));
+		//Send quantity to sell
 		outStream.writeObject(Integer.parseInt(quantity));
+		//Get result
 		result = (String) inStream.readObject();
-
 		return result;
 	}
 	
-	public String view(String wine) throws IOException, ClassNotFoundException {
+	/**
+	 * Views the given wine by sending the view command to the server
+	 * 
+	 * @param wine							The wine we want to view (information)
+	 * @return								The information of the given wine
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist
+	 */
+	public String view(String wine)
+			throws IOException, ClassNotFoundException {
 		String result = "";
-
+		//Send view command
 		outStream.writeObject("view");
+		//Send the name of the wine
 		outStream.writeObject(wine);
+		//Check if wine exists
 		boolean wineExists = inStream.readBoolean();
+		//If wine exists receive image and information about wine
 		if(wineExists)
 			FileUtils.receiveFile(inStream);
+		//Get result
 		result = (String) inStream.readObject();
-
 		return result;
 	}
 	
-	public String buy(String wine, String seller, String quantity) throws IOException, ClassNotFoundException {
+	/**
+	 * Buys a certain quantity of wine to a specific seller by sending the buy command
+	 * to the server
+	 * 
+	 * @param wine							The name of the wine to buy
+	 * @param seller						The seller from whom you want to buy the wine
+	 * @param quantity						The quantity you want to buy from the seller
+	 * @return								A message confirming that the wine was 
+	 * 										successfully bought
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist
+	 */
+	public String buy(String wine, String seller, String quantity)
+			throws IOException, ClassNotFoundException {
 		String result = "";
-		
+		//Send buy command
 		outStream.writeObject("buy");
+		//Send the name of the wine
 		outStream.writeObject(wine);
+		//Send the seller
 		outStream.writeObject(seller);
+		//Send the quantity to buy
 		outStream.writeObject(Integer.parseInt(quantity));
-		result = (String) inStream.readObject();
-		 
+		//Get result
+		result = (String) inStream.readObject();	 
 		return result;
 	}
 	
+	/**
+	 * Get the actual balance of the current user by sending the wallet command
+	 * to the server
+	 * 
+	 * @return								The actual balance of the current user
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist	
+	 */
 	public String wallet() throws IOException, ClassNotFoundException {
 		String result = "";
-		
+		//Send wallet command
 		outStream.writeObject("wallet");
+		//Get result
 		result = (String) inStream.readObject();
-			
 		return result;
 	}
 	
-	public String classify(String wine, String stars) throws IOException, ClassNotFoundException {
+	/**
+	 * Rates a wine by sending the classify command to the server
+	 * 
+	 * @param wine							The wine to classify
+	 * @param stars							The rating
+	 * @return								A message confirming that 
+	 * 										the wine was successfully rated
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist	
+	 */
+	public String classify(String wine, String stars)
+			throws IOException, ClassNotFoundException {
 		String result = "";
-		
+		//Send classify command
 		outStream.writeObject("classify");
+		//Send the name of the wine
 		outStream.writeObject(wine);
+		//Send the rating
 		outStream.writeObject(Integer.parseInt(stars));
+		//Get result
 		result = (String) inStream.readObject();
-		 
 		return result;
 	}
 	
-	public String talk(String userFrom, String userTo, String message) throws IOException, ClassNotFoundException {
+	/**
+	 * Sends a message to a specific user by sending the talk command to the server
+	 * 
+	 * @param userTo						The user we want to send the message
+	 * @param message						The message we want to send
+	 * @return								A message confirming that the message was delivered
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist	
+	 */
+	public String talk(String userTo, String message)
+			throws IOException, ClassNotFoundException {
 		String result = "";
-		
+		//Send talk command
 		outStream.writeObject("talk");
+		//Send the receiver of the message
 		outStream.writeObject(userTo);
+		//Send the message
 		outStream.writeObject(message);
+		//Get result
 		result = (String) inStream.readObject();
-		
 		return result;
 	}
 	
-	public String read() throws IOException, ClassNotFoundException {
+	/**
+	 * Gets all unread messages of the current user by sending the read command
+	 * to the server
+	 * 
+	 * @return							All unread messages from the current user
+	 * @throws ClassNotFoundException	When trying to find the class of an object
+	 * 									that does not match/exist
+	 * @throws IOException				When inStream does not receive input
+	 * 									or the outStream can't send a message	
+	 */
+	public String read() throws ClassNotFoundException, IOException {
 		String result = "";
-		
+		//Send read command
 		outStream.writeObject("read");
+		//Get result
 		result = (String) inStream.readObject();
-			
 		return result;
 	}
 }

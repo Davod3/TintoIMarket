@@ -22,7 +22,7 @@ public class Wine {
 	private List<Sale> sales;
 	
 	/**
-	 * Creates a new Wine given the name and image of the wine
+	 * Creates a new Wine given the name and image of the wine.
 	 * 
 	 * @param name		The name of the wine
 	 * @param image		The image of the wine
@@ -35,7 +35,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Returns the name of this wine
+	 * Returns the name of this wine.
 	 * 
 	 * @return	The name of the wine
 	 */
@@ -44,7 +44,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Returns the image name of this wine
+	 * Returns the image name of this wine.
 	 * 
 	 * @return	The image name of the wine
 	 */
@@ -53,7 +53,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Returns the list of sales of this wine
+	 * Returns the list of sales of this wine.
 	 * 
 	 * @return	The list of sales of the wine
 	 */
@@ -62,7 +62,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Returns the sale associated to the seller
+	 * Returns the sale associated to the seller.
 	 * 
 	 * @param seller	The seller of this wine
 	 * @return			The sale associated to the seller
@@ -76,7 +76,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Adds a new sale to this wine
+	 * Adds a new sale to this wine.
 	 * 
 	 * @param sale		The sale we want to add to the wine
 	 */
@@ -85,7 +85,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Sets a new rating for this wine
+	 * Sets a new rating for this wine.
 	 * 
 	 * @param rating	The new rating for this wine
 	 */
@@ -94,7 +94,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Returns the rating of this wine
+	 * Returns the rating of this wine.
 	 * 
 	 * @return	The rating of the wine
 	 */
@@ -103,7 +103,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Returns the number of reviews for this wine
+	 * Returns the number of reviews for this wine.
 	 * 
 	 * @return	The number of reviews for this wine
 	 */
@@ -112,7 +112,7 @@ public class Wine {
 	}
 	
 	/**
-	 * Sets a new number of reviews for this wine
+	 * Sets a new number of reviews for this wine.
 	 * 
 	 * @param numberOfReviews	The new number of reviews for this wine
 	 */
@@ -121,10 +121,9 @@ public class Wine {
 	}
 	
 	/**
-	 * Checks if this wine has sales
+	 * Checks if this wine has sales.
 	 * 
-	 * @return	True if this wine has sales,
-	 * 			false otherwise
+	 * @return	True if this wine has sales, false otherwise
 	 */
 	public synchronized boolean hasSales() {
 		return !sales.isEmpty();
