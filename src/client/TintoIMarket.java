@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
  */
 public class TintoIMarket {
 
+	private static Scanner sc = new Scanner(System.in);
 	public static final String COMMAND_INSTRUCTIONS = "To use the application, use the commands below (either full command word or first letter): \n"
 			+ "\n"
 			+ "add <wine> <image> 		- add a new wine identified by <wine> and associated to the image <image> \n"
@@ -26,6 +27,11 @@ public class TintoIMarket {
 			+ "talk <user> <message>		- send a private message <message> to user <user> \n"
 			+ "read				- read new received messages \n \n";
 
+	/**
+	 * Executes the client
+	 * 
+	 * @param args	ServerAddress, clientID and password
+	 */
 	public static void main(String[] args) {
 		String address = "";
 		String clientID = "";
@@ -34,19 +40,23 @@ public class TintoIMarket {
 
 		try {
 			//Get client arguments
+			if (args.length != 3) {
+				password = getPassword();
+			}
+			else {
+				password = args[2];
+			}
 			address = args[0];
 			clientID = args[1];
-			password = args[2];
-			sessionHandler = new SessionHandler(clientID, password, address);
 
 			System.out.println("Cliente: " + clientID + " Password: " + password + " ipPort: " + address);
 
-			if (sessionHandler.getSessionValid()) {
-				runClient(sessionHandler);
-			} else {
+			while (!(sessionHandler = new SessionHandler(clientID, password, address)).getSessionValid()) {
 				System.out.println("Incorrect user or password");
+				password = getPassword();
 			}
-
+			runClient(sessionHandler);
+			
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Missing arguments. Correct usage: <serverAddress> <userID> <password>");
 		} catch (UnknownHostException e) {
@@ -54,9 +64,26 @@ public class TintoIMarket {
 		} catch (IOException e) {
 			System.out.println("Unknown host. Wrong IP or Port used.");
 		}
-
 	}
 
+	/**
+	 * Reads the password from the user
+	 * 
+	 * @return	User's password
+	 */
+	public static String getPassword() {
+		String password = "";
+		boolean gotPassword = false;
+		while (!gotPassword) {
+			System.out.print("Write your password again: ");
+			password = sc.nextLine();
+			if (password != null) {
+				gotPassword = true;
+			}
+		}
+		return password;
+	}
+	
 	/**
 	 * Runs the client's engine
 	 * 
@@ -64,7 +91,6 @@ public class TintoIMarket {
 	 */
 	private static void runClient(SessionHandler sessionHandler) {
 		System.out.println("Welcome to TintoIMarket!");
-		Scanner sc = new Scanner(System.in);
 		System.out.print(COMMAND_INSTRUCTIONS);
 		boolean help = false;
 		System.out.print("Your command: ");
@@ -72,6 +98,7 @@ public class TintoIMarket {
 		while (true) {
 			
 			if(help) {
+				System.out.println();
 				System.out.println("Type help to see commands");
 				System.out.print("Your command: ");
 			}
@@ -82,7 +109,7 @@ public class TintoIMarket {
 			if (sc.hasNext()) {
 
 				String line = sc.nextLine();
-
+				System.out.println();
 				if (line.equals("help")) {
 					System.out.print(COMMAND_INSTRUCTIONS);
 				}

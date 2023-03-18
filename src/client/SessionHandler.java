@@ -52,7 +52,6 @@ public class SessionHandler {
 	 */
 	public String processCommand(String[] command) {
 		String result = "";
-		
 		if (command[0].equals("talk") || command[0].equals("t")) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 2; i < command.length; i++) {
