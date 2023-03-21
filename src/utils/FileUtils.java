@@ -18,6 +18,7 @@ import java.io.ObjectOutputStream;
 public class FileUtils {
 
 	public static final String EOL = System.lineSeparator();
+	public static final String SERVER_IMAGES_DIR = "server_files/images/";
 	
 	/**
 	 * Sends a file through a given stream.
@@ -27,7 +28,8 @@ public class FileUtils {
 	 */
 	public static void sendFile(String fileName, ObjectOutputStream outStream) {
 		//Create file with filename
-		File file = new File(fileName);
+		File file = new File(SERVER_IMAGES_DIR + fileName);
+		file.getParentFile().mkdirs();
 		//Get file size
 		long size = file.length();
 		//Attempt to send file
@@ -65,7 +67,8 @@ public class FileUtils {
 		//Read file into space allocated
 		inStream.readFully(bytes, 0, size);
 		//Create a new file
-		File outFile = new File(name);
+		File outFile = new File(SERVER_IMAGES_DIR + name);
+		outFile.getParentFile().mkdirs();
 		FileOutputStream fout = new FileOutputStream(outFile);
 		//Write data into file
 		fout.write(bytes);

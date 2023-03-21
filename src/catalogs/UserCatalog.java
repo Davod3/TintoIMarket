@@ -27,8 +27,8 @@ public class UserCatalog {
 	private static UserCatalog instance = null;
 	private Map<String, User> userList;
 	
-	private static final String USER_FILE_PATH = "users.txt";
-	private static final String USER_MESSAGES_PATH = "users/";
+	private static final String USER_FILE_PATH = "server_files/storage/users.txt";
+	private static final String USER_MESSAGES_PATH = "server_files/user_messages/";
 	private static final String USER_MESSAGES_EXTENSION = ".txt";
 	private static final String SEPARATOR = ":";
 
@@ -52,6 +52,7 @@ public class UserCatalog {
 		Map<String, User> users = new HashMap<>();
 		//Open the file that contains all the users information
 		File userFile = new File(USER_FILE_PATH);
+		userFile.getParentFile().mkdirs();
 		userFile.createNewFile(); //Make sure file exists before reading
 		//Open a reader to read from the opened file
 		BufferedReader br = new BufferedReader(new FileReader(USER_FILE_PATH));

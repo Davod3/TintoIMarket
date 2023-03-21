@@ -1,5 +1,6 @@
 package server;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,6 +16,7 @@ public class Server {
 	
 	private int sPort;
 	private boolean close = false;
+	private static final String SERVER_FILES_DIR = "server_files/";
 
 	/**
 	 * Creates a new Server given the port
@@ -40,6 +42,9 @@ public class Server {
 			System.out.println(e.getMessage());
 		}
 		
+		File serverDir = new File(SERVER_FILES_DIR);
+		serverDir.mkdir();
+		
 		//Wait for connections
 		while(!this.close) {
 			try {
@@ -56,7 +61,7 @@ public class Server {
 	}
 	
 	/**
-	 * Closes the socket and all connections of the server
+	 * Stops the server main loop
 	 */
 	public void stop() {
 		this.close = true;

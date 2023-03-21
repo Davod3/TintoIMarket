@@ -25,8 +25,8 @@ public class WineCatalog {
 
 	private static WineCatalog instance = null;
 	private Map<String, Wine> wineList;
-	private static final String WINE_FILE_PATH = "wines.txt";
-	private static final String SALES_FILE_PATH = "sales.txt";
+	private static final String WINE_FILE_PATH = "server_files/storage/wines.txt";
+	private static final String SALES_FILE_PATH = "server_files/storage/sales.txt";
 	private static final String SEPARATOR = ":";
 	private static final String EOL = System.lineSeparator();
 
@@ -65,6 +65,7 @@ public class WineCatalog {
 		HashMap<String, Wine> map = new HashMap<String, Wine>();
 		//Get file with all wines
 		File wineFile = new File(WINE_FILE_PATH);
+		wineFile.getParentFile().mkdirs();
 		wineFile.createNewFile(); // Make sure file exists before reading
 		//Open reader to read from file
 		BufferedReader br = new BufferedReader(new FileReader(WINE_FILE_PATH));
