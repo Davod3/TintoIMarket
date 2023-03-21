@@ -67,12 +67,12 @@ public class ServerThread extends Thread {
 				outStream.writeObject(value);
 			}
 		} catch (IOException e) {
-			try {
 				System.out.println("User exited");
-				socket.close();
-			} catch (IOException e1) {
-				System.out.println("User exited");
-			}
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					System.out.println("User exited");
+				}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
