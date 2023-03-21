@@ -77,7 +77,7 @@ public class TintoIMarket {
 		while (!gotPassword) {
 			System.out.print("Write your password again: ");
 			password = sc.nextLine();
-			if (password != null) {
+			if (password != null && !password.equals("")) {
 				gotPassword = true;
 			}
 		}

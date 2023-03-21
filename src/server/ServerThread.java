@@ -1,11 +1,9 @@
 package server;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 
 import catalogs.UserCatalog;
 import handlers.*;
@@ -68,14 +66,14 @@ public class ServerThread extends Thread {
 				System.out.println("Authentication failed");
 				outStream.writeObject(value);
 			}
-		} catch (SocketException e) {
+		} catch (IOException e) {
 			try {
 				System.out.println("User exited");
 				socket.close();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				System.out.println("User exited");
 			}
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -93,48 +91,44 @@ public class ServerThread extends Thread {
 		while (this.socket.isConnected()) {
 			//Get command
 			System.out.println("Waiting for commands...");
-			try {
-				String command = (String) inStream.readObject();
-				System.out.println("Command: " + command);
-				//Run the command
-				switch (command) {
-				//Each command has a unique handler
-				case "add":
-					AddHandler.getInstance().run(inStream, outStream);
-					break;
-				case "sell":
-					SellHandler.getInstance().run(inStream, outStream, loggedUser);
-					break;
-	
-				case "view":
-					ViewHandler.getInstance().run(inStream, outStream);
-					break;
-	
-				case "buy":
-					BuyHandler.getInstance().run(inStream, outStream, loggedUser);
-					break;
-	
-				case "wallet":
-					WalletHandler.getInstance().run(outStream, loggedUser);
-					break;
-				case "classify":
-					ClassifyHandler.getInstance().run(inStream, outStream);
-					break;
-	
-				case "talk":
-					TalkHandler.getInstance().run(inStream, outStream, loggedUser);
-					break;
-	
-				case "read":
-					ReadHandler.getInstance().run(outStream, loggedUser);
-					break;
-	
-				default:
-					//Default case for wrong command message
-					break;
-				}
-			} catch (EOFException e) {
-				System.out.println("User exited");
+			String command = (String) inStream.readObject();
+			System.out.println("Command: " + command);
+			//Run the command
+			switch (command) {
+			//Each command has a unique handler
+			case "add":
+				AddHandler.getInstance().run(inStream, outStream);
+				break;
+			case "sell":
+				SellHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
+			case "view":
+				ViewHandler.getInstance().run(inStream, outStream);
+				break;
+
+			case "buy":
+				BuyHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
+			case "wallet":
+				WalletHandler.getInstance().run(outStream, loggedUser);
+				break;
+			case "classify":
+				ClassifyHandler.getInstance().run(inStream, outStream);
+				break;
+
+			case "talk":
+				TalkHandler.getInstance().run(inStream, outStream, loggedUser);
+				break;
+
+			case "read":
+				ReadHandler.getInstance().run(outStream, loggedUser);
+				break;
+
+			default:
+				//Default case for wrong command message
+				break;
 			}
 		}
 	}
