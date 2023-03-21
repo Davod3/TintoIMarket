@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 
 import catalogs.UserCatalog;
 import handlers.*;
@@ -67,14 +66,14 @@ public class ServerThread extends Thread {
 				System.out.println("Authentication failed");
 				outStream.writeObject(value);
 			}
-		} catch (SocketException e) {
+		} catch (IOException e) {
 			try {
 				System.out.println("User exited");
 				socket.close();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				System.out.println("User exited");
 			}
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
