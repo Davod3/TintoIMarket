@@ -20,6 +20,7 @@ import utils.FileUtils;
 public class AddHandler {
 	
 	private static AddHandler instance = null;
+	public static final String SERVER_IMAGES_DIR = "server_files/images/";
 	
 	/**
 	 * Adds a new wine given the name of the wine and a image (both sent through streams).
@@ -38,7 +39,7 @@ public class AddHandler {
 			throws ClassNotFoundException, IOException {
 		//Read wine name and image file of the wine
 		String wine = (String) inStream.readObject();
-		File received = FileUtils.receiveFile(inStream);
+		File received = FileUtils.receiveFile(SERVER_IMAGES_DIR, inStream);
 		//Try to create a new Wine with the obtained wine and image
 		boolean result = WineCatalog.getInstance().createWine(wine, received);
 		//Output the result message

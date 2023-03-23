@@ -20,6 +20,7 @@ import utils.FileUtils;
 public class ViewHandler {
 	
 	private static ViewHandler instance = null;
+	public static final String SERVER_IMAGES_DIR = "server_files/images/";
 	
 	/**
 	 * Returns the information associated to a wine.
@@ -47,7 +48,7 @@ public class ViewHandler {
 			//Get the wine
 			Wine wineToView = wineCatalog.getWine(wine);
 			//Send wine's image
-			FileUtils.sendFile(wineToView.getImageName(), outStream);
+			FileUtils.sendFile(SERVER_IMAGES_DIR + wineToView.getImageName(), outStream);
 			//Get wine's rating
 			result.append("Wine " + wine + " has a classification of "
 					+ wineToView.getRating() + " stars." + FileUtils.EOL);
