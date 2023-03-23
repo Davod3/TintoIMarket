@@ -1,7 +1,7 @@
 
 ----------------------------------------- TintoIMarket -------------------------------------------------
 
-This project consists of a client-server type system named TintoIMarket.
+This project consists of a client-server type system named TintolMarket.
 
 Basically, TintoIMarket offers a service that allows users to purchase and sell wines, similar
 to Vivino web application.
@@ -12,30 +12,67 @@ their value, classification and quantity, all made available by each user.
 
 The application consists of two programs:
 
-	- The TintoIMarketServer, which responds to all client requests;
-	- The TintoIMarket client application, which communicates with the server through TCP sockets.
+	- The TintolMarketServer, which responds to all client requests;
+	- The TintolMarket client application, which communicates with the server through TCP sockets.
 
 The application is distributed, as the server runs on one machine and there can be an unlimited
 number of clients running on different machines on the Internet.
 
----------------------------------- HOW TO RUN THE APPLICATION ------------------------------------------	
+----------------------------HOW TO MANUALLY COMPILE AND RUN THE APPLICATION------------------------
+	
+
+			IN BOTH CASES PLEASE BE SURE TO BE IN THE REPOSITORY'S ROOT DIRECTORY
+			
 
 -------------------------------------------- SERVER ----------------------------------------------------
 
-To execute the TintoIMarket Server, you can run the jar file TintoIMarketServer.jar with the 
+To compile TintolMarket Server:
+
+	javac -d bin -sourcepath src src/server/TintolMarketServer.java
+	
+To run TintolMarket Server:
+
+	java -cp bin server.TintolMarketServer <port>
+	
+	Where <port> refers to the TCP port number where to accept client connections.
+	If you don't give any port, the server will use the port 12345 by default.
+
+
+-------------------------------------------- CLIENT ----------------------------------------------------
+
+To compile TintolMarket Client:
+
+	javac -d bin -sourcepath src src/client/TintolMarket.java
+	
+To run TintolMarket Client:
+	
+	java -cp bin client.TintolMarket <serverAddress> <userID> <password>
+
+
+
+
+---------------------------------- HOW TO RUN THE APPLICATION USING JAR FILES------------------------------------------
+
+
+		IN BOTH CASES PLEASE BE SURE TO BE IN THE REPOSITORY'S ROOT DIRECTORY
+
+
+-------------------------------------------- SERVER ----------------------------------------------------
+
+To execute TintolMarket Server, you can run the jar file TintolMarketServer.jar with the 
 following argument:
 
-	TintoIMarketServer.jar <port>
+	java -jar TintolMarketServer.jar <port>
 	
 	Where <port> refers to the TCP port number where to accept client connections.
 	If you don't give any port, the server will use the port 12345 by default.
 
 -------------------------------------------- CLIENT ----------------------------------------------------
 
-To execute the TintoIMarket client, you can run the jar file TintoIMarketClient.jar with the 
+To execute TintolMarket client, you can run the jar file TintoIMarketClient.jar with the 
 following arguments:
 
-	TintoIMarket.jar <serverAddress> <userID> <password>
+	java -jar TintolMarket.jar <serverAddress> <userID> <password>
 	
 	Where:
 		- <serverAddress> identifies the server. The serverAddress format is the following:
