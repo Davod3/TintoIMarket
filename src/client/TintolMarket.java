@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @author David Pereira 	nº 56361
  * @author Miguel Cut		nº 56339
  */
-public class TintoIMarket {
+public class TintolMarket {
 
 	private static Scanner sc = new Scanner(System.in);
 	public static final String COMMAND_INSTRUCTIONS = "To use the application, use the commands below (either full command word or first letter): \n"

@@ -7,7 +7,7 @@ package server;
  * @author David Pereira 	nº 56361
  * @author Miguel Cut		nº 56339
  */
-public class TintoIMarketServer {
+public class TintolMarketServer {
 
 	/**
 	 * Starts the server with the given IP address and Port number

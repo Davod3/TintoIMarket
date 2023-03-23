@@ -7,10 +7,10 @@ Basically, TintoIMarket offers a service that allows users to purchase and sell 
 to Vivino web application.
 
 It maintains information about all registered users and their private messages (which can be sent 
-from one user to another is this application), and maintains information about all wines: 
+from one user to another in this application), and maintains information about all wines: 
 their value, classification and quantity, all made available by each user.
 
-The application consists in two programs:
+The application consists of two programs:
 
 	- The TintoIMarketServer, which responds to all client requests;
 	- The TintoIMarket client application, which communicates with the server through TCP sockets.
@@ -39,7 +39,7 @@ following arguments:
 	
 	Where:
 		- <serverAddress> identifies the server. The serverAddress format is the following:
-			<IP/Hostname>:<port>. Server IP address or hostname is required and the port is optional.
+			<IP or Hostname>:<port>. Server IP address or hostname is required and the port is optional.
 			By default, the client connects to the server using the port 12345;
 		- <userID> identifies the local user;
 		- <password> refers to user's password.
