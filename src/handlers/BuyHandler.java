@@ -51,8 +51,17 @@ public class BuyHandler {
 					+ " doesn't exist, try again with another wine" + FileUtils.EOL);
 			return;
 		}
+		
+		System.out.println("Gets here 1");
+		
 		//Get the wine sale of the seller
 		Sale sale = wineCatalog.getWineSaleBySeller(wine, seller);
+		
+		if(sale == null) {
+			outStream.writeObject("User " + seller +" doesn't exist!" + FileUtils.EOL);
+			return;
+		}
+		
 		//Check if there are more or a equal number of units to buy
 		boolean wineAvailable = sale.getQuantity() >= quantity;
 		if(!wineAvailable) {

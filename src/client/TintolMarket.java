@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 /**
  * This class represents the client of this application.
  * 
- * @author André Dias 		nº 55314
- * @author David Pereira 	nº 56361
- * @author Miguel Cut		nº 56339
+ * @author André Dias nº 55314
+ * @author David Pereira nº 56361
+ * @author Miguel Cut nº 56339
  */
 public class TintolMarket {
 
@@ -30,7 +30,7 @@ public class TintolMarket {
 	/**
 	 * Executes the client
 	 * 
-	 * @param args	ServerAddress, clientID and password
+	 * @param args ServerAddress, clientID and password
 	 */
 	public static void main(String[] args) {
 		String address = "";
@@ -39,11 +39,10 @@ public class TintolMarket {
 		SessionHandler sessionHandler = null;
 
 		try {
-			//Get client arguments
+			// Get client arguments
 			if (args.length != 3) {
 				password = getPassword();
-			}
-			else {
+			} else {
 				password = args[2];
 			}
 			address = args[0];
@@ -56,7 +55,7 @@ public class TintolMarket {
 				password = getPassword();
 			}
 			runClient(sessionHandler);
-			
+
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Missing arguments. Correct usage: <serverAddress> <userID> <password>");
 		} catch (UnknownHostException e) {
@@ -69,7 +68,7 @@ public class TintolMarket {
 	/**
 	 * Reads the password from the user
 	 * 
-	 * @return	User's password
+	 * @return User's password
 	 */
 	public static String getPassword() {
 		String password = "";
@@ -83,40 +82,38 @@ public class TintolMarket {
 		}
 		return password;
 	}
-	
+
 	/**
 	 * Runs the client's engine
 	 * 
-	 * @param sessionHandler	The handler for this session/connection
+	 * @param sessionHandler The handler for this session/connection
 	 */
 	private static void runClient(SessionHandler sessionHandler) {
 		System.out.println("Welcome to TintoIMarket!");
 		System.out.print(COMMAND_INSTRUCTIONS);
 		boolean help = false;
 		System.out.print("Your command: ");
-		
+
 		while (true) {
-			
-			if(help) {
+
+			if (help) {
 				System.out.println();
 				System.out.println("Type help to see commands");
 				System.out.print("Your command: ");
-			}
-			else {
+			} else {
 				help = true;
 			}
-			
+
 			if (sc.hasNext()) {
 
 				String line = sc.nextLine();
 				System.out.println();
 				if (line.equals("help")) {
 					System.out.print(COMMAND_INSTRUCTIONS);
-				}
-				else {
+				} else {
 					Pattern pattern = Pattern.compile(":");
 					Matcher matcher = pattern.matcher(line);
-	
+
 					if (!matcher.find()) {
 						String[] command = line.split(" ");
 						System.out.println(sessionHandler.processCommand(command));

@@ -72,6 +72,7 @@ public class Wine {
 			if(sale.getSeller().equals(seller))
 				return sale;
 		}
+		System.out.println("This happens");
 		return null;
 	}
 	

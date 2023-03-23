@@ -54,14 +54,15 @@ public class SessionHandler {
 		String result = "";
 		if (command[0].equals("talk") || command[0].equals("t")) {
 			StringBuilder builder = new StringBuilder();
+			
 			for (int i = 2; i < command.length; i++) {
 				builder.append(command[i] + " ");
 			}
+			
 			try {
 				result = netClient.talk( command[1], builder.toString());
-			} catch (ClassNotFoundException | IOException e) {
-				System.out.println("Error sending message\n");
-				System.exit(-1);
+			} catch (ClassNotFoundException | IOException | ArrayIndexOutOfBoundsException e) {
+				System.out.println("Error sending message. Invalid user.\n");
 			}
 		}
 		else {
