@@ -44,10 +44,11 @@ public class Server {
 		
 	}
 
-	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, FileNotFoundException {
 		
 		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-		FileInputStream fis = new FileInputStream("keystore");
+		File ks_file = new File(keystore);
+		FileInputStream fis = new FileInputStream(ks_file);
 		ks.load(fis, keystorepw);
 		
 		return ks;
@@ -77,7 +78,7 @@ public class Server {
 				//Try to catch new connections to clients
 				Socket inSoc = sSoc.accept();
 				//Create a new thread for the client
-				ServerThread workerThread = new ServerThread(inSoc);
+				ServerThread workerThread = new ServerThread(inSoc, ks);
 				workerThread.start();
 			} catch (IOException e) {
 				System.out.println("Failed to connect to client!");

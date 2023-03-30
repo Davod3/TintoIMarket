@@ -151,7 +151,6 @@ public class UserCatalog {
 	 * returns the given username.
 	 * 
 	 * @param userId			Username
-	 * @param pwd				User password
 	 * @return					The loggedUser username
 	 * @throws IOException		When an I/O error occurs
 	 * 							while reading from a file

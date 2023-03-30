@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.KeyStore;
+import java.util.Random;
 
 import catalogs.UserCatalog;
 import handlers.*;
@@ -22,16 +24,18 @@ public class ServerThread extends Thread {
 	private String loggedUser = null;
 	private ObjectOutputStream outStream;
 	private ObjectInputStream inStream;
+	private KeyStore ks = null;
 	
 	/**
 	 * Creates a new thread for the server to manage
 	 * the commands from the client
 	 * 
 	 * @param inSoc				Client's socket
+	 * @param ks 
 	 * @throws IOException		When an I/O error occurs while 
 	 * 							reading/writing to a file or stream
 	 */
-	public ServerThread(Socket inSoc) throws IOException {
+	public ServerThread(Socket inSoc, KeyStore ks) throws IOException {
 		//Save client's socket
 		this.socket = inSoc;
 		//Get the unique instance of User Catalog
@@ -39,6 +43,9 @@ public class ServerThread extends Thread {
 		//Open streams
 		this.outStream = new ObjectOutputStream(socket.getOutputStream());
 		this.inStream = new ObjectInputStream(socket.getInputStream());
+		
+		this.ks = ks;
+		
 		//Print message with result
 		System.out.println("New connection established!");
 	}
@@ -49,22 +56,14 @@ public class ServerThread extends Thread {
 	public void run() {
 		// Open IO streams
 		try {
-			//Get user and password from client
-			String user = null;
-			String pwd = null;
-			user = (String) inStream.readObject();
-			pwd = (String) inStream.readObject();
-			//Validate client
-			boolean value = false;
-			if (value = (this.loggedUser = userCatalog.validate(user, pwd)) != null) {
+			
+			if (authenticateUser()) {
 				// User authenticated, wait for commands
 				System.out.println("User authenticated");
-				outStream.writeObject(value);
 				mainLoop();
 			} else {
 				// User failed to authenticate, close connection
 				System.out.println("Authentication failed");
-				outStream.writeObject(value);
 			}
 		} catch (IOException e) {
 				System.out.println("User exited");
@@ -76,6 +75,23 @@ public class ServerThread extends Thread {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private boolean authenticateUser() throws ClassNotFoundException, IOException {
+		
+		String user = (String) inStream.readObject();
+		
+		long nonce = new Random().nextLong();
+		
+		boolean isKnown = userCatalog.getUser(user) != null;
+		
+		outStream.writeObject(nonce);
+		outStream.writeBoolean(isKnown);
+		
+		
+		
+		
+		return false;
 	}
 
 	/**

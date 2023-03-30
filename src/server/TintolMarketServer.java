@@ -69,8 +69,9 @@ public class TintolMarketServer {
 			// TODO Auto-generated catch block
 			System.out.println("Error acessing key store!");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			System.out.println("Key Store not found!");
+			
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
