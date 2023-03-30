@@ -1,5 +1,11 @@
 package server;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
 /**
  * This class represents the threads of the server of this application
  * 
@@ -17,18 +23,64 @@ public class TintolMarketServer {
 	public static void main(String[] args) {
 		//Default port for connection
 		int port = 12345;
-		//Check if there is any port number for the connection
-		if(args.length >= 1){
+		
+		String cipherpw = null;
+		String keystore = null;
+		String keystorepw = null;
+		
+		//Check if port is present
+		if(args.length >= 4){
+			
 			//Set port
 			try {
 				port = Integer.parseInt(args[0]);
+				cipherpw = args[1];
+				keystore = args[2];
+				keystorepw = args[3];
 			} catch (Exception e) {
 				System.out.println("Input argument must be a number. Using default port.");
 			}
+			
+		} else if (args.length >= 3) {
+			
+			try {
+				port = Integer.parseInt(args[0]);
+				
+				System.out.println("Missing argument. Correct usage TintolMarketServer <port> <cipher-password> <keystore> <keystore-password> ");
+				
+				return;
+				
+			} catch (Exception e) {
+				
+				cipherpw = args[0];
+				keystore = args[1];
+				keystorepw = args[2];
+				
+			}
+			
 		}
+		
 		//Create Server
-		Server myServer = new Server(port);
-		myServer.run();
+		Server myServer;
+		try {
+			myServer = new Server(port, cipherpw, keystore, keystorepw);
+			myServer.run();
+		} catch (KeyStoreException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error acessing key store!");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }

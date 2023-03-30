@@ -1,9 +1,15 @@
 package server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 /**
  * This class represents the server of this application
@@ -17,14 +23,34 @@ public class Server {
 	private int sPort;
 	private boolean close = false;
 	private static final String SERVER_FILES_DIR = "server_files/";
+	private KeyStore ks = null;
 
 	/**
 	 * Creates a new Server given the port
 	 * 
 	 * @param port		The port for the connection to the server
+	 * @param keystorepw 
+	 * @param keystore 
+	 * @param cipherpw 
+	 * @throws KeyStoreException 
+	 * @throws IOException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public Server(int port) {
+	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		sPort = port;
+		ks = getKeyStore(keystore, keystorepw.toCharArray());
+		
+		
+	}
+
+	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		
+		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+		FileInputStream fis = new FileInputStream("keystore");
+		ks.load(fis, keystorepw);
+		
+		return ks;
 	}
 
 	/**
