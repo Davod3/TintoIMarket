@@ -67,13 +67,26 @@ public class NetworkClient {
 	 * @param password		User's password
 	 * @return				True if user can log in, false otherwise
 	 */
-	public boolean validateSession(String user, String password) {
-		boolean validation = false;
+	public boolean validateSession(String truststore, String keystore, String keystorePassword, String user) {
+		boolean validation = false, knownUser = false;
+		long nonce;
 		try {
-			//Send user and password
+			//Send user
 			outStream.writeObject(user);
-			outStream.writeObject(password);
-			//Check if user is logged in
+			
+			nonce = (long) inStream.readObject();
+			knownUser = (boolean) inStream.readObject();
+			String signature = "";
+			if(!knownUser) {
+				signature = ""; // Obter com a keystore
+				String certificate = ""; //Obter com truststore
+				outStream.writeObject(nonce);
+				outStream.writeObject(signature);
+				outStream.writeObject(certificate);
+			} else {
+				signature = ""; //Assinar com keystore e nonce
+				outStream.writeObject(signature);
+			}
 			validation = (boolean) inStream.readObject();
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar user e password para a socket");
