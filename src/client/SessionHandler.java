@@ -26,11 +26,11 @@ public class SessionHandler {
 	 * @param serverAdress				The address of the server to connect to
 	 * @throws IOException				When an I/O error occurs while reading/writing to a file
 	 */
-	public SessionHandler(String user, String password, String serverAdress)
+	public SessionHandler(String serverAdress, String truststore, String keystore, String keystorePassword ,String user)
 			throws IOException {
 		this.netClient = new NetworkClient(serverAdress);
 		
-		sessionValid = netClient.validateSession(user, password);
+		sessionValid = netClient.validateSession(truststore, keystore, keystorePassword, user);
 	}
 	
 	/**

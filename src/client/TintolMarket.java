@@ -34,25 +34,24 @@ public class TintolMarket {
 	 */
 	public static void main(String[] args) {
 		String address = "";
+		String truststore = "";
+		String keystore = "";
+		String keystorePassword = "";
 		String clientID = "";
-		String password = "";
 		SessionHandler sessionHandler = null;
 
 		try {
 			// Get client arguments
-			if (args.length != 3) {
-				password = getPassword();
-			} else {
-				password = args[2];
-			}
 			address = args[0];
-			clientID = args[1];
+			truststore = args[1];
+			keystore = args[2];
+			keystorePassword = args[3];
+			clientID = args[4];
+			
+			System.out.println("Cliente: " + clientID + " ipPort: " + address);
 
-			System.out.println("Cliente: " + clientID + " Password: " + password + " ipPort: " + address);
-
-			while (!(sessionHandler = new SessionHandler(clientID, password, address)).getSessionValid()) {
+			while (!(sessionHandler = new SessionHandler(address, truststore, keystore, keystorePassword, clientID)).getSessionValid()) {
 				System.out.println("Incorrect user or password");
-				password = getPassword();
 			}
 			runClient(sessionHandler);
 
@@ -65,23 +64,6 @@ public class TintolMarket {
 		}
 	}
 
-	/**
-	 * Reads the password from the user
-	 * 
-	 * @return User's password
-	 */
-	public static String getPassword() {
-		String password = "";
-		boolean gotPassword = false;
-		while (!gotPassword) {
-			System.out.print("Write your password again: ");
-			password = sc.nextLine();
-			if (password != null && !password.equals("")) {
-				gotPassword = true;
-			}
-		}
-		return password;
-	}
 
 	/**
 	 * Runs the client's engine
