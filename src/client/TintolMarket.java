@@ -2,6 +2,9 @@ package client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,6 +64,15 @@ public class TintolMarket {
 			System.out.println(e.getMessage());
 		} catch (IOException e) {
 			System.out.println("Unknown host. Wrong IP or Port used.");
+		} catch (KeyStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

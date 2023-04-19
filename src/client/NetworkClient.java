@@ -4,6 +4,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.SignedObject;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 import utils.FileUtils;
 
@@ -20,8 +34,11 @@ public class NetworkClient {
 	private Socket clientSocket;
 	private ObjectInputStream inStream;
 	private ObjectOutputStream outStream;
-	private static final String DEFAULT_PORT = "12345";
 	
+	private static final String DEFAULT_PORT = "12345";
+	private static final String TRUSTSTORE_PWD = "keystorepwd";
+	private static final String KEY_ALIAS = "client";
+		
 	/**
 	 * Creates a new network for the client
 	 * 
@@ -29,7 +46,7 @@ public class NetworkClient {
 	 * @throws IOException				When an I/O error occurs while 
 	 * 									reading/writing to a file
 	 */
-	public NetworkClient(String serverAddress) throws IOException {
+	public NetworkClient(String serverAddress, String truststore) throws IOException {
 		//Check if address contains port, otherwise use default
 		String[] addressSplit;
 		if(serverAddress.contains(":")) {
@@ -40,11 +57,18 @@ public class NetworkClient {
 			addressSplit[0] = serverAddress;
 			addressSplit[1] = DEFAULT_PORT;
 		}
+		
+		System.setProperty("javax.net.ssl.trustStore", truststore);
+		System.setProperty("javax.net.ssl.trustStorePassword", TRUSTSTORE_PWD);
+		
 		//Get address
 		String host = addressSplit[0];
 		int port = Integer.parseInt(addressSplit[1]);
+		
 		//Connect to server
-		clientSocket = new Socket(host, port);
+		SocketFactory sf = SSLSocketFactory.getDefault();
+		clientSocket = sf.createSocket(host, port);
+
 		createStreams();
 	}
 
@@ -67,7 +91,7 @@ public class NetworkClient {
 	 * @param password		User's password
 	 * @return				True if user can log in, false otherwise
 	 */
-	public boolean validateSession(String truststore, String keystore, String keystorePassword, String user) {
+	public boolean validateSession(KeyStore keystore, String keystorePassword, String user) {
 		boolean validation = false, knownUser = false;
 		long nonce;
 		try {
@@ -76,22 +100,34 @@ public class NetworkClient {
 			
 			nonce = (long) inStream.readObject();
 			knownUser = (boolean) inStream.readObject();
-			String signature = "";
+			PrivateKey pk = (PrivateKey) keystore.getKey(KEY_ALIAS, keystorePassword.toCharArray());
+			SignedObject signedNonce = new SignedObject(nonce, pk, Signature.getInstance("MD5withRSA"));
+			
+			outStream.writeObject(signedNonce);
+			
 			if(!knownUser) {
-				signature = ""; // Obter com a keystore
-				String certificate = ""; //Obter com truststore
-				outStream.writeObject(nonce);
-				outStream.writeObject(signature);
-				outStream.writeObject(certificate);
-			} else {
-				signature = ""; //Assinar com keystore e nonce
-				outStream.writeObject(signature);
-			}
+				Certificate certs[] = keystore.getCertificateChain(KEY_ALIAS);
+				outStream.writeObject(certs[0]);}
 			validation = (boolean) inStream.readObject();
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar user e password para a socket");
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnrecoverableKeyException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return validation;

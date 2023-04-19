@@ -1,6 +1,13 @@
 package client;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 /**
  * This class represents the session handler for the client of this application.
@@ -16,7 +23,7 @@ public class SessionHandler {
 	private boolean sessionValid;
 	private NetworkClient netClient;
 	public static final String COMMAND_ERROR = "Invalid command.";
-	
+		
 	/**
 	 * Creates a new SessionHandler given the user, password
 	 * and the address of the server to connect to.
@@ -25,12 +32,14 @@ public class SessionHandler {
 	 * @param password					The user's password
 	 * @param serverAdress				The address of the server to connect to
 	 * @throws IOException				When an I/O error occurs while reading/writing to a file
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
 	 */
 	public SessionHandler(String serverAdress, String truststore, String keystore, String keystorePassword ,String user)
-			throws IOException {
-		this.netClient = new NetworkClient(serverAdress);
-		
-		sessionValid = netClient.validateSession(truststore, keystore, keystorePassword, user);
+			throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+		this.netClient = new NetworkClient(serverAdress, truststore);
+		sessionValid = netClient.validateSession(getKeyStore(keystore, keystorePassword.toCharArray()), keystorePassword, user);
 	}
 	
 	/**
@@ -150,5 +159,12 @@ public class SessionHandler {
 		}
 		
 		return result;
+	}
+	private KeyStore getKeyStore(String keystore, char[] password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+		File ks_file = new File(keystore);
+		FileInputStream fis = new FileInputStream(ks_file);
+		ks.load(fis, password);
+		return ks;
 	}
 }
