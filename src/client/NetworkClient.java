@@ -76,6 +76,9 @@ public class NetworkClient {
 	 * Creates the streams for further communication between client and server
 	 */
 	private void createStreams() {
+		
+		System.out.println("Gets here 1");
+		
 		try {
 			inStream = new ObjectInputStream(clientSocket.getInputStream());
 			outStream = new ObjectOutputStream(clientSocket.getOutputStream());
