@@ -3,6 +3,7 @@ package catalogs;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -10,6 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -282,5 +285,13 @@ public class UserCatalog {
 			bf.append(msg.getFrom() + SEPARATOR + msg.getTo() + SEPARATOR + msg.getContent() + FileUtils.EOL);
 		}
 		bf.close();	
+	}
+
+	public Certificate getUserCertificate(String user) throws FileNotFoundException, CertificateException {
+		
+		FileInputStream fis = new FileInputStream(CERTIFICATE_STORAGE + user + CERTIFICATE_EXTENSION);
+		CertificateFactory cf = CertificateFactory.getInstance("X509");
+		
+		return cf.generateCertificate(fis);
 	}
 }
