@@ -4,7 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.SignedObject;
+import java.security.cert.Certificate;
 import java.util.Random;
 
 import catalogs.UserCatalog;
@@ -74,21 +81,69 @@ public class ServerThread extends Thread {
 				}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	private boolean authenticateUser() throws ClassNotFoundException, IOException {
+	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
 		
-		String user = (String) inStream.readObject();
+		String user = (String) inStream.readObject(); //Receive userID
+		
+		System.out.println("Received userID: " + user);
 		
 		long nonce = new Random().nextLong();
 		
+		System.out.println("Generated nonce: " + nonce);
+		
 		boolean isKnown = userCatalog.getUser(user) != null;
 		
-		outStream.writeObject(nonce);
-		outStream.writeBoolean(isKnown);
+		System.out.println("Checked if user present");
 		
+		outStream.writeObject(nonce); //Send nonce
+		System.out.println("Sent nonce");
 		
+		outStream.writeObject(isKnown); //isKnown flag
+		System.out.println("Sent flag");
+		
+		if(isKnown) {
+			//Authenticate
+			
+			
+		} else {
+			//Register
+			SignedObject signedNonce = (SignedObject) inStream.readObject();
+			System.out.println("Received signed nonce");
+			
+			
+			Certificate cert = (Certificate) inStream.readObject();
+			System.out.println("Received certificate");
+			
+			long receivedNonce = (Long) signedNonce.getObject();
+			
+			if(receivedNonce == nonce) {
+				//Same as sent
+				
+				PublicKey received = cert.getPublicKey();
+				
+				if(signedNonce.verify(received, Signature.getInstance("MD5withRSA"))) {
+					
+					return true;
+					//this.userCatalog.registerUser(user, )
+					
+				}
+				
+				
+			} 
+			
+		}
 		
 		
 		return false;

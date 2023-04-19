@@ -11,6 +11,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+
 /**
  * This class represents the server of this application
  * 
@@ -24,6 +28,8 @@ public class Server {
 	private boolean close = false;
 	private static final String SERVER_FILES_DIR = "server_files/";
 	private KeyStore ks = null;
+	private String keystorePath;
+	private String keystorePwd;
 
 	/**
 	 * Creates a new Server given the port
@@ -38,8 +44,10 @@ public class Server {
 	 * @throws NoSuchAlgorithmException 
 	 */
 	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		sPort = port;
-		ks = getKeyStore(keystore, keystorepw.toCharArray());
+		this.sPort = port;
+		this.ks = getKeyStore(keystore, keystorepw.toCharArray());
+		this.keystorePath = keystore;
+		this.keystorePwd = keystorepw;
 		
 		
 	}
@@ -59,10 +67,13 @@ public class Server {
 	 */
 	public void run() {
 		//Create socket for server
+		System.setProperty("javax.net.ssl.keyStore", this.keystorePath);
+		System.setProperty("javax.net.ssl.keyStorePassword", this.keystorePwd);
+		ServerSocketFactory ssf = SSLServerSocketFactory.getDefault();
 		ServerSocket sSoc = null;
 		//Open socket on the defined port
 		try {
-			sSoc = new ServerSocket(this.sPort);
+			sSoc = (SSLServerSocket) ssf.createServerSocket(sPort);
 			System.out.println("Listening on port " + sPort);
 		} catch (IOException e) {
 			System.out.println("Failed to open new server socket!");
