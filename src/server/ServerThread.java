@@ -135,8 +135,8 @@ public class ServerThread extends Thread {
 				
 				if(signedNonce.verify(received, Signature.getInstance("MD5withRSA"))) {
 					
+					this.userCatalog.registerUser(user, cert);
 					return true;
-					//this.userCatalog.registerUser(user, )
 					
 				}
 				

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class UserCatalog {
 			String[] splitData = line.split(SEPARATOR);
 			if (splitData.length >= 2) {
 				//Create new user with the given name and password
-				User user = new User(splitData[0], splitData[1]);
+				User user = new User(splitData[0]);
 				//Load all unread messages of that user
 				loadMessages(user);
 				//Load user in map
@@ -144,37 +145,6 @@ public class UserCatalog {
 	}
 
 	/**
-	 * Returns the loggedUser username, after trying to log him in,
-	 * or after creating a new account for the given user.
-	 * If the username and password match, returns the username.
-	 * If the username does not exist, creates a new account and
-	 * returns the given username.
-	 * 
-	 * @param userId			Username
-	 * @return					The loggedUser username
-	 * @throws IOException		When an I/O error occurs
-	 * 							while reading from a file
-	 */
-	public synchronized String validate(String userId, String pwd)
-			throws IOException {
-		//Create the result string (username)
-		String loggedUser = null;
-		//Check if userId is in UserCatalog
-		if (this.userList.containsKey(userId)) {
-			// Check if password is valid
-			User user = this.userList.get(userId);
-			if (pwd.equals(user.getPassword())) {
-				//Validation succeeded 
-				loggedUser = userId;
-			}		
-		} else {	
-			//New user, register it
-			loggedUser = registerUser(userId, pwd);
-		}
-		return loggedUser;
-	}
-
-	/**
 	 * Registers a new user given the username and password
 	 * 
 	 * @param userId			Username
@@ -183,22 +153,33 @@ public class UserCatalog {
 	 * @throws IOException		When an I/O error occurs while
 	 * 							reading/writing to a file
 	 */
-	public synchronized String registerUser(String userId, String pwd)
+	public synchronized String registerUser(String userId, Certificate cert)
 			throws IOException {
+		
+		//Save user certificate to file
+		String certFileName = saveCertificate(userId, cert);
+		
 		//Create new user
-		User registering = new User(userId, pwd);
+		User registering = new User(userId);
 		//Insert new user in dataBase
 		userList.put(userId, registering);
 		//Open reader to write to file
 		BufferedWriter bw = new BufferedWriter(new FileWriter(USER_FILE_PATH, true));
 		//Create string with user and password
-		String entry = FileUtils.EOL + userId + SEPARATOR + pwd;
+		String entry = FileUtils.EOL + userId + SEPARATOR + "placeholder";
 		//Write string to file
 		bw.append(entry);
 		bw.close();
 		return userId;	
 	}
 	
+	private String saveCertificate(String userId, Certificate cert) {
+		
+		
+		
+		return null;
+	}
+
 	/**
 	 * Gets all unread messages from the given user
 	 * 

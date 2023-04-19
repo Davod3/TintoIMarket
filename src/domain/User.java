@@ -15,7 +15,6 @@ public class User {
 	
 	private String id;
 	private double balance;
-	private String password;
 	private Stack<Message> inbox;
 	
 	/**
@@ -24,10 +23,9 @@ public class User {
 	 * @param id	The username	
 	 * @param pwd	The password
 	 */
-	public User(String id, String pwd) {
+	public User(String id) {
 		this.id = id;
 		this.balance = 200;
-		this.password = pwd;
 		inbox = new Stack<>();
 	}
 	
@@ -38,15 +36,6 @@ public class User {
 	 */
 	public String getID() {
 		return this.id;
-	}
-	
-	/**
-	 * Returns the password of this user
-	 * 
-	 * @return	The password of this user
-	 */
-	public String getPassword() {
-		return this.password;
 	}
 	
 	/**
