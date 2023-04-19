@@ -1,2 +1,3 @@
 
-manel:placeholder
+manel:server_files/storage/certmanel.cer
+david:server_files/storage/certdavid.cer

@@ -3,10 +3,13 @@ package catalogs;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,8 @@ public class UserCatalog {
 	private static final String USER_MESSAGES_PATH = "server_files/user_messages/";
 	private static final String USER_MESSAGES_EXTENSION = ".txt";
 	private static final String SEPARATOR = ":";
+	private static final String CERTIFICATE_STORAGE = "server_files/storage/cert"; //cert is part of name, function adds unique uid
+	private static final String CERTIFICATE_EXTENSION = ".cer";
 
 	/**
 	 * Creates a UserCatalog and loads all users from a users file
@@ -152,9 +157,10 @@ public class UserCatalog {
 	 * @return					Username
 	 * @throws IOException		When an I/O error occurs while
 	 * 							reading/writing to a file
+	 * @throws CertificateEncodingException 
 	 */
 	public synchronized String registerUser(String userId, Certificate cert)
-			throws IOException {
+			throws IOException, CertificateEncodingException {
 		
 		//Save user certificate to file
 		String certFileName = saveCertificate(userId, cert);
@@ -166,18 +172,28 @@ public class UserCatalog {
 		//Open reader to write to file
 		BufferedWriter bw = new BufferedWriter(new FileWriter(USER_FILE_PATH, true));
 		//Create string with user and password
-		String entry = FileUtils.EOL + userId + SEPARATOR + "placeholder";
+		String entry = FileUtils.EOL + userId + SEPARATOR + certFileName;
 		//Write string to file
 		bw.append(entry);
 		bw.close();
 		return userId;	
 	}
 	
-	private String saveCertificate(String userId, Certificate cert) {
+	private String saveCertificate(String userId, Certificate cert) throws CertificateEncodingException, IOException {
 		
 		
+		String fileName = CERTIFICATE_STORAGE + userId + CERTIFICATE_EXTENSION;
 		
-		return null;
+		byte[] buf = cert.getEncoded();
+		
+		File certFile = new File(fileName);
+		FileOutputStream fos = new FileOutputStream(certFile);
+		
+		fos.write(buf);
+		fos.close();
+		
+		
+		return fileName;
 	}
 
 	/**

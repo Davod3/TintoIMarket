@@ -12,6 +12,7 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.SignedObject;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.util.Random;
 
 import catalogs.UserCatalog;
@@ -90,10 +91,13 @@ public class ServerThread extends Thread {
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (CertificateEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException, CertificateEncodingException {
 		
 		String user = (String) inStream.readObject(); //Receive userID
 		
