@@ -140,6 +140,7 @@ public class ServerThread extends Thread {
 				if(signedNonce.verify(received, Signature.getInstance("MD5withRSA"))) {
 					
 					this.userCatalog.registerUser(user, cert);
+					outStream.writeObject(true);
 					return true;
 					
 				}
@@ -149,7 +150,7 @@ public class ServerThread extends Thread {
 			
 		}
 		
-		
+		outStream.writeObject(false);
 		return false;
 	}
 
