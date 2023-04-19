@@ -103,11 +103,15 @@ public class NetworkClient {
 			PrivateKey pk = (PrivateKey) keystore.getKey(KEY_ALIAS, keystorePassword.toCharArray());
 			SignedObject signedNonce = new SignedObject(nonce, pk, Signature.getInstance("MD5withRSA"));
 			
+			//Send signed nonce either way
 			outStream.writeObject(signedNonce);
 			
-			if(!knownUser) {
+			//If user is unknown send certificate
+			if(!knownUser) { 
 				Certificate certs[] = keystore.getCertificateChain(KEY_ALIAS);
-				outStream.writeObject(certs[0]);}
+				outStream.writeObject(certs[0]);
+			}
+			
 			validation = (boolean) inStream.readObject();
 		} catch (IOException e) {
 			System.out.println("Erro ao enviar user e password para a socket");
