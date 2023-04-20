@@ -3,9 +3,11 @@ package catalogs;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.Set;
 
 import domain.Sale;
 import domain.Wine;
+import utils.VerifyHash;
 
 /**
  * The WineCatalog class represents the catalog with all wines.
@@ -118,8 +121,9 @@ public class WineCatalog {
 	 * Updates all sales and wines to wine/sales file.
 	 * 
 	 * @throws IOException	When an I/O error occurs while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public synchronized void updateWines() throws IOException {
+	public synchronized void updateWines() throws IOException, NoSuchAlgorithmException {
 		//Get all wines
 		Set<String> keys = wineList.keySet();
 		StringBuilder sbWines = new StringBuilder();
@@ -136,10 +140,16 @@ public class WineCatalog {
 		}
 		//Write all wines
 		BufferedWriter bwWines = new BufferedWriter(new FileWriter(WINE_FILE_PATH));
-		bwWines.write(sbWines.toString());
+		String winesContent = sbWines.toString();
+		bwWines.write(winesContent);
+		VerifyHash.getInstance().updateHash(winesContent.getBytes(), WINE_FILE_PATH);
+		
+		
 		//Write all sales
 		BufferedWriter bwSales = new BufferedWriter(new FileWriter(SALES_FILE_PATH));
-		bwSales.write(sbSales.toString());
+		String salesContent = sbSales.toString();
+		bwSales.write(salesContent);
+		
 		//Close resources
 		bwWines.close();
 		bwSales.close();
@@ -172,9 +182,10 @@ public class WineCatalog {
 	 * 							false otherwise
 	 * @throws IOException		When an I/O error occurs while
 	 * 							reading/writing to a file
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public synchronized boolean createWine(String wine, File received)
-			throws IOException {
+			throws IOException, NoSuchAlgorithmException {
 		//Create new Wine
 		Wine newWine = new Wine(wine, received);
 		//If wine does not exist already in dataBase
@@ -194,9 +205,10 @@ public class WineCatalog {
 	 * @param wine				The name of the wine we want to rate
 	 * @param rating			The rating
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public synchronized void rate(String wine, double rating)
-			throws IOException {
+			throws IOException, NoSuchAlgorithmException {
 		//Get wine
 		Wine wineToRate = getWine(wine);
 		//Set his rating
@@ -263,9 +275,10 @@ public class WineCatalog {
 	 * @param wineName			The name of the wine
 	 * @param sale				The sale we want to add to the sale list of the wine
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public synchronized void addSaleToWine(String wineName, Sale sale)
-			throws IOException {
+			throws IOException, NoSuchAlgorithmException {
 		Wine wine = wineList.get(wineName);
 		wine.addSale(sale);
 		updateWines();
@@ -277,9 +290,10 @@ public class WineCatalog {
 	 * @param wine				The wine for which we want to get the sale
 	 * @param seller			The user for which we want to delete the sale
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public synchronized void removeSaleFromSeller(String wine, String seller)
-			throws IOException {
+			throws IOException, NoSuchAlgorithmException {
 		wineList.get(wine).getSales().remove(getWineSaleBySeller(wine, seller));
 		updateWines();
 	}

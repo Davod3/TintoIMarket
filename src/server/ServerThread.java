@@ -182,8 +182,9 @@ public class ServerThread extends Thread {
 	 * 										that does not match/exist
 	 * @throws IOException					When an I/O error occurs while
 	 * 										reading/writing to a file or stream
+	 * @throws NoSuchAlgorithmException 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException {
+	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command

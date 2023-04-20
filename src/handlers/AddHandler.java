@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
 import utils.FileUtils;
@@ -34,9 +35,10 @@ public class AddHandler {
 	 * @throws IOException				When inStream does not receive input
 	 * 									(in this case, the name of the wine)
 	 * 									or the outStream can't send the result message
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
 		//Read wine name and image file of the wine
 		String wine = (String) inStream.readObject();
 		File received = FileUtils.receiveFile(SERVER_IMAGES_DIR, inStream);

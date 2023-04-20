@@ -3,6 +3,7 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
 import domain.Sale;
@@ -30,9 +31,10 @@ public class SellHandler {
 	 * 									that does not match/exist
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send the result message		
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Read the name of the wine, the price and the quantity to sell

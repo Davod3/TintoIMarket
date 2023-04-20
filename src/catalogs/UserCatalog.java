@@ -63,6 +63,7 @@ public class UserCatalog {
 		File userFile = new File(USER_FILE_PATH);
 		userFile.getParentFile().mkdirs();
 		userFile.createNewFile(); //Make sure file exists before reading
+		
 		//Open a reader to read from the opened file
 		BufferedReader br = new BufferedReader(new FileReader(USER_FILE_PATH));
 		//Read each line of the file
