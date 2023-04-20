@@ -1,6 +1,12 @@
 package utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -11,6 +17,7 @@ public class VerifyHash {
 	
 	private static VerifyHash instance = null;
 	private Map<String, byte[]> file_hash;
+	private static final String HASH_STORAGE = "server_files/storage/hash/";
 	
 	private VerifyHash() {
 		file_hash = new HashMap<>();
@@ -28,26 +35,48 @@ public class VerifyHash {
 	 * @param file
 	 * @param fileName
 	 * @return
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public boolean verify(byte[] file, String fileName) {
+	public boolean verify(byte[] file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
 		
+		byte[] storedHash = this.file_hash.get(fileName);
+		
+		String[] splitFileName = fileName.split("/");	
+		String filepath = HASH_STORAGE + splitFileName[splitFileName.length - 1] + "hash";
+
+		if(storedHash != null) {
+			
+			MessageDigest md = MessageDigest.getInstance("SHA");
+			byte[] newHash = md.digest(file);
+			
+			return MessageDigest.isEqual(storedHash, newHash);	
+		}
 		
 		
 		return false;
 	}
 	
-	public void updateHash(byte[] file, String fileName) throws NoSuchAlgorithmException {
+	public void updateHash(byte[] file, String fileName) throws NoSuchAlgorithmException, IOException {
 		
 		MessageDigest md = MessageDigest.getInstance("SHA");
-		this.file_hash.put(fileName, md.digest(file)); 
+		byte[] hash =  md.digest(file);
+		this.file_hash.put(fileName, hash); 
 		
-		for(String f : file_hash.keySet()) {
+		String[] splitFileName = fileName.split("/");	
+		String filepath = HASH_STORAGE + splitFileName[splitFileName.length - 1] + "hash";
+		
+		File hashFile = new File(filepath);
+		hashFile.getParentFile().mkdirs();
 			
-			byte[] hash = file_hash.get(f);
-			System.out.println(hash.toString());
-		}
+		FileOutputStream fos = new FileOutputStream(filepath);
 		
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		
+		oos.writeObject(hash);
+		oos.close();
+		fos.close();
 	}
 
 }

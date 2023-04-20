@@ -1,4 +1,2 @@
 
 david:server_files/storage/certdavid.cer
-bacano:server_files/storage/certbacano.cer
-Miguel:server_files/storage/certMiguel.cer
