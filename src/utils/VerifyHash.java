@@ -72,6 +72,22 @@ public class VerifyHash {
 		return instance;
 	}
 	
+	public void verify(File file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
+		
+		int fileLen = (int) file.length();
+		
+		if(fileLen > 0) {
+			
+			byte[] fileBytes = new byte[fileLen];
+			
+			FileInputStream fis = new FileInputStream(file);
+			fis.read(fileBytes);
+			fis.close();
+			
+			this.verify(fileBytes, fileName);
+		}
+	}
+	
 	/**
 	 * Verify hash from file matches stored hash
 	 * 
@@ -83,47 +99,33 @@ public class VerifyHash {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws FileIntegrityViolationException 
 	 */
-	public void verify(File file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
-		
-		int fileLen = (int) file.length();
-		
-		//Check if file is new
-		if(fileLen > 0) {
-			//Check file integrity
-			byte[] fileBytes = new byte[fileLen];
-					
-			FileInputStream fis = new FileInputStream(file);
-			fis.read(fileBytes);
-			fis.close();
+	public void verify(byte[] file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
 			
 			byte[] storedHash = this.file_hash.get(fileName);
 
 			if(storedHash != null) {
 				
 				MessageDigest md = MessageDigest.getInstance("SHA");
-				byte[] newHash = md.digest(fileBytes);
+				byte[] newHash = md.digest(file);
 				
 				if(!MessageDigest.isEqual(storedHash, newHash)) {
-					System.out.println("VerifyHash - 99");
 					throw new FileIntegrityViolationException("File " + fileName + " integrity was violated!");
 				}
 			} else {
 				throw new FileIntegrityViolationException("File " + fileName + " integrity cannot be assessed!");
 			}
 			
-				
-		}
 		
 	}
 	
-	public void updateHash(byte[] file, String fileName) throws NoSuchAlgorithmException, IOException {
+	public void updateHash(byte[] file, String fileName) throws NoSuchAlgorithmException, IOException, ClassNotFoundException, FileIntegrityViolationException {
 		
 		MessageDigest md = MessageDigest.getInstance("SHA");
 		byte[] hash =  md.digest(file);
 		
-		
-		
 		if(!this.file_hash.containsKey(fileName)) {
+			
+			//If file not hashed, do so
 			
 			File hashes = new File(HASH_FILES);
 			hashes.getParentFile().mkdirs();
@@ -132,6 +134,10 @@ public class VerifyHash {
 			bw.append(fileName + EOL);
 			bw.close();
 			
+		} else {
+			
+			//If file already hashed, check integrity
+			this.verify(file, fileName);
 		}
 		
 		this.file_hash.put(fileName, hash); 

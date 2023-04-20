@@ -147,8 +147,10 @@ public class WineCatalog {
 	 * @throws IOException	When an I/O error occurs while reading/writing to a file
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
-	public synchronized void updateWines() throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
+	public synchronized void updateWines() throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
+		
 		//Get all wines
 		Set<String> keys = wineList.keySet();
 		StringBuilder sbWines = new StringBuilder();
@@ -209,9 +211,10 @@ public class WineCatalog {
 	 * 							reading/writing to a file
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public synchronized boolean createWine(String wine, File received)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
 		//Create new Wine
 		Wine newWine = new Wine(wine, received);
 		//If wine does not exist already in dataBase
@@ -233,9 +236,10 @@ public class WineCatalog {
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public synchronized void rate(String wine, double rating)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
 		//Get wine
 		Wine wineToRate = getWine(wine);
 		//Set his rating
@@ -304,9 +308,10 @@ public class WineCatalog {
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public synchronized void addSaleToWine(String wineName, Sale sale)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
 		Wine wine = wineList.get(wineName);
 		wine.addSale(sale);
 		updateWines();
@@ -320,9 +325,10 @@ public class WineCatalog {
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public synchronized void removeSaleFromSeller(String wine, String seller)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
 		wineList.get(wine).getSales().remove(getWineSaleBySeller(wine, seller));
 		updateWines();
 	}
