@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 
 /**
@@ -58,8 +60,11 @@ public class SessionHandler {
 	 * 
 	 * @param command		The command entered by the current user
 	 * @return				Result message received by NetworkClient
+	 * @throws NoSuchAlgorithmException 
+	 * @throws SignatureException 
+	 * @throws InvalidKeyException 
 	 */
-	public String processCommand(String[] command) {
+	public String processCommand(String[] command) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException {
 		String result = "";
 		if (command[0].equals("talk") || command[0].equals("t")) {
 			StringBuilder builder = new StringBuilder();

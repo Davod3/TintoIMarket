@@ -2,8 +2,10 @@ package client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -76,6 +78,12 @@ public class TintolMarket {
 		} catch (CertificateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -84,8 +92,11 @@ public class TintolMarket {
 	 * Runs the client's engine
 	 * 
 	 * @param sessionHandler The handler for this session/connection
+	 * @throws NoSuchAlgorithmException 
+	 * @throws SignatureException 
+	 * @throws InvalidKeyException 
 	 */
-	private static void runClient(SessionHandler sessionHandler) {
+	private static void runClient(SessionHandler sessionHandler) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException {
 		System.out.println("Welcome to TintoIMarket!");
 		System.out.print(COMMAND_INSTRUCTIONS);
 		boolean help = false;
