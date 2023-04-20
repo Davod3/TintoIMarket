@@ -53,10 +53,13 @@ public class TintolMarket {
 			
 			System.out.println("Cliente: " + clientID + " ipPort: " + address);
 
-			while (!(sessionHandler = new SessionHandler(address, truststore, keystore, keystorePassword, clientID)).getSessionValid()) {
-				System.out.println("Incorrect user or password");
+			if ((sessionHandler = new SessionHandler(address, truststore, keystore, keystorePassword, clientID)).getSessionValid()) {
+				
+				runClient(sessionHandler);
+				
 			}
-			runClient(sessionHandler);
+			
+			System.out.println("Failed to authenticate user");
 
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Missing arguments. Correct usage: <serverAddress> <userID> <password>");

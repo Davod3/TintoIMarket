@@ -12,6 +12,8 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.SignedObject;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.util.Random;
 
 import catalogs.UserCatalog;
@@ -90,10 +92,16 @@ public class ServerThread extends Thread {
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (CertificateEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			// Failed to retrieve certificate from file
+			e.printStackTrace();
 		}
 	}
 
-	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException, CertificateException {
 		
 		String user = (String) inStream.readObject(); //Receive userID
 		
@@ -115,6 +123,23 @@ public class ServerThread extends Thread {
 		
 		if(isKnown) {
 			//Authenticate
+			SignedObject signedNonce = (SignedObject) inStream.readObject();
+			Certificate cert = this.userCatalog.getUserCertificate(user);
+			
+			long receivedNonce = (Long) signedNonce.getObject();
+			
+			if(receivedNonce == nonce) {
+				
+				PublicKey received = cert.getPublicKey();
+				
+				if(signedNonce.verify(received, Signature.getInstance("MD5withRSA"))) {
+					
+					outStream.writeObject(true);
+					this.loggedUser = user;
+					return true;
+				}
+			}
+			
 			
 			
 		} else {
@@ -135,8 +160,9 @@ public class ServerThread extends Thread {
 				
 				if(signedNonce.verify(received, Signature.getInstance("MD5withRSA"))) {
 					
+					this.loggedUser = this.userCatalog.registerUser(user, cert);
+					outStream.writeObject(true);
 					return true;
-					//this.userCatalog.registerUser(user, )
 					
 				}
 				
@@ -145,7 +171,7 @@ public class ServerThread extends Thread {
 			
 		}
 		
-		
+		outStream.writeObject(false);
 		return false;
 	}
 
