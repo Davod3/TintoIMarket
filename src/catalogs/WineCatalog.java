@@ -110,14 +110,18 @@ public class WineCatalog {
 	 * 
 	 * @param wine				The wine for which we want the sales
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
+	 * @throws FileIntegrityViolationException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws ClassNotFoundException 
 	 */
-	private synchronized void loadSales(Wine wine) throws IOException {
+	private synchronized void loadSales(Wine wine) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		//Get file with wine sales
 		File saleFile = new File(SALES_FILE_PATH);
 		saleFile.createNewFile();
 		
 		//Check integrity
 		
+		VerifyHash.getInstance().verify(saleFile, SALES_FILE_PATH);
 		
 		//Open reader to read from file
 		BufferedReader br = new BufferedReader(new FileReader(SALES_FILE_PATH));
