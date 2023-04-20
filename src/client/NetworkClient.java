@@ -34,6 +34,7 @@ public class NetworkClient {
 	private Socket clientSocket;
 	private ObjectInputStream inStream;
 	private ObjectOutputStream outStream;
+	private PrivateKey pk;
 	
 	private static final String DEFAULT_PORT = "12345";
 	private static final String TRUSTSTORE_PWD = "keystorepwd";
@@ -103,7 +104,7 @@ public class NetworkClient {
 			
 			nonce = (long) inStream.readObject();
 			knownUser = (boolean) inStream.readObject();
-			PrivateKey pk = (PrivateKey) keystore.getKey(KEY_ALIAS, keystorePassword.toCharArray());
+			this.pk = (PrivateKey) keystore.getKey(KEY_ALIAS, keystorePassword.toCharArray());
 			SignedObject signedNonce = new SignedObject(nonce, pk, Signature.getInstance("MD5withRSA"));
 			
 			//Send signed nonce either way
@@ -178,18 +179,24 @@ public class NetworkClient {
 	 * 										or the outStream can't send a message
 	 * @throws ClassNotFoundException		When trying to find the class of an object
 	 * 										that does not match/exist
+	 * @throws NoSuchAlgorithmException 
+	 * @throws SignatureException 
+	 * @throws InvalidKeyException 
 	 */
 	public String sell(String wine, String value, String quantity)
-			throws IOException, ClassNotFoundException {
+			throws IOException, ClassNotFoundException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
 		String result = "";
 		//Send sell command
 		outStream.writeObject("sell");
 		//Send the name of the wine
-		outStream.writeObject(wine);
+		SignedObject signedWine = new SignedObject(wine, this.pk, Signature.getInstance("MD5withRSA"));
+		outStream.writeObject(signedWine);
 		//Send value of each unit
-		outStream.writeObject(Double.parseDouble(value));
+		SignedObject signedValue = new SignedObject(Double.parseDouble(value), this.pk, Signature.getInstance("MD5withRSA"));
+		outStream.writeObject(signedValue);
 		//Send quantity to sell
-		outStream.writeObject(Integer.parseInt(quantity));
+		SignedObject signedQuantity = new SignedObject(Integer.parseInt(quantity), this.pk, Signature.getInstance("MD5withRSA"));
+		outStream.writeObject(signedQuantity);
 		//Get result
 		result = (String) inStream.readObject();
 		return result;
@@ -235,18 +242,24 @@ public class NetworkClient {
 	 * 										or the outStream can't send a message
 	 * @throws ClassNotFoundException		When trying to find the class of an object
 	 * 										that does not match/exist
+	 * @throws NoSuchAlgorithmException 
+	 * @throws SignatureException 
+	 * @throws InvalidKeyException 
 	 */
 	public String buy(String wine, String seller, String quantity)
-			throws IOException, ClassNotFoundException {
+			throws IOException, ClassNotFoundException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
 		String result = "";
 		//Send buy command
 		outStream.writeObject("buy");
 		//Send the name of the wine
-		outStream.writeObject(wine);
+		SignedObject signedWine = new SignedObject(wine, this.pk, Signature.getInstance("MD5withRSA"));
+		outStream.writeObject(signedWine);
 		//Send the seller
-		outStream.writeObject(seller);
+		SignedObject signedSeller = new SignedObject(seller, this.pk, Signature.getInstance("MD5withRSA"));
+		outStream.writeObject(signedSeller);
 		//Send the quantity to buy
-		outStream.writeObject(Integer.parseInt(quantity));
+		SignedObject signedQuantity = new SignedObject(Integer.parseInt(quantity), this.pk, Signature.getInstance("MD5withRSA"));
+		outStream.writeObject(signedQuantity);
 		//Get result
 		result = (String) inStream.readObject();	 
 		return result;
