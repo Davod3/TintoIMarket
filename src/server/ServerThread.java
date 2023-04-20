@@ -18,6 +18,7 @@ import java.util.Random;
 
 import catalogs.UserCatalog;
 import handlers.*;
+import utils.FileIntegrityViolationException;
 
 /**
  * This class represents the threads of the server of this application
@@ -75,12 +76,7 @@ public class ServerThread extends Thread {
 				System.out.println("Authentication failed");
 			}
 		} catch (IOException e) {
-				System.out.println("User exited");
-				try {
-					socket.close();
-				} catch (IOException e1) {
-					System.out.println("User exited");
-				}
+			System.out.println("User exited");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
@@ -98,6 +94,17 @@ public class ServerThread extends Thread {
 		} catch (CertificateException e) {
 			// Failed to retrieve certificate from file
 			e.printStackTrace();
+		} catch (FileIntegrityViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			
+			try {
+				socket.close();
+			} catch (IOException e1) {
+				System.out.println("Error closing socket");
+			}
+			
 		}
 	}
 
@@ -183,8 +190,9 @@ public class ServerThread extends Thread {
 	 * @throws IOException					When an I/O error occurs while
 	 * 										reading/writing to a file or stream
 	 * @throws NoSuchAlgorithmException 
+	 * @throws FileIntegrityViolationException 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
+	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command

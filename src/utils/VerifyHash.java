@@ -81,8 +81,9 @@ public class VerifyHash {
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 * @throws NoSuchAlgorithmException 
+	 * @throws FileIntegrityViolationException 
 	 */
-	public boolean verify(byte[] file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+	public void verify(byte[] file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		
 		byte[] storedHash = this.file_hash.get(fileName);
 		
@@ -94,11 +95,14 @@ public class VerifyHash {
 			MessageDigest md = MessageDigest.getInstance("SHA");
 			byte[] newHash = md.digest(file);
 			
-			return MessageDigest.isEqual(storedHash, newHash);	
+			if(!MessageDigest.isEqual(storedHash, newHash)) {
+				System.out.println("VerifyHash - 99");
+				throw new FileIntegrityViolationException("File " + fileName + " integrity was violated!");
+			}
+		} else {
+			throw new FileIntegrityViolationException("File " + fileName + " integrity cannot be assessed!");
 		}
 		
-		
-		return false;
 	}
 	
 	public void updateHash(byte[] file, String fileName) throws NoSuchAlgorithmException, IOException {

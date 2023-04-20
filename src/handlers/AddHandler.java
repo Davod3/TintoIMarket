@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 
 /**
@@ -36,9 +37,10 @@ public class AddHandler {
 	 * 									(in this case, the name of the wine)
 	 * 									or the outStream can't send the result message
 	 * @throws NoSuchAlgorithmException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		//Read wine name and image file of the wine
 		String wine = (String) inStream.readObject();
 		File received = FileUtils.receiveFile(SERVER_IMAGES_DIR, inStream);

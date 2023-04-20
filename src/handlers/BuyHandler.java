@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import catalogs.UserCatalog;
 import catalogs.WineCatalog;
 import domain.Sale;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 
 /**
@@ -35,9 +36,10 @@ public class BuyHandler {
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send the result message			
 	 * @throws NoSuchAlgorithmException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		//Read the name of the wine, the seller and the quantity to buy
 		String wine = (String) inStream.readObject();
 		String seller = (String) inStream.readObject();

@@ -16,6 +16,7 @@ import java.util.Set;
 
 import domain.Sale;
 import domain.Wine;
+import utils.FileIntegrityViolationException;
 import utils.VerifyHash;
 
 /**
@@ -40,8 +41,9 @@ public class WineCatalog {
 	 * @throws IOException	When an I/O error occurs while loading all wines
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
-	private WineCatalog() throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+	private WineCatalog() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		wineList = loadWines();
 	}
 
@@ -53,8 +55,9 @@ public class WineCatalog {
 	 * @throws IOException		When an I/O error occurs while reading from a file
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
-	public static WineCatalog getInstance() throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+	public static WineCatalog getInstance() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		if (instance == null)
 			instance = new WineCatalog();
 		return instance;
@@ -68,9 +71,10 @@ public class WineCatalog {
 	 * 							while reading/writing to a file
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	private synchronized HashMap<String, Wine> loadWines()
-			throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+			throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		//Create a map to store all wines
 		HashMap<String, Wine> map = new HashMap<String, Wine>();
 		//Get file with all wines
@@ -80,8 +84,10 @@ public class WineCatalog {
 		
 		int fileLen = (int) wineFile.length();
 		
+		//Check if file is new
 		if(fileLen > 0) {
 			
+			System.out.println("WineCatalog - 90");
 			//Check file integrity
 			byte[] bytes = new byte[fileLen];
 			
@@ -89,7 +95,11 @@ public class WineCatalog {
 			fis.read(bytes);
 			fis.close();
 			
+			System.out.println("WineCatalog - 98");
+			
 			VerifyHash.getInstance().verify(bytes, WINE_FILE_PATH);
+			
+			System.out.println("WineCatalog - 102");
 		}
 		
 		//Open reader to read from file

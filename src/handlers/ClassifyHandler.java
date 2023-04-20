@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 
 /**
@@ -30,9 +31,10 @@ public class ClassifyHandler {
 	 * @throws IOException            When inStream does not receive input or the
 	 *                                outStream can't send the result message
 	 * @throws NoSuchAlgorithmException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		// Read the name of the wine and the rating
 		String wine = (String) inStream.readObject();
 		double rating = (int) inStream.readObject();

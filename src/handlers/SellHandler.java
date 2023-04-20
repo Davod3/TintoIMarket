@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
 import domain.Sale;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 
 /**
@@ -32,9 +33,10 @@ public class SellHandler {
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send the result message		
 	 * @throws NoSuchAlgorithmException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Read the name of the wine, the price and the quantity to sell

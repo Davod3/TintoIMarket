@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import catalogs.WineCatalog;
 import domain.Sale;
 import domain.Wine;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 
 /**
@@ -34,9 +35,10 @@ public class ViewHandler {
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send the result message		
 	 * @throws NoSuchAlgorithmException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		//Create result message
 		StringBuilder result = new StringBuilder();
 		//Get Wine's Catalog only instance
