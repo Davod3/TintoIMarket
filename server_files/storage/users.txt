@@ -1,2 +1,0 @@
-
-david:server_files/storage/certdavid.cer

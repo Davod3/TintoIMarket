@@ -1,2 +1,0 @@
-vinho4:hello.jpg:0.0:0
-vinho1:img.jpg:0.0:0

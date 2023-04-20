@@ -3,6 +3,7 @@ package catalogs;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -37,8 +38,10 @@ public class WineCatalog {
 	 * Creates a WineCatalog and loads all wines from a specific file.
 	 * 
 	 * @throws IOException	When an I/O error occurs while loading all wines
+	 * @throws NoSuchAlgorithmException 
+	 * @throws ClassNotFoundException 
 	 */
-	private WineCatalog() throws IOException {
+	private WineCatalog() throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
 		wineList = loadWines();
 	}
 
@@ -48,8 +51,10 @@ public class WineCatalog {
 	 * 
 	 * @return					The unique instance of the WineCatalog class
 	 * @throws IOException		When an I/O error occurs while reading from a file
+	 * @throws NoSuchAlgorithmException 
+	 * @throws ClassNotFoundException 
 	 */
-	public static WineCatalog getInstance() throws IOException {
+	public static WineCatalog getInstance() throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
 		if (instance == null)
 			instance = new WineCatalog();
 		return instance;
@@ -61,15 +66,32 @@ public class WineCatalog {
 	 * @return					A map with all wines
 	 * @throws IOException		When an I/O error occurs
 	 * 							while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 
+	 * @throws ClassNotFoundException 
 	 */
 	private synchronized HashMap<String, Wine> loadWines()
-			throws IOException {
+			throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
 		//Create a map to store all wines
 		HashMap<String, Wine> map = new HashMap<String, Wine>();
 		//Get file with all wines
 		File wineFile = new File(WINE_FILE_PATH);
 		wineFile.getParentFile().mkdirs();
 		wineFile.createNewFile(); // Make sure file exists before reading
+		
+		int fileLen = (int) wineFile.length();
+		
+		if(fileLen > 0) {
+			
+			//Check file integrity
+			byte[] bytes = new byte[fileLen];
+			
+			FileInputStream fis = new FileInputStream(wineFile);
+			fis.read(bytes);
+			fis.close();
+			
+			VerifyHash.getInstance().verify(bytes, WINE_FILE_PATH);
+		}
+		
 		//Open reader to read from file
 		BufferedReader br = new BufferedReader(new FileReader(WINE_FILE_PATH));
 		//Read each line from file

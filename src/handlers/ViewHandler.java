@@ -3,6 +3,7 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
 import domain.Sale;
@@ -32,9 +33,10 @@ public class ViewHandler {
 	 * 									that does not match/exist
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send the result message		
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException {
 		//Create result message
 		StringBuilder result = new StringBuilder();
 		//Get Wine's Catalog only instance
