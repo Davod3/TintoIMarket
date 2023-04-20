@@ -82,25 +82,9 @@ public class WineCatalog {
 		wineFile.getParentFile().mkdirs();
 		wineFile.createNewFile(); // Make sure file exists before reading
 		
-		int fileLen = (int) wineFile.length();
 		
-		//Check if file is new
-		if(fileLen > 0) {
-			
-			System.out.println("WineCatalog - 90");
-			//Check file integrity
-			byte[] bytes = new byte[fileLen];
-			
-			FileInputStream fis = new FileInputStream(wineFile);
-			fis.read(bytes);
-			fis.close();
-			
-			System.out.println("WineCatalog - 98");
-			
-			VerifyHash.getInstance().verify(bytes, WINE_FILE_PATH);
-			
-			System.out.println("WineCatalog - 102");
-		}
+		//Verify integrity
+		VerifyHash.getInstance().verify(wineFile, WINE_FILE_PATH);
 		
 		//Open reader to read from file
 		BufferedReader br = new BufferedReader(new FileReader(WINE_FILE_PATH));
@@ -131,6 +115,10 @@ public class WineCatalog {
 		//Get file with wine sales
 		File saleFile = new File(SALES_FILE_PATH);
 		saleFile.createNewFile();
+		
+		//Check integrity
+		
+		
 		//Open reader to read from file
 		BufferedReader br = new BufferedReader(new FileReader(SALES_FILE_PATH));
 		//Read each line from file
