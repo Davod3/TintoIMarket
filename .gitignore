@@ -1,2 +1,7 @@
-/bin/
+bin/
 *.class
+server_files/storage
+*
+server_files/images
+*
+server_files/user_messages
