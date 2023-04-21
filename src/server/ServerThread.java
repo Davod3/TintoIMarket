@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -14,7 +15,10 @@ import java.security.SignedObject;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Random;
+
+import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
 import handlers.*;
@@ -44,8 +48,13 @@ public class ServerThread extends Thread {
 	 * @param ks 
 	 * @throws IOException		When an I/O error occurs while 
 	 * 							reading/writing to a file or stream
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
-	public ServerThread(Socket inSoc, KeyStore ks) throws IOException {
+	public ServerThread(Socket inSoc, KeyStore ks) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Save client's socket
 		this.socket = inSoc;
 		//Get the unique instance of User Catalog
@@ -53,7 +62,6 @@ public class ServerThread extends Thread {
 		//Open streams
 		this.outStream = new ObjectOutputStream(socket.getOutputStream());
 		this.inStream = new ObjectInputStream(socket.getInputStream());
-		
 		this.ks = ks;
 		
 		//Print message with result
@@ -94,21 +102,22 @@ public class ServerThread extends Thread {
 		} catch (CertificateException e) {
 			// Failed to retrieve certificate from file
 			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidAlgorithmParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (FileIntegrityViolationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			
-			try {
-				socket.close();
-			} catch (IOException e1) {
-				System.out.println("Error closing socket");
-			}
-			
 		}
 	}
 
-	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException, CertificateException {
+	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		
 		String user = (String) inStream.readObject(); //Receive userID
 		
@@ -120,7 +129,7 @@ public class ServerThread extends Thread {
 		
 		boolean isKnown = userCatalog.getUser(user) != null;
 		
-		System.out.println("Checked if user present");
+		System.out.println("Checked if user present" + isKnown);
 		
 		outStream.writeObject(nonce); //Send nonce
 		System.out.println("Sent nonce");
@@ -189,10 +198,14 @@ public class ServerThread extends Thread {
 	 * 										that does not match/exist
 	 * @throws IOException					When an I/O error occurs while
 	 * 										reading/writing to a file or stream
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 * @throws FileIntegrityViolationException 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
+	private void mainLoop() throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command

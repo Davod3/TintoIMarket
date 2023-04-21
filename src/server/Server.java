@@ -2,18 +2,23 @@ package server;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+
+import utils.PBE;
 
 /**
  * This class represents the server of this application
@@ -30,7 +35,7 @@ public class Server {
 	private KeyStore ks = null;
 	private String keystorePath;
 	private String keystorePwd;
-
+	
 	/**
 	 * Creates a new Server given the port
 	 * 
@@ -48,11 +53,12 @@ public class Server {
 		this.ks = getKeyStore(keystore, keystorepw.toCharArray());
 		this.keystorePath = keystore;
 		this.keystorePwd = keystorepw;
-		
-		
+		//Criar PBE singleton com a password cipherpw;
+		PBE.getInstance().setPBE(cipherpw);
 	}
 
-	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, FileNotFoundException {
+	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,
+	NoSuchAlgorithmException, CertificateException, IOException {
 		
 		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 		File ks_file = new File(keystore);
@@ -64,8 +70,13 @@ public class Server {
 
 	/**
 	 * Runs the server's engine
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
-	public void run() {
+	public void run() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Create socket for server
 		System.setProperty("javax.net.ssl.keyStore", this.keystorePath);
 		System.setProperty("javax.net.ssl.keyStorePassword", this.keystorePwd);

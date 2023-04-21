@@ -2,6 +2,12 @@ package handlers;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
 
@@ -23,9 +29,14 @@ public class ReadHandler {
 	 * @param outStream		Stream for outputting messages
 	 * @param loggedUser	The user we want to read the messages for
 	 * @throws IOException	When outStream can't send the result message
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	public void run(ObjectOutputStream outStream, String loggedUser)
-			throws IOException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		outStream.writeObject(UserCatalog.getInstance().readMessages(loggedUser));
 	}
 	
