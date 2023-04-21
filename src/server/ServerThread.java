@@ -111,6 +111,9 @@ public class ServerThread extends Thread {
 		} catch (InvalidAlgorithmParameterException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (FileIntegrityViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -200,8 +203,9 @@ public class ServerThread extends Thread {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws FileIntegrityViolationException 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+	private void mainLoop() throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command

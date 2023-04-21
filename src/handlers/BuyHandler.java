@@ -45,9 +45,10 @@ public class BuyHandler {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+			throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException {
 		//Read the name of the wine, the seller and the quantity to buy
 		String wine = (String) inStream.readObject();
 		String seller = (String) inStream.readObject();
