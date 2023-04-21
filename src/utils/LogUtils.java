@@ -32,6 +32,12 @@ public class LogUtils {
     private String pwd;
 	
 	private LogUtils() throws IOException {
+	    File directory = new File("server_files/logs");
+	    if (! directory.exists()){
+	        directory.mkdir();
+	        // If you require it to make the entire directory path including parents,
+	        // use directory.mkdirs(); here instead.
+	    }
 		log = new File("server_files/logs/log.txt");
 		pw = new PrintWriter(new FileWriter(log));
 		currentBlock = null;
