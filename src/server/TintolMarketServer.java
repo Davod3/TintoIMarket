@@ -2,9 +2,14 @@ package server;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * This class represents the threads of the server of this application
@@ -19,8 +24,12 @@ public class TintolMarketServer {
 	 * Starts the server with the given IP address and Port number
 	 * 
 	 * @param args		The address of the server
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws InvalidKeyException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InvalidKeyException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Default port for connection
 		int port = 12345;
 		

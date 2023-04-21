@@ -9,18 +9,25 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.crypto.NoSuchPaddingException;
+
 import domain.Message;
 import domain.User;
 import utils.FileUtils;
+import utils.PBE;
 
 /**
  * The UserCatalog class represents the catalog with all users
@@ -34,29 +41,44 @@ public class UserCatalog {
 	private static UserCatalog instance = null;
 	private Map<String, User> userList;
 	
-	private static final String USER_FILE_PATH = "server_files/storage/users.txt";
+	private static final String USER_FILE_PATH = "server_files/storage/users.cif";
 	private static final String USER_MESSAGES_PATH = "server_files/user_messages/";
 	private static final String USER_MESSAGES_EXTENSION = ".txt";
 	private static final String SEPARATOR = ":";
 	private static final String CERTIFICATE_STORAGE = "server_files/storage/cert"; //cert is part of name, function adds unique uid
 	private static final String CERTIFICATE_EXTENSION = ".cer";
-
+	
 	/**
 	 * Creates a UserCatalog and loads all users from a users file
 	 * 
 	 * @throws IOException	When an I/O error occurs while loading all users
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
-	private UserCatalog() throws IOException {
+	private UserCatalog() throws IOException,
+	InvalidKeyException, NoSuchAlgorithmException,
+	InvalidKeySpecException, NoSuchPaddingException,
+	InvalidAlgorithmParameterException {
 		this.userList = loadUsers();
 	}
 
 	/**
 	 * Returns a map with all users, after loading their unread messages
 	 * 
-	 * @return					A map containing all users
-	 * @throws IOException		When an I/O error occurs while reading from the file
+	 * @return					A map containing all users 
+	 * @throws IOException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
-	private synchronized Map<String, User> loadUsers() throws IOException {
+	private synchronized Map<String, User> loadUsers() throws IOException,
+	InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException,
+	NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Create a map to load users
 		Map<String, User> users = new HashMap<>();
 		//Open the file that contains all the users information
@@ -64,23 +86,30 @@ public class UserCatalog {
 		userFile.getParentFile().mkdirs();
 		userFile.createNewFile(); //Make sure file exists before reading
 		
-		//Open a reader to read from the opened file
-		BufferedReader br = new BufferedReader(new FileReader(USER_FILE_PATH));
-		//Read each line of the file
-		String line;
-		while((line = br.readLine()) != null) {
-			//Split the data
-			String[] splitData = line.split(SEPARATOR);
-			if (splitData.length >= 2) {
-				//Create new user with the given name and password
-				User user = new User(splitData[0]);
-				//Load all unread messages of that user
-				loadMessages(user);
-				//Load user in map
-				users.put(splitData[0], user);	
+		//Call decryption method
+		String usersFile = PBE.getInstance().decryption(userFile);
+		
+		if (usersFile != null) {
+			System.out.println("BADUM TSS");
+			System.out.println(usersFile);
+			//Read each line of the file
+			for (String line: usersFile.split(FileUtils.EOL)) {
+				//Split the data
+				System.out.println(line + ".....................");
+				String[] splitData = line.split(SEPARATOR);
+				if (splitData.length >= 2) {
+					//Create new user with the given name and password
+					User user = new User(splitData[0]);
+					//Load all unread messages of that user
+					loadMessages(user);
+					//Load user in map
+					System.out.println(splitData[0] + "--------------");
+					users.put(splitData[0], user);	
+				}
 			}
+		}else {
+			System.out.println("NULL");
 		}
-		br.close();
 		return users;
 	}
 
@@ -146,8 +175,15 @@ public class UserCatalog {
 	 * 
 	 * @return					The unique instance of the UserCatalog class
 	 * @throws IOException		When an I/O error occurs while reading from a file
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
-	public static UserCatalog getInstance() throws IOException {
+	public static UserCatalog getInstance() throws IOException,
+	InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException,
+	NoSuchPaddingException, InvalidAlgorithmParameterException {
 		if (instance == null)
 			instance = new UserCatalog();
 		return instance;
@@ -157,14 +193,22 @@ public class UserCatalog {
 	 * Registers a new user given the username and password
 	 * 
 	 * @param userId			Username
+	 * @param pbe 
 	 * @param pwd				Password
 	 * @return					Username
 	 * @throws IOException		When an I/O error occurs while
 	 * 							reading/writing to a file
 	 * @throws CertificateEncodingException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	public synchronized String registerUser(String userId, Certificate cert)
-			throws IOException, CertificateEncodingException {
+			throws IOException, CertificateEncodingException, InvalidKeyException,
+			NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException {
 		
 		//Save user certificate to file
 		String certFileName = saveCertificate(userId, cert);
@@ -173,13 +217,23 @@ public class UserCatalog {
 		User registering = new User(userId);
 		//Insert new user in dataBase
 		userList.put(userId, registering);
-		//Open reader to write to file
-		BufferedWriter bw = new BufferedWriter(new FileWriter(USER_FILE_PATH, true));
-		//Create string with user and password
-		String entry = FileUtils.EOL + userId + SEPARATOR + certFileName;
-		//Write string to file
-		bw.append(entry);
-		bw.close();
+		
+		//Desencriptar ficheiro
+		String usersFile = PBE.getInstance().decryption(new File(USER_FILE_PATH));
+		
+		System.out.println(usersFile + "´´´´´´´´´´´´´´");
+		
+		//Adicionar user a String
+		if (usersFile != null) {
+			usersFile = usersFile + userId + SEPARATOR + certFileName + FileUtils.EOL;
+			System.out.println(usersFile + "##########################");
+		}
+		else {
+			usersFile = userId + SEPARATOR + certFileName + FileUtils.EOL;
+		}
+		//Encriptar string para o ficheiro
+		PBE.getInstance().encryption(usersFile);	
+		
 		return userId;	
 	}
 	
