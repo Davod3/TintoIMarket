@@ -137,7 +137,10 @@ public class VerifyHash {
 		} else {
 			
 			//If file already hashed, check integrity
-			this.verify(file, fileName);
+			File oldFile = new File(fileName);
+			this.verify(oldFile, fileName);
+			
+			
 		}
 		
 		this.file_hash.put(fileName, hash); 
