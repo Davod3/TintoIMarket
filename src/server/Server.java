@@ -19,6 +19,7 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 
 import utils.PBE;
+import utils.LogUtils;
 
 /**
  * This class represents the server of this application
@@ -34,6 +35,7 @@ public class Server {
 	private static final String SERVER_FILES_DIR = "server_files/";
 	private KeyStore ks = null;
 	private String keystorePath;
+	private static final String ALIAS_KEY = "server";
 	private String keystorePwd;
 	
 	/**
@@ -55,6 +57,8 @@ public class Server {
 		this.keystorePwd = keystorepw;
 		//Criar PBE singleton com a password cipherpw;
 		PBE.getInstance().setPBE(cipherpw);
+		
+		LogUtils.getInstance().setKeyStore(ks, ALIAS_KEY, keystorepw);
 	}
 
 	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,
