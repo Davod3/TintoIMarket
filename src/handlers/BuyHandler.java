@@ -3,6 +3,12 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
 import catalogs.WineCatalog;
@@ -33,9 +39,14 @@ public class BuyHandler {
 	 * 									that does not match/exist
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send the result message			
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException {
+			throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Read the name of the wine, the seller and the quantity to buy
 		String wine = (String) inStream.readObject();
 		String seller = (String) inStream.readObject();

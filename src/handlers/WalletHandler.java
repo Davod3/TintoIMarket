@@ -2,6 +2,12 @@ package handlers;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
 import utils.FileUtils;
@@ -24,9 +30,14 @@ public class WalletHandler {
 	 * @param outStream			Stream for outputting result	
 	 * @param loggedUser		The user for which we want to see and send the balance
 	 * @throws IOException		When outStream can't send the message with the balance
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	public void run(ObjectOutputStream outStream, String loggedUser)
-			throws IOException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Get user's Catalog only instance
 		UserCatalog userCatalog = UserCatalog.getInstance();
 		//Send message with loggedUser's balance
