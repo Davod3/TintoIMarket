@@ -26,9 +26,10 @@ public class LogUtils implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -8914479604836760464L;
+	private static final String LOGS_FOLDER = "server_files/logs";
+	private static final String LOG_FILE = LOGS_FOLDER + "/log.txt";
 	private static LogUtils instance = null;
 	private File log;
-    private transient PrintWriter pw;
     private int count;
     private Block currentBlock;
     private transient KeyStore ks;
@@ -36,14 +37,13 @@ public class LogUtils implements Serializable {
     private String pwd;
 	
 	private LogUtils() throws IOException {
-	    File directory = new File("server_files/logs");
+	    File directory = new File(LOGS_FOLDER);
 	    if (! directory.exists()){
 	        directory.mkdir();
 	        // If you require it to make the entire directory path including parents,
 	        // use directory.mkdirs(); here instead.
 	    }
-		log = new File("server_files/logs/log.txt");
-		pw = new PrintWriter(new FileWriter(log));
+		log = new File(LOG_FILE);
 		currentBlock = null;
 		count = 0;
 	}
@@ -58,7 +58,9 @@ public class LogUtils implements Serializable {
 	
 	public synchronized void writeBuy(String wine, double value, int quantity, String buyer) throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException {
 		String transaction = "buy: " + wine + " " + value + " " + quantity + " " + buyer + "\n";
-		pw.print(transaction);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(log, true));
+		bw.append(transaction);
+		bw.close();
 		manageCount(transaction);
 	}
 	
@@ -66,23 +68,17 @@ public class LogUtils implements Serializable {
 		count++;
 		if(currentBlock == null) {
 			currentBlock = new Block(new byte[32], 0);
-			System.out.println("FIRST BLOCK");
 		}
 		currentBlock.addTransaction(transaction);
 
 		if(count > 4) {	//New block
-			System.out.println("FINISHED BLOCK");
 			currentBlock.calculateBlockHash();
-			System.out.println("HEREE0");
 			currentBlock.saveBlockToFile();
-			System.out.println("HEREE1");
 
 			count = 0;
 			long blockId = currentBlock.getBlockId() + 1;
 			byte[] hash = currentBlock.getHash();
-			System.out.println("HEREE2");
 			currentBlock = new Block(hash, blockId);
-			System.out.println("HEREE3");
 		}
 	}
 	
@@ -120,20 +116,16 @@ public class LogUtils implements Serializable {
 	    }
 	    
 	    public synchronized void calculateBlockHash() throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException {
-			System.out.println("HELLOOO");
 			
 			SignedObject signedBlock = new SignedObject(this,(PrivateKey) ks.getKey(alias, pwd.toCharArray()), Signature.getInstance("MD5withRSA"));
-			System.out.println("HELLOOO1");
 	    	MessageDigest md = MessageDigest.getInstance("SHA-256");
 
 			ByteArrayOutputStream bs = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bs);
-			System.out.println("HELLOOO2");
 
 			os.writeObject(signedBlock);
 			os.flush();
 			os.close();
-			System.out.println("HELLOOO3");
 			byte[] signedBlockBytes = bs.toByteArray();
 			byte[] hash = md.digest(signedBlockBytes);
 			byte[] truncatedHash = new byte[32];

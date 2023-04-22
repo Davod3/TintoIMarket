@@ -8,6 +8,7 @@ import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -57,9 +58,12 @@ public class BuyHandler {
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
 			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Read the name of the wine, the seller and the quantity to buy
-		String wine = (String) inStream.readObject();
-		String seller = (String) inStream.readObject();
-		int quantity = (int) inStream.readObject();
+		SignedObject signedWine = (SignedObject) inStream.readObject();
+		String wine = (String) signedWine.getObject();
+		SignedObject signedSeller = (SignedObject) inStream.readObject();
+		String seller = (String) signedSeller.getObject();
+		SignedObject signedQuantity = (SignedObject) inStream.readObject();
+		int quantity = (int) signedQuantity.getObject();
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Create the result message
@@ -90,7 +94,7 @@ public class BuyHandler {
 			return;
 		}
 		//Check if buyer has enough money
-		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * sale.getQuantity());
+		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * quantity);
 		if (!buyerHasEnoughMoney) {
 			result = "You don't have enough money" + FileUtils.EOL;
 		} else {
