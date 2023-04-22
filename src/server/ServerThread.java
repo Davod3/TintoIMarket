@@ -25,7 +25,6 @@ import javax.crypto.NoSuchPaddingException;
 import catalogs.UserCatalog;
 import handlers.*;
 import utils.FileIntegrityViolationException;
-import utils.LogUtils;
 
 /**
  * This class represents the threads of the server of this application
@@ -90,10 +89,8 @@ public class ServerThread extends Thread {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SignatureException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block

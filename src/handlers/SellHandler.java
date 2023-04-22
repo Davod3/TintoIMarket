@@ -77,6 +77,7 @@ public class SellHandler {
 					//Set new price
 					sale.setValue(value);
 				}
+				wineCatalog.updateSaleToWine(wine, sale);
 			}
 			//If sale does not exist
 			else {

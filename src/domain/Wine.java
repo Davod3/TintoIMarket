@@ -86,6 +86,21 @@ public class Wine {
 	}
 	
 	/**
+	 * Update a given sale of this wine.
+	 * 
+	 * @param newSale	The new sale to update
+	 */
+	public synchronized void updateSale(Sale newSale) {
+		String seller = newSale.getSeller();
+		int index = 0;
+		for(int i = 0; i < this.sales.size(); i++) {
+			if(sales.get(i).getSeller().equals(seller))
+				index = i;
+		}
+		sales.set(index, newSale);
+	}
+	
+	/**
 	 * Sets a new rating for this wine.
 	 * 
 	 * @param rating	The new rating for this wine
