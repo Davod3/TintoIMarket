@@ -16,7 +16,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 
 import javax.net.SocketFactory;
-import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import utils.FileUtils;

@@ -85,7 +85,6 @@ public class SellHandler {
 				wineCatalog.addSaleToWine(wine, sale);
 			}
 			
-			System.out.println("WRITING SALE");
 			LogUtils.getInstance().writeSale(wine, value, quantity, loggedUser);
 			
 			result = "Wine " + wine

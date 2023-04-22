@@ -20,14 +20,18 @@ import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 
-public class LogUtils {
+public class LogUtils implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8914479604836760464L;
 	private static LogUtils instance = null;
 	private File log;
-    private PrintWriter pw;
+    private transient PrintWriter pw;
     private int count;
     private Block currentBlock;
-    private KeyStore ks;
+    private transient KeyStore ks;
     private String alias;
     private String pwd;
 	
@@ -41,6 +45,7 @@ public class LogUtils {
 		log = new File("server_files/logs/log.txt");
 		pw = new PrintWriter(new FileWriter(log));
 		currentBlock = null;
+		count = 0;
 	}
 	
 	public synchronized void writeSale(String wine, double value, int quantity, String seller) throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException {
@@ -95,6 +100,11 @@ public class LogUtils {
 
 	public class Block implements Serializable {
 		
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private byte[] previousHash;
 	    private long blockId;
 	    private long numTransactions;
@@ -109,7 +119,7 @@ public class LogUtils {
 	        this.blockHash = new byte[32];
 	    }
 	    
-	    public void calculateBlockHash() throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException {
+	    public synchronized void calculateBlockHash() throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException {
 			System.out.println("HELLOOO");
 			
 			SignedObject signedBlock = new SignedObject(this,(PrivateKey) ks.getKey(alias, pwd.toCharArray()), Signature.getInstance("MD5withRSA"));
