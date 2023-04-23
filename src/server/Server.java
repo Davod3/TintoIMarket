@@ -45,12 +45,9 @@ public class Server {
 	 * @param keystorepw 
 	 * @param keystore 
 	 * @param cipherpw 
-	 * @throws KeyStoreException 
-	 * @throws IOException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
+	 * @throws Exception 
 	 */
-	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public Server(int port, String cipherpw, String keystore, String keystorepw) throws Exception {
 		this.sPort = port;
 		this.ks = getKeyStore(keystore, keystorepw.toCharArray());
 		this.keystorePath = keystore;
@@ -59,6 +56,8 @@ public class Server {
 		PBE.getInstance().setPBE(cipherpw);
 		
 		LogUtils.getInstance().setKeyStore(ks, ALIAS_KEY, keystorepw);
+		if(!LogUtils.getInstance().verifyBlockchainIntegrity())
+			throw new Exception("The blockchain was corrupted");
 	}
 
 	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,
