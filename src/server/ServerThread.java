@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -114,6 +115,9 @@ public class ServerThread extends Thread {
 		} catch (FileIntegrityViolationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -204,8 +208,10 @@ public class ServerThread extends Thread {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException {
+	private void mainLoop() throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException, KeyStoreException, CertificateException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command
@@ -244,6 +250,9 @@ public class ServerThread extends Thread {
 			case "read":
 				ReadHandler.getInstance().run(outStream, loggedUser);
 				break;
+				
+			case "getCertificate":
+				GetCertificateHandler.getInstance().run(inStream, outStream);
 
 			default:
 				//Default case for wrong command message

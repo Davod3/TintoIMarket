@@ -93,6 +93,9 @@ public class SessionHandler {
 			} catch (BadPaddingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (CertificateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		else {

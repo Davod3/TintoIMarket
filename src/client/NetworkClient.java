@@ -1,5 +1,7 @@
 package client;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,6 +16,7 @@ import java.security.SignatureException;
 import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -39,6 +42,7 @@ public class NetworkClient {
 	private ObjectOutputStream outStream;
 	private PrivateKey pk;
 	private KeyStore truststore;
+	private String truststorePath;
 	
 	private static final String DEFAULT_PORT = "12345";
 	private static final String TRUSTSTORE_PWD = "keystorepwd";
@@ -50,8 +54,11 @@ public class NetworkClient {
 	 * @param serverAddress				The address of the server to connect to
 	 * @throws IOException				When an I/O error occurs while 
 	 * 									reading/writing to a file
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
 	 */
-	public NetworkClient(String serverAddress, String truststore) throws IOException {
+	public NetworkClient(String serverAddress, String truststore) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 		//Check if address contains port, otherwise use default
 		String[] addressSplit;
 		if(serverAddress.contains(":")) {
@@ -63,6 +70,8 @@ public class NetworkClient {
 			addressSplit[1] = DEFAULT_PORT;
 		}
 		
+		
+		this.truststorePath = truststore;
 		System.setProperty("javax.net.ssl.trustStore", truststore);
 		System.setProperty("javax.net.ssl.trustStorePassword", TRUSTSTORE_PWD);
 		
@@ -73,8 +82,21 @@ public class NetworkClient {
 		//Connect to server
 		SocketFactory sf = SSLSocketFactory.getDefault();
 		clientSocket = sf.createSocket(host, port);
+		
+		this.truststore = getKeyStore(truststore, TRUSTSTORE_PWD.toCharArray());
 
 		createStreams();
+	}
+	
+	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,
+	NoSuchAlgorithmException, CertificateException, IOException {
+		
+		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+		File ks_file = new File(keystore);
+		FileInputStream fis = new FileInputStream(ks_file);
+		ks.load(fis, keystorepw);
+		
+		return ks;
 	}
 
 	/**
@@ -330,13 +352,14 @@ public class NetworkClient {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyStoreException 
 	 * @throws InvalidKeyException 
+	 * @throws CertificateException 
 	 */
 	public String talk(String userTo, String message)
-			throws IOException, ClassNotFoundException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+			throws IOException, ClassNotFoundException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, CertificateException {
 		String result = "";
 		
 		//Encrypt the message
-		AssimetricMessageEncryption ame = new AssimetricMessageEncryption(this.truststore, TRUSTSTORE_PWD, inStream, outStream);
+		AssimetricMessageEncryption ame = new AssimetricMessageEncryption(this.truststore, TRUSTSTORE_PWD, inStream, outStream, this.truststorePath);
 		byte[] encryptedMsg = ame.encrypt(userTo, message);
 		
 		//Send talk command
