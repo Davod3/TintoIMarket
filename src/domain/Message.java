@@ -1,5 +1,8 @@
 package domain;
 
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+
 /**
  * The Message class represents a message in this application.
  * Each message has a sender, a receiver and the message itself.
@@ -8,11 +11,11 @@ package domain;
  * @author David Pereira 	nº 56361
  * @author Miguel Cut		nº 56339
  */
-public class Message {
+public class Message implements Serializable{
 	
 	private String from;
 	private String to;
-	private String content;
+	private byte[] content;
 	
 	/**
 	 * Creates a new Message given the sender, the receiver and the message
@@ -21,7 +24,7 @@ public class Message {
 	 * @param to			The receiver
 	 * @param content		The message
 	 */
-	public Message(String from, String to, String content) {
+	public Message(String from, String to, byte[] content) {
 		this.from = from;
 		this.to = to;
 		this.content = content;
@@ -32,7 +35,7 @@ public class Message {
 	 * 
 	 * @return	The content of the message
 	 */
-	public String getContent() {
+	public byte[] getContent() {
 		return content;
 	}
 	

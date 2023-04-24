@@ -49,13 +49,13 @@ public class TalkHandler {
 		String result = "";
 		//Read user's name and the message to be sent to the user
 		String user = (String) inStream.readObject();
-		String msg = (String) inStream.readObject();
+		byte[] encryptedMsg = (byte[]) inStream.readObject();
 		//Get User's Catalog only instance
 		UserCatalog userCatalog = UserCatalog.getInstance();
 		//Check if user exists
 		if (userCatalog.exists(user)) {
 			//Create message
-			Message msgTosend = new Message(loggedUser, user, msg);
+			Message msgTosend = new Message(loggedUser, user, encryptedMsg);
 			//Send message to user
 			userCatalog.addMessageToUser(user, msgTosend);
 			result = "Message successfully sent to " + user + FileUtils.EOL;

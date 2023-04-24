@@ -17,6 +17,7 @@ import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Stack;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,6 +26,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
+import domain.Message;
 import utils.FileUtils;
 
 /**
@@ -42,11 +44,14 @@ public class NetworkClient {
 	private ObjectOutputStream outStream;
 	private PrivateKey pk;
 	private KeyStore truststore;
+	private KeyStore keystore;
 	private String truststorePath;
+	private String keystorePwd;
 	
 	private static final String DEFAULT_PORT = "12345";
 	private static final String TRUSTSTORE_PWD = "keystorepwd";
 	private static final String KEY_ALIAS = "client";
+	private static final String EOL = System.lineSeparator();
 		
 	/**
 	 * Creates a new network for the client
@@ -58,7 +63,7 @@ public class NetworkClient {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyStoreException 
 	 */
-	public NetworkClient(String serverAddress, String truststore) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+	public NetworkClient(String serverAddress, String truststore, String keystore, String keystorepwd) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 		//Check if address contains port, otherwise use default
 		String[] addressSplit;
 		if(serverAddress.contains(":")) {
@@ -84,6 +89,8 @@ public class NetworkClient {
 		clientSocket = sf.createSocket(host, port);
 		
 		this.truststore = getKeyStore(truststore, TRUSTSTORE_PWD.toCharArray());
+		this.keystore = getKeyStore(keystore, keystorepwd.toCharArray());
+		this.keystorePwd = keystorepwd;
 
 		createStreams();
 	}
@@ -362,6 +369,11 @@ public class NetworkClient {
 		AssimetricMessageEncryption ame = new AssimetricMessageEncryption(this.truststore, TRUSTSTORE_PWD, inStream, outStream, this.truststorePath);
 		byte[] encryptedMsg = ame.encrypt(userTo, message);
 		
+		if(encryptedMsg.length <= 0) {
+			
+			return "Failed to encrypt message!";
+		}
+		
 		//Send talk command
 		outStream.writeObject("talk");
 		//Send the receiver of the message
@@ -383,13 +395,35 @@ public class NetworkClient {
 	 * 									that does not match/exist
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send a message	
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
+	 * @throws UnrecoverableKeyException 
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeyException 
 	 */
-	public String read() throws ClassNotFoundException, IOException {
-		String result = "";
+	@SuppressWarnings("unchecked")
+	public String read() throws ClassNotFoundException, IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
 		//Send read command
 		outStream.writeObject("read");
 		//Get result
-		result = (String) inStream.readObject();
-		return result;
+		Stack<Message> msgList = (Stack<Message>) inStream.readObject();
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("You have " + msgList.size() + " messages to read! " + EOL);
+		
+		while(!msgList.isEmpty()) {
+			
+			Message m = msgList.pop();
+			
+			AssimetricMessageDecryption amd = new AssimetricMessageDecryption(this.keystore, this.keystorePwd);
+			
+			sb.append("From: " + m.getFrom() + ": " + amd.decrypt(m.getContent()));
+				
+		}
+		
+		return sb.toString();
 	}
 }

@@ -85,7 +85,8 @@ public class ServerThread extends Thread {
 				System.out.println("Authentication failed");
 			}
 		} catch (IOException e) {
-			System.out.println("User exited");
+			//System.out.println("User exited");
+			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {

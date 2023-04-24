@@ -9,6 +9,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import javax.crypto.BadPaddingException;
@@ -44,7 +45,7 @@ public class SessionHandler {
 	 */
 	public SessionHandler(String serverAdress, String truststore, String keystore, String keystorePassword ,String user)
 			throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
-		this.netClient = new NetworkClient(serverAdress, truststore);
+		this.netClient = new NetworkClient(serverAdress, truststore, keystore, keystorePassword);
 		sessionValid = netClient.validateSession(getKeyStore(keystore, keystorePassword.toCharArray()), keystorePassword, user);
 	}
 	
@@ -107,6 +108,21 @@ public class SessionHandler {
 					} catch (ClassNotFoundException | IOException e) {
 						System.out.println("Error reading messages\n");
 						System.exit(-1);
+					} catch (UnrecoverableKeyException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (KeyStoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchPaddingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalBlockSizeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BadPaddingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 				else if (command[0].equals("wallet") || command[0].equals("w")) {

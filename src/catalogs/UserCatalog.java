@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -135,9 +137,9 @@ public class UserCatalog {
 			//Split the data
 			String[] splitData = line.split(SEPARATOR);
 			//Create a new message with the given data
-			Message message = new Message(splitData[0], splitData[1], splitData[2]);
+			//Message message = new Message(splitData[0], splitData[1], splitData[2]);
 			//Add the message to the database
-			user.addMessage(message);	
+			//user.addMessage(message);	
 		}
 		br.close();
 	}
@@ -262,23 +264,21 @@ public class UserCatalog {
 	 * @throws IOException		When an I/O error occurs while
 	 * 							reading/writing to a file
 	 */
-	public String readMessages(String loggedUser) throws IOException {
+	public Stack<Message> readMessages(String loggedUser) throws IOException {
 		//Get user by username
 		User user = getUser(loggedUser);
-		//Open a StringBuilder to write all messages
-		StringBuilder sb = new StringBuilder();
 		//Get all unread messages
 		Stack<Message> userInbox = user.getInbox();
-		//Write the numbers of unread messages the user has
-		sb.append("You have: " + userInbox.size() + " new messages" + FileUtils.EOL);
+		
+		Stack<Message> result = new Stack<>();
+		
 		//Write all unread messages
 		while(!userInbox.isEmpty()) {
 			Message message = userInbox.pop();
-			sb.append("-->From: " + message.getFrom()
-				+ "; Message: " + message.getContent() + FileUtils.EOL);
+			result.add(message);
 		}
 		updateMessages(user);
-		return sb.toString();
+		return result;
 	}
 	
 	/**
@@ -332,14 +332,26 @@ public class UserCatalog {
 		messageDir.getParentFile().mkdirs(); //Create parent directory if non existent
 		messageDir.createNewFile(); //Create file before reading
 		//Open reader to read from file
-		BufferedWriter bf = new BufferedWriter(new FileWriter(filePath));
-		//Get all unread messages
+		
 		List<Message> messages = user.getInbox();
-		//Write all unread messages
-		for(Message msg : messages) {
-			bf.append(msg.getFrom() + SEPARATOR + msg.getTo() + SEPARATOR + msg.getContent() + FileUtils.EOL);
-		}
-		bf.close();	
+		
+		System.out.println("Gets here 1");
+		
+		FileOutputStream fileOut = new FileOutputStream(filePath);
+		
+		System.out.println("Gets here 2");
+		
+		ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		
+		System.out.println("Gets here 3");
+		
+		out.writeObject(messages);
+		
+		System.out.println("Gets here 4");
+		
+		out.close();
+		fileOut.close();
+	
 	}
 
 	public Certificate getUserCertificate(String user) throws FileNotFoundException, CertificateException {

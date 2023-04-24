@@ -50,12 +50,15 @@ public class AssimetricMessageEncryption {
 			outStream.writeObject(receiver);
 			cert = (Certificate) inStream.readObject();	
 			
-			//Save it to truststore
-			this.truststore.setCertificateEntry(receiver, cert);
-			FileOutputStream out = new FileOutputStream(this.truststorePath);
-			this.truststore.store(out, this.pwd.toCharArray());
+			if(cert != null) {
+				//Save it to truststore
+				this.truststore.setCertificateEntry(receiver, cert);
+				FileOutputStream out = new FileOutputStream(this.truststorePath);
+				this.truststore.store(out, this.pwd.toCharArray());
+			} else {
+				return new byte[0];
+			}
 			
-			System.out.println("This happens");
 		}
 		
 		// Get public key from certificate
@@ -68,10 +71,6 @@ public class AssimetricMessageEncryption {
 		
 		return c.doFinal(message.getBytes());
 
-	}
-	
-	public String decrypt() {
-		return null;
 	}
 
 }
