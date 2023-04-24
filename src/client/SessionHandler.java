@@ -11,6 +11,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 /**
  * This class represents the session handler for the client of this application.
  * It digests the user commands for the NetworkClient class. Also sends error messages
@@ -77,6 +81,18 @@ public class SessionHandler {
 				result = netClient.talk( command[1], builder.toString());
 			} catch (ClassNotFoundException | IOException | ArrayIndexOutOfBoundsException e) {
 				System.out.println("Error sending message. Invalid user.\n");
+			} catch (KeyStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchPaddingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalBlockSizeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BadPaddingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		else {

@@ -15,6 +15,9 @@ import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -35,6 +38,7 @@ public class NetworkClient {
 	private ObjectInputStream inStream;
 	private ObjectOutputStream outStream;
 	private PrivateKey pk;
+	private KeyStore truststore;
 	
 	private static final String DEFAULT_PORT = "12345";
 	private static final String TRUSTSTORE_PWD = "keystorepwd";
@@ -320,16 +324,28 @@ public class NetworkClient {
 	 * 										or the outStream can't send a message
 	 * @throws ClassNotFoundException		When trying to find the class of an object
 	 * 										that does not match/exist	
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
+	 * @throws InvalidKeyException 
 	 */
 	public String talk(String userTo, String message)
-			throws IOException, ClassNotFoundException {
+			throws IOException, ClassNotFoundException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
 		String result = "";
+		
+		//Encrypt the message
+		AssimetricMessageEncryption ame = new AssimetricMessageEncryption(this.truststore, TRUSTSTORE_PWD, inStream, outStream);
+		byte[] encryptedMsg = ame.encrypt(userTo, message);
+		
 		//Send talk command
 		outStream.writeObject("talk");
 		//Send the receiver of the message
 		outStream.writeObject(userTo);
+		
 		//Send the message
-		outStream.writeObject(message);
+		outStream.writeObject(encryptedMsg);
 		//Get result
 		result = (String) inStream.readObject();
 		return result;
