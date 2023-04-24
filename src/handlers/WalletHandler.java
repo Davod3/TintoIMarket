@@ -35,9 +35,10 @@ public class WalletHandler {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws ClassNotFoundException 
 	 */
 	public void run(ObjectOutputStream outStream, String loggedUser)
-			throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
 		//Get user's Catalog only instance
 		UserCatalog userCatalog = UserCatalog.getInstance();
 		//Send message with loggedUser's balance

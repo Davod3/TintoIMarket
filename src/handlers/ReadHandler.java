@@ -34,9 +34,10 @@ public class ReadHandler {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws ClassNotFoundException 
 	 */
 	public void run(ObjectOutputStream outStream, String loggedUser)
-			throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
 		outStream.writeObject(UserCatalog.getInstance().readMessages(loggedUser));
 	}
 	

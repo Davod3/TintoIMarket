@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -72,5 +73,10 @@ public class User {
 	 */
 	public synchronized void addMessage(Message msg) {
 		inbox.push(msg);
+	}
+
+	public void setInbox(Stack<Message> inbox) {
+		this.inbox = inbox;
+		
 	}
 }

@@ -113,6 +113,9 @@ public class Server {
 			} catch (IOException e) {
 				System.out.println("Failed to connect to client!");
 				System.out.println(e.getMessage());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

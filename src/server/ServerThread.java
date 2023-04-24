@@ -54,8 +54,9 @@ public class ServerThread extends Thread {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws ClassNotFoundException 
 	 */
-	public ServerThread(Socket inSoc, KeyStore ks) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+	public ServerThread(Socket inSoc, KeyStore ks) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
 		//Save client's socket
 		this.socket = inSoc;
 		//Get the unique instance of User Catalog

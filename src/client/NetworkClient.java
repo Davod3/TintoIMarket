@@ -420,7 +420,7 @@ public class NetworkClient {
 			
 			AssimetricMessageDecryption amd = new AssimetricMessageDecryption(this.keystore, this.keystorePwd);
 			
-			sb.append("From: " + m.getFrom() + ": " + amd.decrypt(m.getContent()));
+			sb.append("From: " + m.getFrom() + ": " + amd.decrypt(m.getContent()) + EOL);
 				
 		}
 		

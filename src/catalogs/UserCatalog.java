@@ -59,11 +59,12 @@ public class UserCatalog {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws ClassNotFoundException 
 	 */
 	private UserCatalog() throws IOException,
 	InvalidKeyException, NoSuchAlgorithmException,
 	InvalidKeySpecException, NoSuchPaddingException,
-	InvalidAlgorithmParameterException {
+	InvalidAlgorithmParameterException, ClassNotFoundException {
 		this.userList = loadUsers();
 	}
 
@@ -77,10 +78,11 @@ public class UserCatalog {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws ClassNotFoundException 
 	 */
 	private synchronized Map<String, User> loadUsers() throws IOException,
 	InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException,
-	NoSuchPaddingException, InvalidAlgorithmParameterException {
+	NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
 		//Create a map to load users
 		Map<String, User> users = new HashMap<>();
 		//Open the file that contains all the users information
@@ -120,28 +122,24 @@ public class UserCatalog {
 	 * 
 	 * @param user				The user for who we want to get the unread messages
 	 * @throws IOException		When an I/O error occurs while reading from a file
+	 * @throws ClassNotFoundException 
 	 */
-	private void loadMessages(User user) throws IOException {
+	@SuppressWarnings("unchecked")
+	private void loadMessages(User user) throws IOException, ClassNotFoundException {
 		//Create the user path
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
+		
 		//Get the file with the specific user path
 		File messageDir = new File(filePath);
 		messageDir.getParentFile().mkdirs(); //Create parent directory if non existent
 		messageDir.createNewFile(); //Create file before reading
-		//Open a reader to read the messages from the file
-		BufferedReader br = new BufferedReader(new FileReader(filePath));
-		//Read messages from the file
-		String line;
-		while((line = br.readLine()) != null) {
-			//from:to:content
-			//Split the data
-			String[] splitData = line.split(SEPARATOR);
-			//Create a new message with the given data
-			//Message message = new Message(splitData[0], splitData[1], splitData[2]);
-			//Add the message to the database
-			//user.addMessage(message);	
-		}
-		br.close();
+		
+		FileInputStream fileIn = new FileInputStream(filePath);
+		ObjectInputStream in = new ObjectInputStream(fileIn);
+		
+		Stack<Message> inbox = (Stack<Message>) in.readObject();
+		
+		user.setInbox(inbox);
 	}
 
 	/**
@@ -182,10 +180,11 @@ public class UserCatalog {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws ClassNotFoundException 
 	 */
 	public static UserCatalog getInstance() throws IOException,
 	InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException,
-	NoSuchPaddingException, InvalidAlgorithmParameterException {
+	NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
 		if (instance == null)
 			instance = new UserCatalog();
 		return instance;
@@ -325,6 +324,9 @@ public class UserCatalog {
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 */
 	private synchronized void updateMessages(User user) throws IOException {
+		
+		System.out.println("HELLOOOOOOO 1");
+		
 		//Get path to file with all unread messages
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
 		//Get file with the specified path
@@ -333,24 +335,19 @@ public class UserCatalog {
 		messageDir.createNewFile(); //Create file before reading
 		//Open reader to read from file
 		
-		List<Message> messages = user.getInbox();
-		
-		System.out.println("Gets here 1");
+		Stack<Message> messages = user.getInbox();
 		
 		FileOutputStream fileOut = new FileOutputStream(filePath);
 		
-		System.out.println("Gets here 2");
-		
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		
-		System.out.println("Gets here 3");
 		
 		out.writeObject(messages);
 		
-		System.out.println("Gets here 4");
-		
 		out.close();
 		fileOut.close();
+		
+		
+		System.out.println("HELLOOOOOOO 2");
 	
 	}
 

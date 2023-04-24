@@ -29,7 +29,7 @@ public class AssimetricMessageDecryption {
 	
 	public String decrypt(byte[] encryptedMessage) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 			
-			PrivateKey sk = (PrivateKey) ks.getKey("client", keystorePwd.toCharArray());
+			PrivateKey sk = (PrivateKey) ks.getKey(KEYPAIR_ALIAS, keystorePwd.toCharArray());
 			
 			Cipher c = Cipher.getInstance("RSA");
 			c.init(Cipher.DECRYPT_MODE, sk);
