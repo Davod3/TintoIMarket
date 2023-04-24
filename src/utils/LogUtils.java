@@ -113,11 +113,15 @@ public class LogUtils implements Serializable {
         for (File file : files) {
         	Block block = readBlockFromFile(file.getName(), count);
         	if(count != 0) {
-        		if(!new String(block.previousHash).equals(new String(lastBlock.getHash()))) 
+        		if(!new String(block.previousHash).equals(new String(lastBlock.getHash()))) {
         			return false; 		
+        		}
+
         		lastBlock.calculateBlockHash();
-        		if(!new String(block.previousHash).equals(new String(lastBlock.getHash()))) 
+
+        		if(!new String(block.previousHash).equals(new String(lastBlock.getHash()))) {
         			return false;
+        		}
         	}
         	lastBlock = block;
         	count++;
@@ -136,7 +140,11 @@ public class LogUtils implements Serializable {
             byte[] blockHash = null;
             
             previousHash = reader.readLine().getBytes();
-            numTransactions = Long.parseLong(reader.readLine());
+            try {
+	            numTransactions = Long.parseLong(reader.readLine());
+            }catch(NumberFormatException e) {
+            	e.printStackTrace();
+            }
             
             for(int i = 0; i < numTransactions; i++) {
             	line = reader.readLine();
@@ -146,6 +154,8 @@ public class LogUtils implements Serializable {
             		throw new Exception("The blockchain was corrupted");
             }
             blockHash = reader.readLine().getBytes();
+            if(reader.readLine() != null)
+            	throw new Exception("The blockchain was corrupted");
             reader.close();
                
             block = new Block(previousHash, blockId);
@@ -213,8 +223,7 @@ public class LogUtils implements Serializable {
 			md.reset();
 			md.update(signedBlockBytes);
 
-			byte[] truncatedHash = Arrays.copyOf(md.digest(), 32);
-			this.blockHash = truncatedHash;
+			this.blockHash = md.digest();
 	    }
 	    
 	    public void saveBlockToFile() {
