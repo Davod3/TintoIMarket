@@ -21,6 +21,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 
 import utils.PBE;
 import utils.VerifyHash;
+import utils.LogUtils;
 
 /**
  * This class represents the server of this application
@@ -36,6 +37,7 @@ public class Server {
 	private static final String SERVER_FILES_DIR = "server_files/";
 	private KeyStore ks = null;
 	private String keystorePath;
+	private static final String ALIAS_KEY = "server";
 	private String keystorePwd;
 	
 	/**
@@ -63,6 +65,10 @@ public class Server {
 				
 		//Set private key for hashing
 		VerifyHash.getInstance().setPrivateKey(this.ks, this.keystorePwd);
+		
+		LogUtils.getInstance().setKeyStore(ks, ALIAS_KEY, keystorepw);
+		if(!LogUtils.getInstance().verifyBlockchainIntegrity())
+			throw new Exception("The blockchain was corrupted");
 	}
 
 	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,

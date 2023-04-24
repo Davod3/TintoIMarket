@@ -5,7 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.SignedObject;
+import java.security.UnrecoverableKeyException;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.NoSuchPaddingException;
@@ -15,6 +19,7 @@ import catalogs.WineCatalog;
 import domain.Sale;
 import utils.FileIntegrityViolationException;
 import utils.FileUtils;
+import utils.LogUtils;
 
 /**
  * The BuyHandler class represents the action of buying a wine. 
@@ -44,15 +49,21 @@ public class BuyHandler {
 	 * @throws NoSuchPaddingException 
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
+	 * @throws SignatureException 
+	 * @throws UnrecoverableKeyException 
 	 * @throws InvalidKeyException 
 	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Read the name of the wine, the seller and the quantity to buy
-		String wine = (String) inStream.readObject();
-		String seller = (String) inStream.readObject();
-		int quantity = (int) inStream.readObject();
+		SignedObject signedWine = (SignedObject) inStream.readObject();
+		String wine = (String) signedWine.getObject();
+		SignedObject signedSeller = (SignedObject) inStream.readObject();
+		String seller = (String) signedSeller.getObject();
+		SignedObject signedQuantity = (SignedObject) inStream.readObject();
+		int quantity = (int) signedQuantity.getObject();
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Create the result message
@@ -83,7 +94,7 @@ public class BuyHandler {
 			return;
 		}
 		//Check if buyer has enough money
-		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * sale.getQuantity());
+		boolean buyerHasEnoughMoney = UserCatalog.getInstance().hasEnoughMoney(loggedUser, sale.getValue() * quantity);
 		if (!buyerHasEnoughMoney) {
 			result = "You don't have enough money" + FileUtils.EOL;
 		} else {
@@ -94,8 +105,11 @@ public class BuyHandler {
 			//If there are not more units to buy from the seller, delete the sale
 			if(sale.getQuantity() == 0)
 				wineCatalog.removeSaleFromSeller(wine, seller);
+			
 			result = "Wine " + wine + " successfully bought!" + FileUtils.EOL;
 			wineCatalog.updateWines();
+			
+			LogUtils.getInstance().writeBuy(wine, quantity, quantity, loggedUser);
 		}
 		//Send result message
 		outStream.writeObject(result);

@@ -94,12 +94,9 @@ public class UserCatalog {
 		String usersFile = PBE.getInstance().decryption(userFile);
 		
 		if (usersFile != null) {
-			System.out.println("BADUM TSS");
-			System.out.println(usersFile);
 			//Read each line of the file
 			for (String line: usersFile.split(FileUtils.EOL)) {
 				//Split the data
-				System.out.println(line + ".....................");
 				String[] splitData = line.split(SEPARATOR);
 				if (splitData.length >= 2) {
 					//Create new user with the given name and password
@@ -107,12 +104,9 @@ public class UserCatalog {
 					//Load all unread messages of that user
 					loadMessages(user);
 					//Load user in map
-					System.out.println(splitData[0] + "--------------");
 					users.put(splitData[0], user);	
 				}
 			}
-		}else {
-			System.out.println("NULL");
 		}
 		return users;
 	}
@@ -222,12 +216,9 @@ public class UserCatalog {
 		//Desencriptar ficheiro
 		String usersFile = PBE.getInstance().decryption(new File(USER_FILE_PATH));
 		
-		System.out.println(usersFile + "´´´´´´´´´´´´´´");
-		
 		//Adicionar user a String
 		if (usersFile != null) {
 			usersFile = usersFile + userId + SEPARATOR + certFileName + FileUtils.EOL;
-			System.out.println(usersFile + "##########################");
 		}
 		else {
 			usersFile = userId + SEPARATOR + certFileName + FileUtils.EOL;

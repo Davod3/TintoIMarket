@@ -13,6 +13,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.SignedObject;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -65,7 +66,6 @@ public class ServerThread extends Thread {
 		this.outStream = new ObjectOutputStream(socket.getOutputStream());
 		this.inStream = new ObjectInputStream(socket.getInputStream());
 		this.ks = ks;
-		
 		//Print message with result
 		System.out.println("New connection established!");
 	}
@@ -91,10 +91,8 @@ public class ServerThread extends Thread {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SignatureException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
@@ -117,9 +115,20 @@ public class ServerThread extends Thread {
 		} catch (FileIntegrityViolationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (UnrecoverableKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (KeyStoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			
+			try {
+				socket.close();
+			} catch (IOException e1) {
+				System.out.println("Error closing socket");
+			}
+			
 		}
 	}
 
@@ -208,12 +217,15 @@ public class ServerThread extends Thread {
 	 * @throws NoSuchPaddingException 
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
+	 * @throws SignatureException 
+	 * @throws UnrecoverableKeyException 
 	 * @throws InvalidKeyException 
 	 * @throws FileIntegrityViolationException 
 	 * @throws KeyStoreException 
 	 * @throws CertificateException 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException, KeyStoreException, CertificateException {
+	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command
