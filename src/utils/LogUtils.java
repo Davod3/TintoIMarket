@@ -223,7 +223,9 @@ public class LogUtils implements Serializable {
 			md.reset();
 			md.update(signedBlockBytes);
 
-			this.blockHash = md.digest();
+			byte[] hash = md.digest();
+			String hashStr = Arrays.toString(hash);
+			this.blockHash = hashStr.getBytes();
 	    }
 	    
 	    public void saveBlockToFile() {
