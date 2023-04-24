@@ -3,6 +3,7 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
@@ -32,9 +33,10 @@ public class ClassifyHandler {
 	 *                                outStream can't send the result message
 	 * @throws NoSuchAlgorithmException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		// Read the name of the wine and the rating
 		String wine = (String) inStream.readObject();
 		double rating = (int) inStream.readObject();

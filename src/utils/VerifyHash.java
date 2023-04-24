@@ -11,10 +11,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+
 import catalogs.WineCatalog;
 import domain.User;
 
@@ -25,10 +33,13 @@ public class VerifyHash {
 	private static final String HASH_STORAGE = "server_files/storage/hash/";
 	private static final String HASH_FILES = "server_files/storage/hash/hashfiles.txt";
 	private static final String EOL = System.lineSeparator();
+	private static final String SECRET_KEY_ALIAS = "mackey";
+	private SecretKey secret = null;
 
 	
 	private VerifyHash() throws IOException, ClassNotFoundException {
 		file_hash = loadHash();
+		
 	}
 	
 	private Map<String, byte[]> loadHash() throws IOException, ClassNotFoundException {
@@ -72,7 +83,7 @@ public class VerifyHash {
 		return instance;
 	}
 	
-	public void verify(File file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
+	public void verify(File file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		
 		int fileLen = (int) file.length();
 		
@@ -98,17 +109,20 @@ public class VerifyHash {
 	 * @throws ClassNotFoundException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
-	public void verify(byte[] file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
+	public void verify(byte[] file, String fileName) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 			
 			byte[] storedHash = this.file_hash.get(fileName);
 
 			if(storedHash != null) {
 				
-				MessageDigest md = MessageDigest.getInstance("SHA");
-				byte[] newHash = md.digest(file);
+				Mac mac = Mac.getInstance("HmacSHA1");
+				mac.init(this.secret);
+				mac.update(file);
+				byte[] newHash = mac.doFinal();
 				
-				if(!MessageDigest.isEqual(storedHash, newHash)) {
+				if(!isEqual(storedHash, newHash)) {
 					throw new FileIntegrityViolationException("File " + fileName + " integrity was violated!");
 				}
 			} else {
@@ -118,10 +132,12 @@ public class VerifyHash {
 		
 	}
 	
-	public void updateHash(byte[] file, String fileName) throws NoSuchAlgorithmException, IOException, ClassNotFoundException, FileIntegrityViolationException {
+	public void updateHash(byte[] file, String fileName) throws NoSuchAlgorithmException, IOException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
 		
-		MessageDigest md = MessageDigest.getInstance("SHA");
-		byte[] hash =  md.digest(file);
+		Mac mac = Mac.getInstance("HmacSHA1");
+		mac.init(this.secret);
+		mac.update(file);
+		byte[] hash =  mac.doFinal();
 		
 		if(!this.file_hash.containsKey(fileName)) {
 			
@@ -158,6 +174,30 @@ public class VerifyHash {
 		oos.writeObject(hash);
 		oos.close();
 		fos.close();
+	}
+
+	public void setPrivateKey(KeyStore ks, String keystorePwd) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+		
+		this.secret = (SecretKey) ks.getKey(SECRET_KEY_ALIAS, keystorePwd.toCharArray());
+		
+	}
+	
+	private boolean isEqual(byte[] newHash, byte[] oldHash) {
+		
+		if(newHash.length != oldHash.length) {
+			return false;
+		}
+		
+		for(int i = 0; i < newHash.length; i++) {
+			
+			if(newHash[i] != oldHash[i]) {
+				return false;
+			}
+			
+		}
+		
+		return true;
+		
 	}
 
 }

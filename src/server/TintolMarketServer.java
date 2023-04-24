@@ -6,6 +6,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -72,6 +73,8 @@ public class TintolMarketServer {
 		//Create Server
 		Server myServer;
 		try {
+			
+			System.out.println(keystorepw);
 			myServer = new Server(port, cipherpw, keystore, keystorepw);
 			myServer.run();
 		} catch (KeyStoreException e) {
@@ -88,6 +91,12 @@ public class TintolMarketServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnrecoverableKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

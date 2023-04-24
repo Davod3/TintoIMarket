@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import catalogs.WineCatalog;
@@ -38,9 +39,10 @@ public class AddHandler {
 	 * 									or the outStream can't send the result message
 	 * @throws NoSuchAlgorithmException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		//Read wine name and image file of the wine
 		String wine = (String) inStream.readObject();
 		File received = FileUtils.receiveFile(SERVER_IMAGES_DIR, inStream);

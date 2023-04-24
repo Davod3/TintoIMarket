@@ -10,6 +10,7 @@ import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -19,6 +20,7 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 
 import utils.PBE;
+import utils.VerifyHash;
 
 /**
  * This class represents the server of this application
@@ -47,14 +49,20 @@ public class Server {
 	 * @throws IOException 
 	 * @throws CertificateException 
 	 * @throws NoSuchAlgorithmException 
+	 * @throws ClassNotFoundException 
+	 * @throws UnrecoverableKeyException 
 	 */
-	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ClassNotFoundException, UnrecoverableKeyException {
 		this.sPort = port;
 		this.ks = getKeyStore(keystore, keystorepw.toCharArray());
 		this.keystorePath = keystore;
 		this.keystorePwd = keystorepw;
+		
 		//Criar PBE singleton com a password cipherpw;
 		PBE.getInstance().setPBE(cipherpw);
+				
+		//Set private key for hashing
+		VerifyHash.getInstance().setPrivateKey(this.ks, this.keystorePwd);
 	}
 
 	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,

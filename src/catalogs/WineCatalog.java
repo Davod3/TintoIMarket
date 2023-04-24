@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +43,9 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
-	private WineCatalog() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
+	private WineCatalog() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		wineList = loadWines();
 	}
 
@@ -56,8 +58,9 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
-	public static WineCatalog getInstance() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
+	public static WineCatalog getInstance() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		if (instance == null)
 			instance = new WineCatalog();
 		return instance;
@@ -72,9 +75,10 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
 	private synchronized HashMap<String, Wine> loadWines()
-			throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
+			throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		//Create a map to store all wines
 		HashMap<String, Wine> map = new HashMap<String, Wine>();
 		//Get file with all wines
@@ -113,8 +117,9 @@ public class WineCatalog {
 	 * @throws FileIntegrityViolationException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
+	 * @throws InvalidKeyException 
 	 */
-	private synchronized void loadSales(Wine wine) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException {
+	private synchronized void loadSales(Wine wine) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		//Get file with wine sales
 		File saleFile = new File(SALES_FILE_PATH);
 		saleFile.createNewFile();
@@ -148,8 +153,9 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
-	public synchronized void updateWines() throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
+	public synchronized void updateWines() throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
 		
 		//Get all wines
 		Set<String> keys = wineList.keySet();
@@ -212,9 +218,10 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
 	public synchronized boolean createWine(String wine, File received)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
 		//Create new Wine
 		Wine newWine = new Wine(wine, received);
 		//If wine does not exist already in dataBase
@@ -237,9 +244,10 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
 	public synchronized void rate(String wine, double rating)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
 		//Get wine
 		Wine wineToRate = getWine(wine);
 		//Set his rating
@@ -309,9 +317,10 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
 	public synchronized void addSaleToWine(String wineName, Sale sale)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
 		Wine wine = wineList.get(wineName);
 		wine.addSale(sale);
 		updateWines();
@@ -326,9 +335,10 @@ public class WineCatalog {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws FileIntegrityViolationException 
+	 * @throws InvalidKeyException 
 	 */
 	public synchronized void removeSaleFromSeller(String wine, String seller)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
+			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
 		wineList.get(wine).getSales().remove(getWineSaleBySeller(wine, seller));
 		updateWines();
 	}
