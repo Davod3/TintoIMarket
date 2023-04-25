@@ -30,19 +30,20 @@ public class AddHandler {
 	 * In case where there is already a wine with that name, returns an message error.
 	 * Initially, the wine has no rating and no units available in the market.
 	 * 
-	 * @param inStream					Stream for receiving input
-	 * @param outStream					Stream for outputting result
-	 * @throws ClassNotFoundException	When trying to find the class of an object
-	 * 									that does not match/exist
-	 * @throws IOException				When inStream does not receive input
-	 * 									(in this case, the name of the wine)
-	 * 									or the outStream can't send the result message
-	 * @throws NoSuchAlgorithmException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @param inStream							Stream for receiving input
+	 * @param outStream							Stream for outputting result
+	 * @throws ClassNotFoundException			When trying to find the class of an object
+	 * 											that does not match/exist
+	 * @throws IOException						When inStream does not receive input
+	 * 											(in this case, the name of the wine)
+	 * 											or the outStream can't send the result message
+	 * @throws NoSuchAlgorithmException 		If the requested algorithm is not available
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException,
+			FileIntegrityViolationException, InvalidKeyException {
 		//Read wine name and image file of the wine
 		String wine = (String) inStream.readObject();
 		File received = FileUtils.receiveFile(SERVER_IMAGES_DIR, inStream);

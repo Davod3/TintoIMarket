@@ -31,23 +31,24 @@ public class SellHandler {
 	 * Puts on sale the given quantity of the given wine for the given price.
 	 * If the given wine does not exist, send an error message.
 	 * 
-	 * @param inStream					Stream for receiving input
-	 * @param outStream					Stream for outputting result		
-	 * @param loggedUser				The user who is selling the wine
-	 * @throws ClassNotFoundException	When trying to find the class of an object
-	 * 									that does not match/exist
-	 * @throws IOException				When inStream does not receive input
-	 * 									or the outStream can't send the result message		
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
-	 * @throws SignatureException 
-	 * @throws UnrecoverableKeyException 
-	 * @throws InvalidKeyException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @param inStream							Stream for receiving input
+	 * @param outStream							Stream for outputting result		
+	 * @param loggedUser						The user who is selling the wine
+	 * @throws ClassNotFoundException			When trying to find the class of an object
+	 * 											that does not match/exist
+	 * @throws IOException						When inStream does not receive input
+	 * 											or the outStream can't send the result message		
+	 * @throws NoSuchAlgorithmException 		If the requested algorithm is not available
+	 * @throws KeyStoreException 				If an exception occurs while accessing the keystore
+	 * @throws SignatureException 				When an error occurs while signing an object
+	 * @throws UnrecoverableKeyException 		If the key cannot be recovered
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException,
+			InvalidKeyException, UnrecoverableKeyException, SignatureException,
+			KeyStoreException, FileIntegrityViolationException {
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Read the name of the wine, the price and the quantity to sell

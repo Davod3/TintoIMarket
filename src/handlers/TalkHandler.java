@@ -30,21 +30,23 @@ public class TalkHandler {
 	 * Sends the given message to the given user.
 	 * If the given user does not exist, send an error message.
 	 * 
-	 * @param inStream					Stream for receiving input
-	 * @param outStream					Stream for outputting result		
-	 * @param loggedUser				The user who wants to send the message
-	 * @throws ClassNotFoundException	When trying to find the class of an object
-	 * 									that does not match/exist
-	 * @throws IOException				When inStream does not receive input
-	 * 									or the outStream can't send the result message		
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
+	 * @param inStream								Stream for receiving input
+	 * @param outStream								Stream for outputting result		
+	 * @param loggedUser							The user who wants to send the message
+	 * @throws ClassNotFoundException				When trying to find the class of an object
+	 * 												that does not match/exist
+	 * @throws IOException							When inStream does not receive input
+	 * 												or the outStream can't send the result message		
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is passed to a method
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+			throws ClassNotFoundException, IOException, InvalidKeyException,
+			NoSuchAlgorithmException, InvalidKeySpecException,
+			NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Create result message
 		String result = "";
 		//Read user's name and the message to be sent to the user

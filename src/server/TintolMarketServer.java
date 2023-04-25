@@ -27,13 +27,15 @@ public class TintolMarketServer {
 	/**
 	 * Starts the server with the given IP address and Port number
 	 * 
-	 * @param args		The address of the server
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws InvalidKeyException 
+	 * @param args									The address of the server
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is passed to a method
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws InvalidKeyException 					If the key is invalid
 	 */
-	public static void main(String[] args) throws InvalidKeyException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+	public static void main(String[] args)
+			throws InvalidKeyException, InvalidKeySpecException,
+			NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Default port for connection
 		int port = 12345;
 		
@@ -58,19 +60,14 @@ public class TintolMarketServer {
 			
 			try {
 				port = Integer.parseInt(args[0]);
-				
 				System.out.println("Missing argument. Correct usage TintolMarketServer <port> <cipher-password> <keystore> <keystore-password> ");
-				
 				return;
 				
 			} catch (Exception e) {
-				
 				cipherpw = args[0];
 				keystore = args[1];
 				keystorepw = args[2];
-				
 			}
-			
 		}
 		
 		//Create Server

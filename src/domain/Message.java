@@ -1,7 +1,6 @@
 package domain;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * The Message class represents a message in this application.
@@ -13,6 +12,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class Message implements Serializable{
 	
+	private static final long serialVersionUID = -26859936239541210L;
 	private String from;
 	private String to;
 	private byte[] content;

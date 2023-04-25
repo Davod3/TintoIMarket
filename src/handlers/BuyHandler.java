@@ -38,25 +38,28 @@ public class BuyHandler {
 	 * available for sale, or if the buyer does not have enough money, sends
 	 * an error message.
 	 * 
-	 * @param inStream					Stream for receiving input
-	 * @param outStream					Stream for outputting result
-	 * @param loggedUser				The buyer
-	 * @throws ClassNotFoundException	When trying to find the class of an object
-	 * 									that does not match/exist
-	 * @throws IOException				When inStream does not receive input
-	 * 									or the outStream can't send the result message			
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
-	 * @throws SignatureException 
-	 * @throws UnrecoverableKeyException 
-	 * @throws InvalidKeyException 
-	 * @throws FileIntegrityViolationException 
+	 * @param inStream								Stream for receiving input
+	 * @param outStream								Stream for outputting result
+	 * @param loggedUser							The buyer
+	 * @throws ClassNotFoundException				When trying to find the class of an object
+	 * 												that does not match/exist
+	 * @throws IOException							When inStream does not receive input
+	 * 												or the outStream can't send the result message			
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is passed to a method
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws KeyStoreException 					If an exception occurs while accessing the keystore
+	 * @throws SignatureException 					When an error occurs while signing an object
+	 * @throws UnrecoverableKeyException 			If the key cannot be recovered
+	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws FileIntegrityViolationException 		If the loaded file is corrupted
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException,
+			InvalidKeyException, UnrecoverableKeyException, SignatureException,
+			KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException,
+			NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Read the name of the wine, the seller and the quantity to buy
 		SignedObject signedWine = (SignedObject) inStream.readObject();
 		String wine = (String) signedWine.getObject();
@@ -75,8 +78,6 @@ public class BuyHandler {
 					+ " doesn't exist, try again with another wine" + FileUtils.EOL);
 			return;
 		}
-		
-		System.out.println("Gets here 1");
 		
 		//Get the wine sale of the seller
 		Sale sale = wineCatalog.getWineSaleBySeller(wine, seller);

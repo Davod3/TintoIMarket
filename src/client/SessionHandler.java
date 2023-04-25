@@ -2,7 +2,6 @@ package client;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -35,16 +34,19 @@ public class SessionHandler {
 	 * Creates a new SessionHandler given the user, password
 	 * and the address of the server to connect to.
 	 * 
-	 * @param user						The user who's trying to log in
-	 * @param password					The user's password
-	 * @param serverAdress				The address of the server to connect to
-	 * @throws IOException				When an I/O error occurs while reading/writing to a file
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
+	 * @param user							The user who's trying to log in
+	 * @param password						The user's password
+	 * @param serverAdress					The address of the server to connect to
+	 * @throws IOException					When an I/O error occurs while reading/writing to a file
+	 * @throws CertificateException 		When an error occurs while generating the certificate
+	 * 										from the fileInputStream
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws KeyStoreException 			If an exception occurs while accessing the keystore
 	 */
-	public SessionHandler(String serverAdress, String truststore, String keystore, String keystorePassword ,String user)
-			throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+	public SessionHandler(String serverAdress, String truststore,
+			String keystore, String keystorePassword ,String user)
+			throws IOException, KeyStoreException,
+			NoSuchAlgorithmException, CertificateException {
 		this.netClient = new NetworkClient(serverAdress, truststore, keystore, keystorePassword);
 		sessionValid = netClient.validateSession(getKeyStore(keystore, keystorePassword.toCharArray()), keystorePassword, user);
 	}
@@ -63,13 +65,14 @@ public class SessionHandler {
 	 * This function sanitizes the commands as well and receives
 	 * the answer from the server.
 	 * 
-	 * @param command		The command entered by the current user
-	 * @return				Result message received by NetworkClient
-	 * @throws NoSuchAlgorithmException 
-	 * @throws SignatureException 
-	 * @throws InvalidKeyException 
+	 * @param command						The command entered by the current user
+	 * @return								Result message received by NetworkClient
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws SignatureException 			When an error occurs while signing an object
+	 * @throws InvalidKeyException 			If the key is invalid
 	 */
-	public String processCommand(String[] command) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+	public String processCommand(String[] command)
+			throws InvalidKeyException, SignatureException, NoSuchAlgorithmException {
 		String result = "";
 		if (command[0].equals("talk") || command[0].equals("t")) {
 			StringBuilder builder = new StringBuilder();
@@ -167,36 +170,43 @@ public class SessionHandler {
 						System.exit(-1);
 					}
 				}
-				else if (command[0].equals("classify") || command[0].equals("c")) {
-					try {
-						result = netClient.classify(command[1], command[2]);
-					} catch (ClassNotFoundException | IOException e) {
-						System.out.println("Error classifying wine\n");
-						System.exit(-1);
-					}
+				else if ((command[0].equals("classify") || command[0].equals("c")) && command[2].matches("[1-5]+")) {
+						try {
+							result = netClient.classify(command[1], command[2]);
+						} catch (ClassNotFoundException | IOException e) {
+							System.out.println("Error classifying wine\n");
+							System.exit(-1);
+						}
 				}
 				else {
 					System.out.println(COMMAND_ERROR);
 				}
 				break;
 			case 4:
-				if (command[0].equals("buy") || command[0].equals("b")) {
-					try {
-						result = netClient.buy(command[1], command[2], command[3]);
-					} catch (ClassNotFoundException | IOException e) {
-						System.out.println("Error buying wine\n");
-						System.exit(-1);
+				try {
+					int quantity = Integer.parseInt(command[3]);
+					if (quantity > 0) {
+						if (command[0].equals("buy") || command[0].equals("b") && command[2].matches("[1-5]+")) {
+							try {
+								result = netClient.buy(command[1], command[2], command[3]);
+							} catch (ClassNotFoundException | IOException e) {
+								System.out.println("Error buying wine\n");
+								System.exit(-1);
+							}
+						}
+						else if (command[0].equals("sell") || command[0].equals("s")) {
+							try {
+								result = netClient.sell(command[1], command[2], command[3]);
+							} catch (ClassNotFoundException | IOException e) {
+								System.out.println("Error selling wine\n");
+								System.exit(-1);
+							}
+						}
 					}
-				}
-				else if (command[0].equals("sell") || command[0].equals("s")) {
-					try {
-						result = netClient.sell(command[1], command[2], command[3]);
-					} catch (ClassNotFoundException | IOException e) {
-						System.out.println("Error selling wine\n");
-						System.exit(-1);
+					else {
+						System.out.println(COMMAND_ERROR);
 					}
-				}
-				else {
+				} catch (NumberFormatException e) {
 					System.out.println(COMMAND_ERROR);
 				}
 				break;
@@ -205,10 +215,24 @@ public class SessionHandler {
 				break;
 			}	
 		}
-		
 		return result;
 	}
-	private KeyStore getKeyStore(String keystore, char[] password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	
+	/**
+	 * Gets the keystore given the file path for it
+	 * 
+	 * @param keystore						The file path for the KeyStore
+	 * @param keystorepw					The password for the KeyStore
+	 * @return								The KeyStore
+	 * @throws KeyStoreException			If an exception occurs while accessing the keystore
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws CertificateException			When an error occurs while generating the certificate
+	 * 										from the fileInputStream
+	 * @throws IOException					When an I/O error occurs while reading/writing to a file
+	 */
+	private KeyStore getKeyStore(String keystore, char[] password)
+			throws KeyStoreException, NoSuchAlgorithmException,
+			CertificateException, IOException {
 		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 		File ks_file = new File(keystore);
 		FileInputStream fis = new FileInputStream(ks_file);

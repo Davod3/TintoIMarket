@@ -43,21 +43,24 @@ public class ServerThread extends Thread {
 	private KeyStore ks = null;
 	
 	/**
-	 * Creates a new thread for the server to manage
-	 * the commands from the client
+	 * Creates a new thread for the server to manage the commands from the client
 	 * 
-	 * @param inSoc				Client's socket
-	 * @param ks 
-	 * @throws IOException		When an I/O error occurs while 
-	 * 							reading/writing to a file or stream
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws ClassNotFoundException 
+	 * @param inSoc									Client's socket
+	 * @param ks 									The KeyStore for the client
+	 * @throws IOException							When an I/O error occurs while 
+	 * 												reading/writing to a file or stream
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is passed to a method
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws ClassNotFoundException 				When trying to find the class of an object
+	 * 												that does not match/exist
 	 */
-	public ServerThread(Socket inSoc, KeyStore ks) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
+	public ServerThread(Socket inSoc, KeyStore ks)
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException,
+			InvalidKeySpecException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException, ClassNotFoundException {
 		//Save client's socket
 		this.socket = inSoc;
 		//Get the unique instance of User Catalog
@@ -76,7 +79,6 @@ public class ServerThread extends Thread {
 	public void run() {
 		// Open IO streams
 		try {
-			
 			if (authenticateUser()) {
 				// User authenticated, wait for commands
 				System.out.println("User authenticated");
@@ -125,17 +127,36 @@ public class ServerThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			
 			try {
 				socket.close();
 			} catch (IOException e1) {
 				System.out.println("Error closing socket");
 			}
-			
 		}
 	}
 
-	private boolean authenticateUser() throws ClassNotFoundException, IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+	/**
+	 * Authenticates a User by communicating with TintoIMarket Client
+	 * 
+	 * @return										True if the user is authenticated, false otherwise
+	 * @throws ClassNotFoundException				When trying to find the class of an object
+	 * 												that does not match/exist
+	 * @throws IOException							When inStream does not receive input
+	 * 												or the outStream can't send the result message
+	 * @throws InvalidKeyException					If the key is invalid
+	 * @throws SignatureException					When an error occurs while signing an object
+	 * @throws NoSuchAlgorithmException				If the requested algorithm is not available
+	 * @throws CertificateException					When an error occurs while generating the
+	 * 												certificate from the fileInputStream
+	 * @throws InvalidKeySpecException				If the requested key specification is invalid
+	 * @throws NoSuchPaddingException				If the padding scheme is not available
+	 * @throws InvalidAlgorithmParameterException	If the algorithm parameters are invalid
+	 */
+	private boolean authenticateUser()
+			throws ClassNotFoundException, IOException, InvalidKeyException,
+			SignatureException, NoSuchAlgorithmException, CertificateException,
+			InvalidKeySpecException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException {
 		
 		String user = (String) inStream.readObject(); //Receive userID
 		
@@ -174,8 +195,6 @@ public class ServerThread extends Thread {
 				}
 			}
 			
-			
-			
 		} else {
 			//Register
 			SignedObject signedNonce = (SignedObject) inStream.readObject();
@@ -197,14 +216,9 @@ public class ServerThread extends Thread {
 					this.loggedUser = this.userCatalog.registerUser(user, cert);
 					outStream.writeObject(true);
 					return true;
-					
 				}
-				
-				
 			} 
-			
 		}
-		
 		outStream.writeObject(false);
 		return false;
 	}
@@ -212,10 +226,27 @@ public class ServerThread extends Thread {
 	/**
 	 * Processes the commands from client
 	 * 
-	 * @throws KeyStoreException 
-	 * @throws Exception 
+	 * @throws IOException 							When an I/O error occurs while reading/writing to a file
+	 * @throws ClassNotFoundException 				When trying to find the class of an object
+	 * 												that does not match/exist
+	 * @throws FileIntegrityViolationException 		If the loaded file's is corrupted
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws SignatureException 					When an error occurs while signing an object
+	 * @throws UnrecoverableKeyException 			If the key cannot be recovered
+	 * @throws KeyStoreException 					If an exception occurs while accessing the keystore
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is passed to a method
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws CertificateException 				When an error occurs while generating
+	 * 												the certificate from the fileInputStream
 	 */
-	private void mainLoop() throws Exception {
+	private void mainLoop()
+			throws ClassNotFoundException, IOException, InvalidKeyException,
+			NoSuchAlgorithmException, FileIntegrityViolationException,
+			UnrecoverableKeyException, SignatureException, KeyStoreException,
+			InvalidKeySpecException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException, CertificateException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command
@@ -228,6 +259,7 @@ public class ServerThread extends Thread {
 			case "add":
 				AddHandler.getInstance().run(inStream, outStream);
 				break;
+				
 			case "sell":
 				SellHandler.getInstance().run(inStream, outStream, loggedUser);
 				break;
@@ -262,7 +294,7 @@ public class ServerThread extends Thread {
 				
 			case "getCertificate":
 				GetCertificateHandler.getInstance().run(inStream, outStream);
-
+				
 			default:
 				//Default case for wrong command message
 				break;

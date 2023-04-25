@@ -1,13 +1,9 @@
 package catalogs;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,7 +16,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -53,36 +48,39 @@ public class UserCatalog {
 	/**
 	 * Creates a UserCatalog and loads all users from a users file
 	 * 
-	 * @throws IOException	When an I/O error occurs while loading all users
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws ClassNotFoundException 
+	 * @throws IOException							When an I/O error occurs while loading all users
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is invalid
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid for initializing the cipher
+	 * @throws ClassNotFoundException 				If the class of a serialized object is not found
 	 */
-	private UserCatalog() throws IOException,
-	InvalidKeyException, NoSuchAlgorithmException,
-	InvalidKeySpecException, NoSuchPaddingException,
-	InvalidAlgorithmParameterException, ClassNotFoundException {
+	private UserCatalog()
+			throws IOException, InvalidKeyException,
+			NoSuchAlgorithmException, InvalidKeySpecException,
+			NoSuchPaddingException, InvalidAlgorithmParameterException,
+			ClassNotFoundException {
 		this.userList = loadUsers();
 	}
 
 	/**
 	 * Returns a map with all users, after loading their unread messages
 	 * 
-	 * @return					A map containing all users 
-	 * @throws IOException 
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws ClassNotFoundException 
+	 * @return										A map containing all users 
+	 * @throws IOException 							If an I/O error occurs when creating or opening the user file
+	 * @throws InvalidAlgorithmParameterException 	If the algorithm parameters are invalid
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws ClassNotFoundException 				If the class of a serialized object is not found
 	 */
-	private synchronized Map<String, User> loadUsers() throws IOException,
-	InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException,
-	NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
+	private synchronized Map<String, User> loadUsers()
+			throws IOException, InvalidKeyException,
+			NoSuchAlgorithmException, InvalidKeySpecException,
+			NoSuchPaddingException, InvalidAlgorithmParameterException,
+			ClassNotFoundException {
 		//Create a map to load users
 		Map<String, User> users = new HashMap<>();
 		//Open the file that contains all the users information
@@ -114,12 +112,13 @@ public class UserCatalog {
 	/**
 	 * Loads the unread messages of the given user, which are in a specific file
 	 * 
-	 * @param user				The user for who we want to get the unread messages
-	 * @throws IOException		When an I/O error occurs while reading from a file
-	 * @throws ClassNotFoundException 
+	 * @param user						The user for who we want to get the unread messages
+	 * @throws IOException				When an I/O error occurs while reading from a file
+	 * @throws ClassNotFoundException 	If the class of a serialized object is not found
 	 */
 	@SuppressWarnings("unchecked")
-	private void loadMessages(User user) throws IOException, ClassNotFoundException {
+	private void loadMessages(User user)
+			throws IOException, ClassNotFoundException {
 		//Create the user path
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
 		
@@ -176,18 +175,20 @@ public class UserCatalog {
 	 * Returns the unique instance of the UserCatalog class.
 	 * If there is no instance of the class, a new one is created and returned.
 	 * 
-	 * @return					The unique instance of the UserCatalog class
-	 * @throws IOException		When an I/O error occurs while reading from a file
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws ClassNotFoundException 
+	 * @return										The unique instance of the UserCatalog class
+	 * @throws IOException							When an I/O error occurs while reading from a file
+	 * @throws InvalidAlgorithmParameterException 	If the algorithm parameters are invalid
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws ClassNotFoundException 				If the class of a serialized object is not found				
 	 */
-	public static UserCatalog getInstance() throws IOException,
-	InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException,
-	NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
+	public static UserCatalog getInstance()
+			throws IOException, InvalidKeyException,
+			NoSuchAlgorithmException, InvalidKeySpecException,
+			NoSuchPaddingException, InvalidAlgorithmParameterException,
+			ClassNotFoundException {
 		if (instance == null)
 			instance = new UserCatalog();
 		return instance;
@@ -196,18 +197,16 @@ public class UserCatalog {
 	/**
 	 * Registers a new user given the username and password
 	 * 
-	 * @param userId			Username
-	 * @param pbe 
-	 * @param pwd				Password
-	 * @return					Username
-	 * @throws IOException		When an I/O error occurs while
-	 * 							reading/writing to a file
-	 * @throws CertificateEncodingException 
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
+	 * @param userId								Username
+	 * @param cer									User's Certificate
+	 * @return										Username
+	 * @throws IOException							When an I/O error occurs while reading/writing to a file
+	 * @throws CertificateEncodingException 		If there is an error encoding the user's certificate
+	 * @throws InvalidAlgorithmParameterException 	If the algorithm parameters are invalid
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
 	 */
 	public synchronized String registerUser(String userId, Certificate cert)
 			throws IOException, CertificateEncodingException, InvalidKeyException,
@@ -238,8 +237,17 @@ public class UserCatalog {
 		return userId;	
 	}
 	
-	private String saveCertificate(String userId, Certificate cert) throws CertificateEncodingException, IOException {
-		
+	/**
+	 * Saves a user's certificate
+	 * 
+	 * @param userId							The username of the user whose certificate we want to save
+	 * @param cert								The certificate to be saved
+	 * @return									The filename of the saved certificate
+	 * @throws CertificateEncodingException		If there is an error encoding the user's certificate
+	 * @throws IOException						When an I/O error occurs while reading/writing to a file
+	 */
+	private String saveCertificate(String userId, Certificate cert)
+			throws CertificateEncodingException, IOException {
 		
 		String fileName = CERTIFICATE_STORAGE + userId + CERTIFICATE_EXTENSION;
 		
@@ -251,19 +259,18 @@ public class UserCatalog {
 		fos.write(buf);
 		fos.close();
 		
-		
 		return fileName;
 	}
 
 	/**
 	 * Gets all unread messages from the given user
 	 * 
-	 * @param loggedUser		The user for which we want to get the messages
+	 * @param loggedUser		The user for whom we want to get the messages
 	 * @return					The unread messages
-	 * @throws IOException		When an I/O error occurs while
-	 * 							reading/writing to a file
+	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 */
-	public Stack<Message> readMessages(String loggedUser) throws IOException {
+	public Stack<Message> readMessages(String loggedUser)
+			throws IOException {
 		//Get user by username
 		User user = getUser(loggedUser);
 		//Get all unread messages
@@ -294,8 +301,7 @@ public class UserCatalog {
 	 * Checks if user with username exists in database
 	 * 
 	 * @param user		The user to check
-	 * @return			True if user exists in database,
-	 * 					false otherwise
+	 * @return			True if user exists in database, false otherwise
 	 */
 	public synchronized boolean exists(String user) {
 		return this.userList.containsKey(user);
@@ -304,7 +310,7 @@ public class UserCatalog {
 	/**
 	 * Adds a new message to the mailBox of the given user
 	 * 
-	 * @param username			The user for which we want to send a new message
+	 * @param username			The user for whom we want to send a new message
 	 * @param msgToSend			The message to send
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 */
@@ -320,13 +326,11 @@ public class UserCatalog {
 	/**
 	 * Updates all unread messages to user file
 	 * 
-	 * @param user				The user for which we want to update all unread messages
+	 * @param user				The user for whom we want to update all unread messages
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 */
-	private synchronized void updateMessages(User user) throws IOException {
-		
-		System.out.println("HELLOOOOOOO 1");
-		
+	private synchronized void updateMessages(User user)
+			throws IOException {
 		//Get path to file with all unread messages
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
 		//Get file with the specified path
@@ -345,13 +349,18 @@ public class UserCatalog {
 		
 		out.close();
 		fileOut.close();
-		
-		
-		System.out.println("HELLOOOOOOO 2");
-	
 	}
 
-	public Certificate getUserCertificate(String user) throws FileNotFoundException, CertificateException {
+	/**
+	 * Gets the certificate of the given user
+	 * 
+	 * @param user						The user for whom we want to get the certificate
+	 * @return							The user's certificate
+	 * @throws FileNotFoundException	When the certificate file for the user is not found
+	 * @throws CertificateException		When an error occurs while generating the certificate from the fileInputStream
+	 */
+	public Certificate getUserCertificate(String user)
+			throws FileNotFoundException, CertificateException {
 		
 		FileInputStream fis = new FileInputStream(CERTIFICATE_STORAGE + user + CERTIFICATE_EXTENSION);
 		CertificateFactory cf = CertificateFactory.getInstance("X509");

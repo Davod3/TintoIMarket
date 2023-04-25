@@ -30,8 +30,8 @@ public class TintolMarket {
 			+ "wallet 				- get the current balance \n"
 			+ "classify <wine> <stars>		- assign the classification <stars> (1 to 5) to wine <wine> \n"
 			+ "talk <user> <message>		- send a private message <message> to user <user> \n"
-			+ "read				- read new received messages \n \n"
-			+ "list				- list all transactions \n";
+			+ "read				- read new received messages \n"
+			+ "list				- list all transactions \n \n";
 
 	/**
 	 * Executes the client
@@ -92,10 +92,10 @@ public class TintolMarket {
 	/**
 	 * Runs the client's engine
 	 * 
-	 * @param sessionHandler The handler for this session/connection
-	 * @throws NoSuchAlgorithmException 
-	 * @throws SignatureException 
-	 * @throws InvalidKeyException 
+	 * @param sessionHandler 				The handler for this session/connection
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws SignatureException 			When an error occurs while signing an object
+	 * @throws InvalidKeyException 			If the key is invalid
 	 */
 	private static void runClient(SessionHandler sessionHandler) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException {
 		System.out.println("Welcome to TintoIMarket!");

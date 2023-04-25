@@ -19,6 +19,14 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+/**
+ * The PBE class has some functions and strings that are often used in
+ * this project (Password Based Encryption management).
+ * 
+ * @author André Dias 		nº 55314
+ * @author David Pereira 	nº 56361
+ * @author Miguel Cut 		nº 56339
+ */
 public class PBE {
 	
 	private static PBE instance = null;
@@ -33,24 +41,51 @@ public class PBE {
 	private String pw = null;
 	private byte[] params;
 	
+	/**
+	 * Returns the unique instance of this class
+	 * 
+	 * @return	The unique instance of this class
+	 */
 	public static PBE getInstance() {
 		if (instance == null) {
 			instance = new PBE();
 		}
 		return instance;
 	}
+	
+	/**
+	 * This constructor initializes the instance of
+	 * this class with the given password and reads
+	 * the parameters for encryption/decryption from
+	 * the params file
+	 * 
+	 * @param pw				The password to be used in encryption/decryption
+	 * @throws IOException		When it is not possible to read the params file
+	 */
 	public PBE(String pw) throws IOException {
 		this.pw = pw;
 		readParamsFile();
 	}
 	
-	protected PBE() {
-	}
+	/**
+	 * Default constructor for PBE class
+	 */
+	protected PBE() {}
 	
+	/**
+	 * Sets a new password for encryption/decryption
+	 * 
+	 * @param pw	The new password to set to
+	 */
 	public void setPBE(String pw) {
 		this.pw = pw;
 	}
 	
+	/**
+	 * Writes the parameters of the encryption into the params file
+	 * 
+	 * @throws IOException	When it is not possible to write into the params file
+	 */
 	public void writeParamsFile() throws IOException {
 		File param = new File(PARAMS_FILE_PATH);
 		param.createNewFile();
@@ -60,6 +95,11 @@ public class PBE {
 		paramsExists = true;
 	}
 	
+	/**
+	 * Reads the parameters for encryption/decryption from the params file
+	 * 
+	 * @throws IOException	When it is not possible to read from the params file
+	 */
 	public void readParamsFile() throws IOException {
 		File param = new File(PARAMS_FILE_PATH);
 		if (param.exists()) {
@@ -70,6 +110,14 @@ public class PBE {
 		}
 	}
 	
+	/**
+	 * Generates the secret key to be used for encryption/decryption
+	 * 
+	 * @return								The secretKey to be used for
+	 * 										encryption/decryption
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws InvalidKeySpecException		If the requested key specification is invalid
+	 */
 	public SecretKey generatePBEKey() throws NoSuchAlgorithmException, InvalidKeySpecException  {
 		// Generate the key based on the password
 		PBEKeySpec keySpec = new PBEKeySpec(pw.toCharArray(), SALT, 20); // pass, salt, iterations
@@ -77,13 +125,31 @@ public class PBE {
 		return kf.generateSecret(keySpec);
 	}
 	
+	/**
+	 * Returns the name of the file without the extension
+	 * 
+	 * @param filename		The filename with its extension
+	 * @return				The filename without its extension
+	 */
 	public String getFileName(String filename) {
 		File file = new File(filename);
 		return file.getName().replaceFirst("[.][^.]+$", "");
 	}
 	
-	public void encryption (String data) throws NoSuchAlgorithmException,
-	NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException, IOException {
+	/**
+	 * Encrypts the given data to the users file
+	 * 
+	 * @param data							The data to encrypt
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws NoSuchPaddingException		If the padding scheme is not available
+	 * @throws InvalidKeyException			If the key is invalid
+	 * @throws InvalidKeySpecException		If the requested key specification is invalid
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send the result message
+	 */
+	public void encryption (String data)
+			throws NoSuchAlgorithmException, NoSuchPaddingException,
+			InvalidKeyException, InvalidKeySpecException, IOException {
 		SecretKey key = generatePBEKey();
 		
 		Cipher c = Cipher.getInstance("PBEWithHmacSHA256AndAES_128");
@@ -105,8 +171,23 @@ public class PBE {
 		writeParamsFile();
 	}
 	
-	public String decryption (File file) throws NoSuchAlgorithmException,
-	InvalidKeySpecException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
+	/**
+	 * Decrypts the given file and returns the decrypted content
+	 * 
+	 * @param file									The file to decrypt
+	 * @return										A string with the content decrypted
+	 * @throws NoSuchAlgorithmException				If the requested algorithm is not available
+	 * @throws InvalidKeySpecException				If the requested key specification is invalid
+	 * @throws IOException							When inStream does not receive input
+	 * 												or the outStream can't send the result message
+	 * @throws NoSuchPaddingException				If the padding scheme is not available
+	 * @throws InvalidKeyException					If the key is invalid
+	 * @throws InvalidAlgorithmParameterException	If an invalid algorithm parameter is passed to a method
+	 */
+	public String decryption (File file)
+			throws NoSuchAlgorithmException, InvalidKeySpecException,
+			IOException, NoSuchPaddingException, InvalidKeyException,
+			InvalidAlgorithmParameterException {
 		readParamsFile();
 		if (paramsExists) {
 			SecretKey key = generatePBEKey();
@@ -124,13 +205,6 @@ public class PBE {
 			
 			byte[] b = cis.readAllBytes();
 			sb.append(new String(b,StandardCharsets.UTF_8));
-			
-			//byte[] b = new byte[16];  
-		    //int i = cis.read(b);
-		    /*while (i != -1) {
-		        sb.append(new String(b,StandardCharsets.UTF_8));
-		        i = cis.read(b);
-		    }*/
 			
 		    cis.close();
 		    fis.close();

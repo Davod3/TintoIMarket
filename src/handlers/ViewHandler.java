@@ -29,18 +29,19 @@ public class ViewHandler {
 	 * Returns the information associated to a wine.
 	 * If the given wine does not exist, send an error message.
 	 * 
-	 * @param inStream					Stream for receiving input
-	 * @param outStream					Stream for outputting result				
-	 * @throws ClassNotFoundException	When trying to find the class of an object
-	 * 									that does not match/exist
-	 * @throws IOException				When inStream does not receive input
-	 * 									or the outStream can't send the result message		
-	 * @throws NoSuchAlgorithmException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @param inStream							Stream for receiving input
+	 * @param outStream							Stream for outputting result				
+	 * @throws ClassNotFoundException			When trying to find the class of an object
+	 * 											that does not match/exist
+	 * @throws IOException						When inStream does not receive input
+	 * 											or the outStream can't send the result message		
+	 * @throws NoSuchAlgorithmException 		If the requested algorithm is not available
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException,
+			FileIntegrityViolationException, InvalidKeyException {
 		//Create result message
 		StringBuilder result = new StringBuilder();
 		//Get Wine's Catalog only instance

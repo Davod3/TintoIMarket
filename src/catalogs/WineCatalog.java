@@ -37,13 +37,16 @@ public class WineCatalog {
 	/**
 	 * Creates a WineCatalog and loads all wines from a specific file.
 	 * 
-	 * @throws IOException	When an I/O error occurs while loading all wines
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @throws IOException						When an I/O error occurs while loading all wines
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
-	private WineCatalog() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
+	private WineCatalog()
+			throws IOException, ClassNotFoundException,
+			NoSuchAlgorithmException, FileIntegrityViolationException,
+			InvalidKeyException {
 		wineList = loadWines();
 	}
 
@@ -51,14 +54,17 @@ public class WineCatalog {
 	 * Returns the unique instance of the WineCatalog class.
 	 * If there is no instance of the class, a new one is created and returned.
 	 * 
-	 * @return					The unique instance of the WineCatalog class
-	 * @throws IOException		When an I/O error occurs while reading from a file
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @return									The unique instance of the WineCatalog class
+	 * @throws IOException						When an I/O error occurs while reading from a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
-	public static WineCatalog getInstance() throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
+	public static WineCatalog getInstance()
+			throws IOException, ClassNotFoundException,
+			NoSuchAlgorithmException, FileIntegrityViolationException,
+			InvalidKeyException {
 		if (instance == null)
 			instance = new WineCatalog();
 		return instance;
@@ -67,23 +73,24 @@ public class WineCatalog {
 	/**
 	 * Loads all wines from a specific file.
 	 * 
-	 * @return					A map with all wines
-	 * @throws IOException		When an I/O error occurs
-	 * 							while reading/writing to a file
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @return									A map with all wines
+	 * @throws IOException						When an I/O error occurs
+	 * 											while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
 	private synchronized HashMap<String, Wine> loadWines()
-			throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
+			throws IOException, ClassNotFoundException,
+			NoSuchAlgorithmException, FileIntegrityViolationException,
+			InvalidKeyException {
 		//Create a map to store all wines
 		HashMap<String, Wine> map = new HashMap<>();
 		//Get file with all wines
 		File wineFile = new File(WINE_FILE_PATH);
 		wineFile.getParentFile().mkdirs();
 		wineFile.createNewFile(); // Make sure file exists before reading
-		
 		
 		//Verify integrity
 		VerifyHash.getInstance().verify(wineFile, WINE_FILE_PATH);
@@ -110,20 +117,23 @@ public class WineCatalog {
 	/**
 	 * Loads all sales of a given wine from a specific file.
 	 * 
-	 * @param wine				The wine for which we want the sales
-	 * @throws IOException		When an I/O error occurs while reading/writing to a file
-	 * @throws FileIntegrityViolationException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws InvalidKeyException 
+	 * @param wine								The wine for which we want the sales
+	 * @throws IOException						When an I/O error occurs while
+	 * 											reading/writing to a file
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
-	private synchronized void loadSales(Wine wine) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
+	private synchronized void loadSales(Wine wine)
+			throws IOException, ClassNotFoundException,
+			NoSuchAlgorithmException, FileIntegrityViolationException,
+			InvalidKeyException {
 		//Get file with wine sales
 		File saleFile = new File(SALES_FILE_PATH);
 		saleFile.createNewFile();
 		
 		//Check integrity
-		
 		VerifyHash.getInstance().verify(saleFile, SALES_FILE_PATH);
 		
 		//Open reader to read from file
@@ -147,13 +157,17 @@ public class WineCatalog {
 	/**
 	 * Updates all sales and wines to wine/sales file.
 	 * 
-	 * @throws IOException	When an I/O error occurs while reading/writing to a file
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @throws IOException						When an I/O error occurs while
+	 * 											reading/writing to a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
-	public synchronized void updateWines() throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
+	public synchronized void updateWines()
+			throws IOException, NoSuchAlgorithmException,
+			ClassNotFoundException, FileIntegrityViolationException,
+			InvalidKeyException {
 		
 		//Get all wines
 		Set<String> keys = wineList.keySet();
@@ -207,19 +221,21 @@ public class WineCatalog {
 	/**
 	 * Adds a new wine to wine catalog.
 	 * 
-	 * @param wine				The name of the wine we want to add
-	 * @param received			The image associated to the wine
-	 * @return					True if wine was added successfully,
-	 * 							false otherwise
-	 * @throws IOException		When an I/O error occurs while
-	 * 							reading/writing to a file
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @param wine								The name of the wine we want to add
+	 * @param received							The image associated to the wine
+	 * @return									True if wine was added successfully,
+	 * 											false otherwise
+	 * @throws IOException						When an I/O error occurs while
+	 * 											reading/writing to a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
 	public synchronized boolean createWine(String wine, File received)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
+			throws IOException, NoSuchAlgorithmException,
+			ClassNotFoundException, FileIntegrityViolationException,
+			InvalidKeyException {
 		//Create new Wine
 		Wine newWine = new Wine(wine, received);
 		//If wine does not exist already in dataBase
@@ -236,16 +252,19 @@ public class WineCatalog {
 	/**
 	 * Rates a wine given his name and rating.
 	 * 
-	 * @param wine				The name of the wine we want to rate
-	 * @param rating			The rating
-	 * @throws IOException		When an I/O error occurs while reading/writing to a file
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @param wine								The name of the wine we want to rate
+	 * @param rating							The rating
+	 * @throws IOException						When an I/O error occurs while
+	 * 											reading/writing to a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
 	public synchronized void rate(String wine, double rating)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
+			throws IOException, NoSuchAlgorithmException,
+			ClassNotFoundException, FileIntegrityViolationException,
+			InvalidKeyException {
 		//Get wine
 		Wine wineToRate = getWine(wine);
 		//Set his rating
@@ -309,16 +328,18 @@ public class WineCatalog {
 	/**
 	 * Adds a given sale to the given wine.
 	 * 
-	 * @param wineName			The name of the wine
-	 * @param sale				The sale we want to add to the sale list of the wine
-	 * @throws IOException		When an I/O error occurs while reading/writing to a file
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @param wineName							The name of the wine
+	 * @param sale								The sale we want to add to the sale list of the wine
+	 * @throws IOException						When an I/O error occurs while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid 				
 	 */
 	public synchronized void addSaleToWine(String wineName, Sale sale)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
+			throws IOException, NoSuchAlgorithmException,
+			ClassNotFoundException, FileIntegrityViolationException,
+			InvalidKeyException {
 		Wine wine = wineList.get(wineName);
 		wine.addSale(sale);
 		updateWines();
@@ -329,13 +350,16 @@ public class WineCatalog {
 	 * 
 	 * @param wineName							The name of the wine
 	 * @param sale								The sale we want to update to the sale list of the wine
-	 * @throws NoSuchAlgorithmException				
-	 * @throws ClassNotFoundException			
-	 * @throws IOException						
-	 * @throws FileIntegrityViolationException	
-	 * @throws InvalidKeyException 
+	 * @throws IOException						When an I/O error occurs while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid 
 	 */
-	public synchronized void updateSaleToWine(String wineName, Sale sale) throws NoSuchAlgorithmException, ClassNotFoundException, IOException, FileIntegrityViolationException, InvalidKeyException {
+	public synchronized void updateSaleToWine(String wineName, Sale sale)
+			throws NoSuchAlgorithmException, ClassNotFoundException,
+			IOException, FileIntegrityViolationException,
+			InvalidKeyException {
 		Wine wine = wineList.get(wineName);
 		wine.updateSale(sale);
 		updateWines();
@@ -344,16 +368,18 @@ public class WineCatalog {
 	/**
 	 * Removes a wine's sale from the given seller.
 	 * 
-	 * @param wine				The wine for which we want to get the sale
-	 * @param seller			The user for which we want to delete the sale
-	 * @throws IOException		When an I/O error occurs while reading/writing to a file
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws InvalidKeyException 
+	 * @param wine								The wine for which we want to get the sale
+	 * @param seller							The user for which we want to delete the sale
+	 * @throws IOException						When an I/O error occurs while reading/writing to a file
+	 * @throws NoSuchAlgorithmException 		If the padding scheme is not available
+	 * @throws ClassNotFoundException 			If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws InvalidKeyException 				If the key is invalid			
 	 */
 	public synchronized void removeSaleFromSeller(String wine, String seller)
-			throws IOException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException, InvalidKeyException {
+			throws IOException, NoSuchAlgorithmException,
+			ClassNotFoundException, FileIntegrityViolationException,
+			InvalidKeyException {
 		wineList.get(wine).getSales().remove(getWineSaleBySeller(wine, seller));
 		updateWines();
 	}

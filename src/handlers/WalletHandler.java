@@ -27,18 +27,21 @@ public class WalletHandler {
 	/**
 	 * Sends the current balance of the given loggedUser.
 	 * 
-	 * @param outStream			Stream for outputting result	
-	 * @param loggedUser		The user for which we want to see and send the balance
-	 * @throws IOException		When outStream can't send the message with the balance
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws ClassNotFoundException 
+	 * @param outStream								Stream for outputting result	
+	 * @param loggedUser							The user for which we want to see and send the balance
+	 * @throws IOException							When outStream can't send the message with the balance
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is passed to a method
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws ClassNotFoundException 				When trying to find the class of an object
+	 * 												that does not match/exist
 	 */
 	public void run(ObjectOutputStream outStream, String loggedUser)
-			throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, ClassNotFoundException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException,
+			InvalidKeySpecException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException, ClassNotFoundException {
 		//Get user's Catalog only instance
 		UserCatalog userCatalog = UserCatalog.getInstance();
 		//Send message with loggedUser's balance

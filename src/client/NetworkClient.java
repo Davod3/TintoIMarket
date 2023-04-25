@@ -55,14 +55,18 @@ public class NetworkClient {
 	/**
 	 * Creates a new network for the client
 	 * 
-	 * @param serverAddress				The address of the server to connect to
-	 * @throws IOException				When an I/O error occurs while 
-	 * 									reading/writing to a file
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
+	 * @param serverAddress					The address of the server to connect to
+	 * @throws IOException					When an I/O error occurs while 
+	 * 										reading/writing to a file
+	 * @throws CertificateException 		When an error occurs while generating
+	 * 										the certificate from the fileInputStream
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws KeyStoreException 			If an exception occurs while accessing the keystore
 	 */
-	public NetworkClient(String serverAddress, String truststore, String keystore, String keystorepwd) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+	public NetworkClient(String serverAddress, String truststore,
+			String keystore, String keystorepwd)
+			throws IOException, KeyStoreException,
+			NoSuchAlgorithmException,CertificateException {
 		//Check if address contains port, otherwise use default
 		String[] addressSplit;
 		if(serverAddress.contains(":")) {
@@ -73,7 +77,6 @@ public class NetworkClient {
 			addressSplit[0] = serverAddress;
 			addressSplit[1] = DEFAULT_PORT;
 		}
-		
 		
 		this.truststorePath = truststore;
 		System.setProperty("javax.net.ssl.trustStore", truststore);
@@ -94,12 +97,24 @@ public class NetworkClient {
 		createStreams();
 	}
 	
-	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,
-	NoSuchAlgorithmException, CertificateException, IOException {
-		
+	/**
+	 * Gets the keystore given the file path for it
+	 * 
+	 * @param keystore						The file path for the KeyStore
+	 * @param keystorepw					The password for the KeyStore
+	 * @return								The KeyStore
+	 * @throws KeyStoreException			If an exception occurs while accessing the keystore
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws CertificateException			When an error occurs while generating the certificate
+	 * 										from the fileInputStream
+	 * @throws IOException					When an I/O error occurs while reading/writing to a file
+	 */
+	private KeyStore getKeyStore(String keystore, char[] keystorepw)
+			throws KeyStoreException, NoSuchAlgorithmException,
+			CertificateException, IOException {
 		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-		File ks_file = new File(keystore);
-		FileInputStream fis = new FileInputStream(ks_file);
+		File ksFile = new File(keystore);
+		FileInputStream fis = new FileInputStream(ksFile);
 		ks.load(fis, keystorepw);
 		
 		return ks;
@@ -109,9 +124,6 @@ public class NetworkClient {
 	 * Creates the streams for further communication between client and server
 	 */
 	private void createStreams() {
-		
-		System.out.println("Gets here 1");
-		
 		try {
 			inStream = new ObjectInputStream(clientSocket.getInputStream());
 			outStream = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -128,7 +140,8 @@ public class NetworkClient {
 	 * @return				True if user can log in, false otherwise
 	 */
 	public boolean validateSession(KeyStore keystore, String keystorePassword, String user) {
-		boolean validation = false, knownUser = false;
+		boolean validation = false;
+		boolean knownUser = false;
 		long nonce;
 		try {
 			//Send user
@@ -144,7 +157,7 @@ public class NetworkClient {
 			
 			//If user is unknown send certificate
 			if(!knownUser) { 
-				Certificate certs[] = keystore.getCertificateChain(KEY_ALIAS);
+				Certificate[] certs = keystore.getCertificateChain(KEY_ALIAS);
 				outStream.writeObject(certs[0]);
 			}
 			
@@ -211,12 +224,13 @@ public class NetworkClient {
 	 * 										or the outStream can't send a message
 	 * @throws ClassNotFoundException		When trying to find the class of an object
 	 * 										that does not match/exist
-	 * @throws NoSuchAlgorithmException 
-	 * @throws SignatureException 
-	 * @throws InvalidKeyException 
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws SignatureException 			When an error occurs while signing an object
+	 * @throws InvalidKeyException 			If the key is invalid
 	 */
 	public String sell(String wine, String value, String quantity)
-			throws IOException, ClassNotFoundException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+			throws IOException, ClassNotFoundException, InvalidKeyException,
+			SignatureException, NoSuchAlgorithmException {
 		String result = "";
 		//Send sell command
 		outStream.writeObject("sell");
@@ -274,12 +288,13 @@ public class NetworkClient {
 	 * 										or the outStream can't send a message
 	 * @throws ClassNotFoundException		When trying to find the class of an object
 	 * 										that does not match/exist
-	 * @throws NoSuchAlgorithmException 
-	 * @throws SignatureException 
-	 * @throws InvalidKeyException 
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws SignatureException 			When an error occurs while signing an object
+	 * @throws InvalidKeyException 			If the key is invalid
 	 */
 	public String buy(String wine, String seller, String quantity)
-			throws IOException, ClassNotFoundException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+			throws IOException, ClassNotFoundException, InvalidKeyException,
+			SignatureException, NoSuchAlgorithmException {
 		String result = "";
 		//Send buy command
 		outStream.writeObject("buy");
@@ -352,16 +367,19 @@ public class NetworkClient {
 	 * 										or the outStream can't send a message
 	 * @throws ClassNotFoundException		When trying to find the class of an object
 	 * 										that does not match/exist	
-	 * @throws BadPaddingException 
-	 * @throws IllegalBlockSizeException 
-	 * @throws NoSuchPaddingException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
-	 * @throws InvalidKeyException 
-	 * @throws CertificateException 
+	 * @throws BadPaddingException 			If the padding is invalid
+	 * @throws IllegalBlockSizeException 	If the block size is invalid
+	 * @throws NoSuchPaddingException 		If the padding scheme is not available
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws KeyStoreException 			If an exception occurs while accessing the keystore
+	 * @throws InvalidKeyException 			If the key is invalid
+	 * @throws CertificateException 		When an error occurs while generating the certificate
+	 * 										from the fileInputStream
 	 */
 	public String talk(String userTo, String message)
-			throws IOException, ClassNotFoundException, InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, CertificateException {
+			throws IOException, ClassNotFoundException, InvalidKeyException,
+			KeyStoreException, NoSuchAlgorithmException, NoSuchPaddingException,
+			IllegalBlockSizeException, BadPaddingException, CertificateException {
 		String result = "";
 		
 		//Encrypt the message
@@ -389,21 +407,24 @@ public class NetworkClient {
 	 * Gets all unread messages of the current user by sending the read command
 	 * to the server
 	 * 
-	 * @return							All unread messages from the current user
-	 * @throws ClassNotFoundException	When trying to find the class of an object
-	 * 									that does not match/exist
-	 * @throws IOException				When inStream does not receive input
-	 * 									or the outStream can't send a message	
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
-	 * @throws UnrecoverableKeyException 
-	 * @throws BadPaddingException 
-	 * @throws IllegalBlockSizeException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeyException 
+	 * @return								All unread messages from the current user
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send a message	
+	 * @throws NoSuchAlgorithmException 	If the requested algorithm is not available
+	 * @throws KeyStoreException 			If an exception occurs while accessing the keystore
+	 * @throws UnrecoverableKeyException 	If the key cannot be recovered
+	 * @throws BadPaddingException 			If the padding is invalid
+	 * @throws IllegalBlockSizeException 	If the block size is invalid
+	 * @throws NoSuchPaddingException 		If the padding scheme is not available
+	 * @throws InvalidKeyException 			If the key is invalid
 	 */
 	@SuppressWarnings("unchecked")
-	public String read() throws ClassNotFoundException, IOException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+	public String read()
+			throws ClassNotFoundException, IOException, UnrecoverableKeyException,
+			KeyStoreException, NoSuchAlgorithmException, InvalidKeyException,
+			NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
 		//Send read command
 		outStream.writeObject("read");
 		//Get result
@@ -420,12 +441,18 @@ public class NetworkClient {
 			AssimetricMessageDecryption amd = new AssimetricMessageDecryption(this.keystore, this.keystorePwd);
 			
 			sb.append("From: " + m.getFrom() + ": " + amd.decrypt(m.getContent()) + EOL);
-				
 		}
-		
 		return sb.toString();
 	}
 
+	/**
+	 * Gets all transactions of the current user by sending the list command
+	 * to the server
+	 * 
+	 * @return							All transactions of the current user
+	 * @throws IOException				When an I/O error occurs while reading/writing to a file
+	 * @throws ClassNotFoundException	If the class of a serialized object is not found
+	 */
 	public String list() throws IOException, ClassNotFoundException {
 		String result = "";
 		//Send wallet command

@@ -23,6 +23,14 @@ import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * The LogUtils class has some functions and strings that are often used in
+ * this project (transaction management).
+ * 
+ * @author André Dias 		nº 55314
+ * @author David Pereira 	nº 56361
+ * @author Miguel Cut 		nº 56339
+ */
 public class LogUtils implements Serializable {
 
 	private static final long serialVersionUID = -8914479604836760464L;
@@ -35,7 +43,10 @@ public class LogUtils implements Serializable {
     private String alias;
     private String pwd;
 	
-	private LogUtils() throws IOException {
+    /**
+     * This constructor loads the transactions from the log file
+     */
+	private LogUtils() {
 	    File directory = new File(LOGS_FOLDER);
 	    if (! directory.exists())
 	        directory.mkdir();
@@ -48,7 +59,26 @@ public class LogUtils implements Serializable {
 		}
 	}
 	
-	public synchronized void writeSale(String wine, double value, int quantity, String seller) throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
+	/**
+	 * Writes a new sale into the log file and the blockChain
+	 * 
+	 * @param wine							The wine to put on sale
+	 * @param value							The value for each unit of this wine
+	 * @param quantity						The quantity of this wine to put on sale
+	 * @param seller						The seller of the wine
+	 * @throws InvalidKeyException			If the key is invalid
+	 * @throws UnrecoverableKeyException	If the key cannot be recovered
+	 * @throws SignatureException			When an error occurs while signing an object
+	 * @throws KeyStoreException			If an exception occurs while accessing the keystore
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send the result message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist
+	 */
+	public synchronized void writeSale(String wine, double value, int quantity, String seller)
+			throws InvalidKeyException, UnrecoverableKeyException, SignatureException,
+			KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
 		String transaction = "sale: " + wine + " " + value + " " + quantity + " " + seller + "\n";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(log, true));
 		bw.append(transaction);
@@ -56,7 +86,26 @@ public class LogUtils implements Serializable {
 		addTransaction(transaction);
 	}
 	
-	public synchronized void writeBuy(String wine, double value, int quantity, String buyer) throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
+	/**
+	 * Writes a new buy into the log file and the blockChain
+	 * 
+	 * @param wine							The wine to buy
+	 * @param value							The value for each unit of this wine
+	 * @param quantity						The quantity of this wine to buy
+	 * @param buyer							The buyer of the wine
+	 * @throws InvalidKeyException			If the key is invalid
+	 * @throws UnrecoverableKeyException	If the key cannot be recovered
+	 * @throws SignatureException			When an error occurs while signing an object
+	 * @throws KeyStoreException			If an exception occurs while accessing the keystore
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send the result message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist		
+	 */
+	public synchronized void writeBuy(String wine, double value, int quantity, String buyer) 
+			throws InvalidKeyException, UnrecoverableKeyException, SignatureException,
+			KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
 		String transaction = "buy: " + wine + " " + value + " " + quantity + " " + buyer + "\n";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(log, true));
 		bw.append(transaction);
@@ -64,7 +113,24 @@ public class LogUtils implements Serializable {
 		addTransaction(transaction);
 	}
 	
-	private synchronized void addTransaction(String transaction) throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
+	/**
+	 * Adds a new transaction to the blockChain
+	 * 
+	 * @param transaction					The transaction to be added
+	 * @throws InvalidKeyException			If the key is invalid
+	 * @throws UnrecoverableKeyException	If the key cannot be recovered
+	 * @throws SignatureException			When an error occurs while signing an object
+	 * @throws KeyStoreException			If an exception occurs while accessing the keystore
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send the result message
+	 * @throws ClassNotFoundException		When trying to find the class of an object
+	 * 										that does not match/exist
+	 */
+	private synchronized void addTransaction(String transaction)
+			throws InvalidKeyException, UnrecoverableKeyException,
+			SignatureException, KeyStoreException, NoSuchAlgorithmException,
+			IOException, ClassNotFoundException {
 		if(currentBlock == null) 
 			currentBlock = new Block(new byte[32], 0);
 		
@@ -81,8 +147,13 @@ public class LogUtils implements Serializable {
 		}
 	}
 	
+	/**
+	 * Gets the last block from the log folder
+	 * 
+	 * @return									The last block from log folder
+	 * @throws FileIntegrityViolationException	If the loaded file is corrupted
+	 */
 	private Block findLastBlock() throws FileIntegrityViolationException {
-		
         File folder = new File(LOGS_FOLDER);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
         
@@ -101,7 +172,26 @@ public class LogUtils implements Serializable {
         return readBlockFromFile(maxFileName, maxId);
 	}
 	
-	public boolean verifyBlockchainIntegrity() throws FileIntegrityViolationException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, ClassNotFoundException, IOException {
+	/**
+	 * Verifies the integrity of the blockChain
+	 * 
+	 * @return									True if the blockChain is not corrupted,
+	 * 											false otherwise
+	 * @throws FileIntegrityViolationException	If the loaded file is corrupted
+	 * @throws InvalidKeyException				If the key is invalid
+	 * @throws UnrecoverableKeyException		If the key cannot be recovered
+	 * @throws SignatureException				When an error occurs while signing an object
+	 * @throws KeyStoreException				If an exception occurs while accessing the keystore
+	 * @throws NoSuchAlgorithmException			If the requested algorithm is not available
+	 * @throws ClassNotFoundException			When trying to find the class of an object
+	 * 											that does not match/exist
+	 * @throws IOException						When inStream does not receive input
+	 * 											or the outStream can't send the result message
+	 */
+	public boolean verifyBlockchainIntegrity()
+			throws FileIntegrityViolationException, InvalidKeyException,
+			UnrecoverableKeyException, SignatureException, KeyStoreException,
+			NoSuchAlgorithmException, ClassNotFoundException, IOException {
         
 		File folder = new File(LOGS_FOLDER);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
@@ -129,7 +219,16 @@ public class LogUtils implements Serializable {
         return true;
 	}
 	
-    public Block readBlockFromFile(String fileName, long blockId) throws FileIntegrityViolationException {
+	/**
+	 * Reads a block file
+	 * 
+	 * @param fileName							The file name of the block to read
+	 * @param blockId							The block id
+	 * @return									The block object
+	 * @throws FileIntegrityViolationException	If the loaded file is corrupted
+	 */
+    public Block readBlockFromFile(String fileName, long blockId)
+    		throws FileIntegrityViolationException {
         Block block = null;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(LOGS_FOLDER + "/" + fileName));
@@ -169,37 +268,79 @@ public class LogUtils implements Serializable {
         return block;
     }
 	
+    /**
+     * Sets the KeyStore to the given Keystore
+     * 
+     * @param keystore		The KeyStore to set to
+     * @param alias			The entry identifier of the given KeyStore
+     * @param pwd			The password for the given KeyStore
+     */
 	public void setKeyStore(KeyStore keystore, String alias, String pwd) {
 		this.ks = keystore;
 		this.alias = alias;
 		this.pwd = pwd;
 	}
 	
-	public static LogUtils getInstance() throws IOException {
+	/**
+	 * Returns the unique instance of the LogUtils class
+	 * 
+	 * @return		The unique instance of this class
+	 */
+	public static LogUtils getInstance() {
 		if (instance == null)
 			instance = new LogUtils();
 		return instance;
 	}
 
+	/**
+	 * The Block class has some functions that are often used in
+	 * this project (block management).
+	 * 
+	 * @author André Dias 		nº 55314
+	 * @author David Pereira 	nº 56361
+	 * @author Miguel Cut 		nº 56339
+	 */
 	public class Block implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
 		private byte[] previousHash;
 	    private long blockId;
 	    private long numTransactions;
-
 		private ArrayList<String> transactions;
 	    private byte[] blockHash;
 
+	    /**
+	     * This constructor creates a new Block given
+	     * its id and the hash of the previous block
+	     * 
+	     * @param previousHash		The hash of the previous block
+	     * @param blockId			The block id (this block)
+	     */
 	    public Block(byte[] previousHash, long blockId) {
 	        this.previousHash = previousHash;
 	        this.blockId = blockId;
 	        this.numTransactions = 0;
-	        this.transactions = new ArrayList<String>();
+	        this.transactions = new ArrayList<>();
 	        this.blockHash = new byte[32];
 	    }
 	    
-	    public synchronized void calculateBlockHash() throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
+	    /**
+	     * Calculates the hash for this block
+	     * 
+	     * @throws InvalidKeyException			If the key is invalid
+	     * @throws UnrecoverableKeyException	If the key cannot be recovered
+	     * @throws SignatureException			When an error occurs while signing an object
+	     * @throws KeyStoreException			If an exception occurs while accessing the keystore
+	     * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	     * @throws IOException					When inStream does not receive input
+	     * 										or the outStream can't send the result message
+	     * @throws ClassNotFoundException		When trying to find the class of an object
+	     * 										that does not match/exist
+	     */
+	    public synchronized void calculateBlockHash()
+	    		throws InvalidKeyException, UnrecoverableKeyException,
+	    		SignatureException, KeyStoreException, NoSuchAlgorithmException,
+	    		IOException, ClassNotFoundException {
 			
 	    	MessageDigest md = MessageDigest.getInstance("SHA-256");
 			ByteArrayOutputStream bs = new ByteArrayOutputStream();
@@ -228,6 +369,9 @@ public class LogUtils implements Serializable {
 			this.blockHash = hashStr.getBytes();
 	    }
 	    
+	    /**
+	     * Saves this block to the blockChain
+	     */
 	    public void saveBlockToFile() {
 	        try {
 	            FileWriter writer = new FileWriter(LOGS_FOLDER + "/block_" + blockId + ".blk");
@@ -250,28 +394,58 @@ public class LogUtils implements Serializable {
 	        }
 	    }
 	    
+	    /**
+	     * Add a transaction to this block
+	     * 
+	     * @param transaction	The transaction to be added
+	     */
 	    public void addTransaction(String transaction){
 	    	transactions.add(transaction);
 	    	numTransactions++;
 	    	saveBlockToFile();
 	    }
 	    
+	    /**
+	     * Returns the id of this block
+	     * 
+	     * @return	The id of this block
+	     */
 	    public long getBlockId() {
 	    	return blockId;
 	    }
 	    
+	    /**
+	     * Returns the hash of this block
+	     * 
+	     * @return	The hash of this block
+	     */
 	    public byte[] getHash() {
 	    	return blockHash;
 	    }
 	    
+	    /**
+	     * Returns the number of transactions saved in this block
+	     * 
+	     * @return	The number of transactions saved in this block
+	     */
 	    public long getNumTransactions() {
 			return numTransactions;
 		}
 	    
+	    /**
+	     * Returns a list with the transactions saved in this block
+	     * 
+	     * @return	A list with the transactions saved in this block
+	     */
 	    public ArrayList<String> getTransactions() {
 			return transactions;
 		}
 
+	    /**
+	     * Returns the hash of the previous block
+	     * 
+	     * @return	The hash of the previous block
+	     */
 		public byte[] getPreviousHash() {
 			return previousHash;
 		}

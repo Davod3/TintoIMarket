@@ -11,9 +11,9 @@ import java.io.ObjectOutputStream;
  * The FileUtils class has some functions and strings that are often used in
  * this project.
  * 
- * @author André Dias nº 55314
- * @author David Pereira nº 56361
- * @author Miguel Cut nº 56339
+ * @author André Dias 		nº 55314
+ * @author David Pereira 	nº 56361
+ * @author Miguel Cut 		nº 56339
  */
 public class FileUtils {
 
@@ -54,17 +54,29 @@ public class FileUtils {
 	/**
 	 * Receives a file from a given stream.
 	 * 
-	 * @param inStream Stream for receiving the file
-	 * @return The file received
-	 * @throws ClassNotFoundException When trying to find the class of an object
-	 *                                that does not match/exist
-	 * @throws IOException            When inStream does not receive input
+	 * @param inStream 					Stream for receiving the file
+	 * @return 							The file received
+	 * @throws ClassNotFoundException 	When trying to find the class of an object
+	 *                                	that does not match/exist
+	 * @throws IOException            	When inStream does not receive input
 	 */
-	public static File receiveFile(ObjectInputStream inStream) throws ClassNotFoundException, IOException {
+	public static File receiveFile(ObjectInputStream inStream)
+			throws ClassNotFoundException, IOException {
 		return receiveFile("", inStream);
 	}
 
-	public static File receiveFile(String path, ObjectInputStream inStream) throws ClassNotFoundException, IOException {
+	/**
+	 * Receives a file from a given stream and saves it in the given path
+	 * 
+	 * @param path						The path where to save the file
+	 * @param inStream					Stream for receiving the file
+	 * @return							The file received
+	 * @throws ClassNotFoundException	When trying to find the class of an object
+	 *                                	that does not match/exist
+	 * @throws IOException				When inStream does not receive input
+	 */
+	public static File receiveFile(String path, ObjectInputStream inStream)
+			throws ClassNotFoundException, IOException {
 		// Get filename
 		String name = (String) inStream.readObject();
 		// Get file size

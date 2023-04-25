@@ -43,23 +43,29 @@ public class Server {
 	private String keystorePwd;
 	
 	/**
-	 * Creates a new Server given the port
+	 * Creates a new Server given the port, a password to encrypt/decrypt the users file,
+	 * the keystore and it's password
 	 * 
-	 * @param port		The port for the connection to the server
-	 * @param keystorepw 
-	 * @param keystore 
-	 * @param cipherpw 
-	 * @throws KeyStoreException 
-	 * @throws IOException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws ClassNotFoundException 
-	 * @throws UnrecoverableKeyException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws SignatureException 
-	 * @throws InvalidKeyException 
+	 * @param port								The port for the connection to the server
+	 * @param keystorepw 						The password of the Keystore
+	 * @param keystore 							The KeyStore
+	 * @param cipherpw 							The password to use with cipher encryption/decryption
+	 * @throws KeyStoreException 				If an exception occurs while accessing the keystore
+	 * @throws IOException 						When an I/O error occurs while reading/writing to a file
+	 * @throws CertificateException 			When an error occurs while generating the certificate from the fileInputStream
+	 * @throws NoSuchAlgorithmException 		If the requested algorithm is not available
+	 * @throws ClassNotFoundException 			When trying to find the class of an object
+	 * 											that does not match/exist
+	 * @throws UnrecoverableKeyException 		If the key cannot be recovered
+	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
+	 * @throws SignatureException 				When an error occurs while signing an object
+	 * @throws InvalidKeyException 				If the key is invalid
 	 */
-	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ClassNotFoundException, UnrecoverableKeyException, FileIntegrityViolationException, InvalidKeyException, SignatureException {
+	public Server(int port, String cipherpw, String keystore, String keystorepw)
+			throws KeyStoreException, NoSuchAlgorithmException,
+			CertificateException, IOException, ClassNotFoundException,
+			UnrecoverableKeyException, FileIntegrityViolationException,
+			InvalidKeyException, SignatureException {
 		this.sPort = port;
 		this.ks = getKeyStore(keystore, keystorepw.toCharArray());
 		this.keystorePath = keystore;
@@ -77,9 +83,22 @@ public class Server {
 			throw new FileIntegrityViolationException("Blockchain integrity was violated!");
 	}
 
-	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,
-	NoSuchAlgorithmException, CertificateException, IOException {
-		
+	/**
+	 * Gets the KeyStore from the given file path, using the given password
+	 * 
+	 * @param keystore						The file path of the KeyStore
+	 * @param keystorepw					The password of the KeyStore
+	 * @return								The KeyStore
+	 * @throws KeyStoreException			If an exception occurs while accessing the keystore
+	 * @throws NoSuchAlgorithmException		If the requested algorithm is not available
+	 * @throws CertificateException			When an error occurs while generating the certificate
+	 * 										from the fileInputStream
+	 * @throws IOException					When inStream does not receive input
+	 * 										or the outStream can't send the result message
+	 */
+	private KeyStore getKeyStore(String keystore, char[] keystorepw)
+			throws KeyStoreException, NoSuchAlgorithmException,
+			CertificateException, IOException {
 		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 		File ks_file = new File(keystore);
 		FileInputStream fis = new FileInputStream(ks_file);
@@ -90,13 +109,17 @@ public class Server {
 
 	/**
 	 * Runs the server's engine
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
+	 * 
+	 * @throws InvalidAlgorithmParameterException 	If an invalid algorithm parameter is passed to a method
+	 * @throws NoSuchPaddingException 				If the padding scheme is not available
+	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
+	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
+	 * @throws InvalidKeyException 					If the key is invalid
 	 */
-	public void run() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+	public void run()
+			throws InvalidKeyException, NoSuchAlgorithmException,
+			InvalidKeySpecException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException {
 		//Create socket for server
 		System.setProperty("javax.net.ssl.keyStore", this.keystorePath);
 		System.setProperty("javax.net.ssl.keyStorePassword", this.keystorePwd);
