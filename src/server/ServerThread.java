@@ -225,7 +225,7 @@ public class ServerThread extends Thread {
 	 * @throws KeyStoreException 
 	 * @throws CertificateException 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, CertificateException {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command

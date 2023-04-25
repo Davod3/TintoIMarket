@@ -81,7 +81,7 @@ public class LogUtils implements Serializable {
 		}
 	}
 	
-	private Block findLastBlock() throws Exception {
+	private Block findLastBlock() throws FileIntegrityViolationException {
 		
         File folder = new File(LOGS_FOLDER);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
@@ -101,7 +101,7 @@ public class LogUtils implements Serializable {
         return readBlockFromFile(maxFileName, maxId);
 	}
 	
-	public boolean verifyBlockchainIntegrity() throws Exception {
+	public boolean verifyBlockchainIntegrity() throws FileIntegrityViolationException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, ClassNotFoundException, IOException {
         
 		File folder = new File(LOGS_FOLDER);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
@@ -129,7 +129,7 @@ public class LogUtils implements Serializable {
         return true;
 	}
 	
-    public Block readBlockFromFile(String fileName, long blockId) throws Exception {
+    public Block readBlockFromFile(String fileName, long blockId) throws FileIntegrityViolationException {
         Block block = null;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(LOGS_FOLDER + "/" + fileName));
@@ -151,11 +151,11 @@ public class LogUtils implements Serializable {
             	if(line != null)
             		transactions.add(line + "\n");
             	else
-            		throw new Exception("The blockchain was corrupted");
+            		throw new FileIntegrityViolationException("Blockchain integrity was violated!");
             }
             blockHash = reader.readLine().getBytes();
             if(reader.readLine() != null)
-            	throw new Exception("The blockchain was corrupted");
+            	throw new FileIntegrityViolationException("Blockchain integrity was violated!");
             reader.close();
                
             block = new Block(previousHash, blockId);

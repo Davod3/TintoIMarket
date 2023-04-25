@@ -6,11 +6,14 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.NoSuchPaddingException;
+
+import utils.FileIntegrityViolationException;
 
 /**
  * This class represents the threads of the server of this application
@@ -97,6 +100,12 @@ public class TintolMarketServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnrecoverableKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileIntegrityViolationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

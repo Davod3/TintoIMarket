@@ -333,8 +333,9 @@ public class WineCatalog {
 	 * @throws ClassNotFoundException			
 	 * @throws IOException						
 	 * @throws FileIntegrityViolationException	
+	 * @throws InvalidKeyException 
 	 */
-	public synchronized void updateSaleToWine(String wineName, Sale sale) throws NoSuchAlgorithmException, ClassNotFoundException, IOException, FileIntegrityViolationException {
+	public synchronized void updateSaleToWine(String wineName, Sale sale) throws NoSuchAlgorithmException, ClassNotFoundException, IOException, FileIntegrityViolationException, InvalidKeyException {
 		Wine wine = wineList.get(wineName);
 		wine.updateSale(sale);
 		updateWines();

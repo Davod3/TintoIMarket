@@ -10,6 +10,7 @@ import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
@@ -21,6 +22,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 
 import utils.PBE;
 import utils.VerifyHash;
+import utils.FileIntegrityViolationException;
 import utils.LogUtils;
 
 /**
@@ -53,8 +55,11 @@ public class Server {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws ClassNotFoundException 
 	 * @throws UnrecoverableKeyException 
+	 * @throws FileIntegrityViolationException 
+	 * @throws SignatureException 
+	 * @throws InvalidKeyException 
 	 */
-	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ClassNotFoundException, UnrecoverableKeyException {
+	public Server(int port, String cipherpw, String keystore, String keystorepw) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, ClassNotFoundException, UnrecoverableKeyException, FileIntegrityViolationException, InvalidKeyException, SignatureException {
 		this.sPort = port;
 		this.ks = getKeyStore(keystore, keystorepw.toCharArray());
 		this.keystorePath = keystore;
@@ -67,8 +72,9 @@ public class Server {
 		VerifyHash.getInstance().setPrivateKey(this.ks, this.keystorePwd);
 		
 		LogUtils.getInstance().setKeyStore(ks, ALIAS_KEY, keystorepw);
+		
 		if(!LogUtils.getInstance().verifyBlockchainIntegrity())
-			throw new Exception("The blockchain was corrupted");
+			throw new FileIntegrityViolationException("Blockchain integrity was violated!");
 	}
 
 	private KeyStore getKeyStore(String keystore, char[] keystorepw) throws KeyStoreException,
@@ -118,7 +124,7 @@ public class Server {
 				workerThread.start();
 			} catch (IOException e) {
 				System.out.println("Failed to connect to client!");
-				System.out.println(e.getMessage());
+				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
