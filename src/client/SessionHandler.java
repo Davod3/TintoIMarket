@@ -133,6 +133,14 @@ public class SessionHandler {
 						System.exit(-1);
 					}
 				}
+				else if (command[0].equals("list") || command[0].equals("l")) {
+					try {
+						result = netClient.list();
+					} catch (ClassNotFoundException | IOException e) {
+						System.out.println("Error getting list of transactions\n");
+						System.exit(-1);
+					}
+				}
 				else {
 					System.out.println(COMMAND_ERROR);
 				}

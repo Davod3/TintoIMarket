@@ -121,6 +121,9 @@ public class ServerThread extends Thread {
 		} catch (KeyStoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			
 			try {
@@ -209,23 +212,10 @@ public class ServerThread extends Thread {
 	/**
 	 * Processes the commands from client
 	 * 
-	 * @throws ClassNotFoundException		When trying to find the class of an object
-	 * 										that does not match/exist
-	 * @throws IOException					When an I/O error occurs while
-	 * 										reading/writing to a file or stream
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws NoSuchPaddingException 
-	 * @throws InvalidKeySpecException 
-	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyStoreException 
-	 * @throws SignatureException 
-	 * @throws UnrecoverableKeyException 
-	 * @throws InvalidKeyException 
-	 * @throws FileIntegrityViolationException 
-	 * @throws KeyStoreException 
-	 * @throws CertificateException 
+	 * @throws Exception 
 	 */
-	private void mainLoop() throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, CertificateException {
+	private void mainLoop() throws Exception {
 		// Run main command execution logic
 		while (this.socket.isConnected()) {
 			//Get command
@@ -253,6 +243,7 @@ public class ServerThread extends Thread {
 			case "wallet":
 				WalletHandler.getInstance().run(outStream, loggedUser);
 				break;
+				
 			case "classify":
 				ClassifyHandler.getInstance().run(inStream, outStream);
 				break;
@@ -263,6 +254,10 @@ public class ServerThread extends Thread {
 
 			case "read":
 				ReadHandler.getInstance().run(outStream, loggedUser);
+				break;
+				
+			case "list":
+				ListHandler.getInstance().run(inStream, outStream);
 				break;
 				
 			case "getCertificate":

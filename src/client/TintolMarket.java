@@ -30,7 +30,8 @@ public class TintolMarket {
 			+ "wallet 				- get the current balance \n"
 			+ "classify <wine> <stars>		- assign the classification <stars> (1 to 5) to wine <wine> \n"
 			+ "talk <user> <message>		- send a private message <message> to user <user> \n"
-			+ "read				- read new received messages \n \n";
+			+ "read				- read new received messages \n \n"
+			+ "list				- list all transactions \n";
 
 	/**
 	 * Executes the client

@@ -19,12 +19,10 @@ public class ListHandler {
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
         
         if (files == null || files.length == 0) {
-        	outStream.writeObject("Failed to read block files"); 
+        	outStream.writeObject("No transactions to show"); 
         	return;
         }
         
-        long count = 0;
-        Block lastBlock = null;
         if(!LogUtils.getInstance().verifyBlockchainIntegrity()) {
         	outStream.writeObject("The blockchain was corrupted"); 
         	return;
@@ -32,6 +30,8 @@ public class ListHandler {
         	
         StringBuilder sb = new StringBuilder();
         
+        long count = 0;
+        Block lastBlock = null;
         for (File file : files) {
         	Block block = LogUtils.getInstance().readBlockFromFile(file.getName(), count);
         	for(int i = 0; i < block.getNumTransactions(); i++) {

@@ -425,4 +425,13 @@ public class NetworkClient {
 		
 		return sb.toString();
 	}
+
+	public String list() throws IOException, ClassNotFoundException {
+		String result = "";
+		//Send wallet command
+		outStream.writeObject("list");
+		//Get result
+		result = (String) inStream.readObject();
+		return result;
+	}
 }
