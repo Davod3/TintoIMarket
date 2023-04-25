@@ -3,8 +3,6 @@ package catalogs;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -80,7 +78,7 @@ public class WineCatalog {
 	private synchronized HashMap<String, Wine> loadWines()
 			throws IOException, ClassNotFoundException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
 		//Create a map to store all wines
-		HashMap<String, Wine> map = new HashMap<String, Wine>();
+		HashMap<String, Wine> map = new HashMap<>();
 		//Get file with all wines
 		File wineFile = new File(WINE_FILE_PATH);
 		wineFile.getParentFile().mkdirs();
@@ -326,6 +324,23 @@ public class WineCatalog {
 		updateWines();
 	}
 
+	/**
+	 * Updates a given sale to a given wine.
+	 * 
+	 * @param wineName							The name of the wine
+	 * @param sale								The sale we want to update to the sale list of the wine
+	 * @throws NoSuchAlgorithmException				
+	 * @throws ClassNotFoundException			
+	 * @throws IOException						
+	 * @throws FileIntegrityViolationException	
+	 * @throws InvalidKeyException 
+	 */
+	public synchronized void updateSaleToWine(String wineName, Sale sale) throws NoSuchAlgorithmException, ClassNotFoundException, IOException, FileIntegrityViolationException, InvalidKeyException {
+		Wine wine = wineList.get(wineName);
+		wine.updateSale(sale);
+		updateWines();
+	}
+	
 	/**
 	 * Removes a wine's sale from the given seller.
 	 * 

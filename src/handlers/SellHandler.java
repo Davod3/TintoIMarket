@@ -4,12 +4,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.SignedObject;
+import java.security.UnrecoverableKeyException;
 
 import catalogs.WineCatalog;
 import domain.Sale;
 import utils.FileIntegrityViolationException;
 import utils.FileUtils;
+import utils.LogUtils;
 
 /**
  * The SellHandler class represents the action of selling a wine. 
@@ -34,17 +39,30 @@ public class SellHandler {
 	 * @throws IOException				When inStream does not receive input
 	 * 									or the outStream can't send the result message		
 	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
+	 * @throws SignatureException 
+	 * @throws UnrecoverableKeyException 
+	 * @throws InvalidKeyException 
 	 * @throws FileIntegrityViolationException 
 	 * @throws InvalidKeyException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
-			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, FileIntegrityViolationException, InvalidKeyException {
+			throws ClassNotFoundException, IOException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, FileIntegrityViolationException {
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Read the name of the wine, the price and the quantity to sell
-		String wine = (String) inStream.readObject();
-		double value = (double) inStream.readObject();
-		int quantity = (int) inStream.readObject();
+		
+		SignedObject signedWine = (SignedObject) inStream.readObject();
+		SignedObject signedValue = (SignedObject) inStream.readObject();
+		SignedObject signedQuantity = (SignedObject) inStream.readObject();
+
+		String wine = (String) signedWine.getObject();
+		double value = (double) signedValue.getObject();
+		int quantity = (int) signedQuantity.getObject();
+		
+//		String wine = (String) inStream.readObject();
+//		double value = (double) inStream.readObject();
+//		int quantity = (int) inStream.readObject();
 		//Create result message
 		String result = "";
 		//Check if wine exists
@@ -60,6 +78,7 @@ public class SellHandler {
 					//Set new price
 					sale.setValue(value);
 				}
+				wineCatalog.updateSaleToWine(wine, sale);
 			}
 			//If sale does not exist
 			else {
@@ -67,6 +86,9 @@ public class SellHandler {
 				sale = new Sale(loggedUser, value, quantity, wine);
 				wineCatalog.addSaleToWine(wine, sale);
 			}
+			
+			LogUtils.getInstance().writeSale(wine, value, quantity, loggedUser);
+			
 			result = "Wine " + wine
 					+ " has been successfully put on sale" + FileUtils.EOL;
 		}
