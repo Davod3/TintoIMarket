@@ -113,13 +113,13 @@ public class LogUtils implements Serializable {
         for (File file : files) {
         	Block block = readBlockFromFile(file.getName(), count);
         	if(count != 0) {
-        		if(!new String(block.previousHash).equals(new String(lastBlock.getHash()))) {
+        		if(!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
         			return false; 		
         		}
 
         		lastBlock.calculateBlockHash();
 
-        		if(!new String(block.previousHash).equals(new String(lastBlock.getHash()))) {
+        		if(!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
         			return false;
         		}
         	}
@@ -205,7 +205,7 @@ public class LogUtils implements Serializable {
 			ByteArrayOutputStream bs = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bs);
 			
-			SignedObject signedPrevHash = new SignedObject(previousHash,(PrivateKey) ks.getKey(alias, pwd.toCharArray()), Signature.getInstance("SHA256withRSA"));
+			SignedObject signedPrevHash = new SignedObject(getPreviousHash(),(PrivateKey) ks.getKey(alias, pwd.toCharArray()), Signature.getInstance("SHA256withRSA"));
 			SignedObject signedID = new SignedObject(blockId,(PrivateKey) ks.getKey(alias, pwd.toCharArray()), Signature.getInstance("SHA256withRSA"));
 			SignedObject signedNumTransactions = new SignedObject(numTransactions,(PrivateKey) ks.getKey(alias, pwd.toCharArray()), Signature.getInstance("SHA256withRSA"));
 			SignedObject signedTransactions = new SignedObject(transactions,(PrivateKey) ks.getKey(alias, pwd.toCharArray()), Signature.getInstance("SHA256withRSA"));
@@ -233,7 +233,7 @@ public class LogUtils implements Serializable {
 	            FileWriter writer = new FileWriter(LOGS_FOLDER + "/block_" + blockId + ".blk");
             	FileOutputStream fos = new FileOutputStream(LOGS_FOLDER + "/block_" + blockId + ".blk");
 
-	            fos.write((new String(previousHash) + "\n").getBytes());
+	            fos.write((new String(getPreviousHash()) + "\n").getBytes());
 	            fos.write(new String(numTransactions + "\n").getBytes());       
 	            for(int i = 0; i < numTransactions; i++) {
 	            	byte[] bytes = new String(transactions.get(i)).getBytes();
@@ -266,6 +266,14 @@ public class LogUtils implements Serializable {
 	    
 	    public long getNumTransactions() {
 			return numTransactions;
+		}
+	    
+	    public ArrayList<String> getTransactions() {
+			return transactions;
+		}
+
+		public byte[] getPreviousHash() {
+			return previousHash;
 		}
 	}
 }
