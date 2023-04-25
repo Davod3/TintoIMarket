@@ -129,11 +129,20 @@ public class UserCatalog {
 		messageDir.createNewFile(); //Create file before reading
 		
 		FileInputStream fileIn = new FileInputStream(filePath);
-		ObjectInputStream in = new ObjectInputStream(fileIn);
 		
-		Stack<Message> inbox = (Stack<Message>) in.readObject();
+		if(fileIn.available() > 0) {
+			
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			
+			Stack<Message> inbox = (Stack<Message>) in.readObject();
+			
+			user.setInbox(inbox);
+			
+			in.close();
+		}
 		
-		user.setInbox(inbox);
+		fileIn.close();	
+		
 	}
 
 	/**
