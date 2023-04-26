@@ -102,10 +102,13 @@ public class PBE {
 	 */
 	public void readParamsFile() throws IOException {
 		File param = new File(PARAMS_FILE_PATH);
+		
 		if (param.exists()) {
+			System.out.println("this happens 107 PBE");
 			paramsExists = true;
+			this.params = new byte[(int) param.length()];
 			FileInputStream fis = new FileInputStream(param);
-			params = fis.readAllBytes();
+			fis.read(params);
 			fis.close();
 		}
 	}
