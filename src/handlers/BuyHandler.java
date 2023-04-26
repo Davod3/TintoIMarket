@@ -61,6 +61,7 @@ public class BuyHandler {
 			KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException,
 			NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Read the name of the wine, the seller and the quantity to buy
+		
 		SignedObject signedWine = (SignedObject) inStream.readObject();
 		String wine = (String) signedWine.getObject();
 		SignedObject signedSeller = (SignedObject) inStream.readObject();
