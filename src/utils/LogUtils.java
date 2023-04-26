@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -251,8 +252,11 @@ public class LogUtils {
 			long numTransactions = 0;
 			ArrayList<String> transactions = new ArrayList<String>();
 			byte[] blockSignature = null;
-
-			previousHash = reader.readLine().getBytes();
+			
+			String hashString = reader.readLine();
+			previousHash = hashString.getBytes(StandardCharsets.UTF_8);
+			
+			//previousHash = reader.readLine().getBytes();
 			try {
 				numTransactions = Long.parseLong(reader.readLine());
 			} catch (NumberFormatException e) {
@@ -275,6 +279,7 @@ public class LogUtils {
 			block.numTransactions = numTransactions;
 			block.transactions = transactions;
 			block.blockSignature = blockSignature;
+			System.out.println(block.blockId + "-This is the previous hash read from file: " + hashString);
 			
 			reader.close();
 		} catch (IOException e) {
