@@ -36,7 +36,7 @@ public class VerifyHash {
 	private static final String HASH_STORAGE = "server_files/storage/hash/";
 	private static final String HASH_FILES = "server_files/storage/hash/hashfiles.txt";
 	private static final String EOL = System.lineSeparator();
-	private static final String SECRET_KEY_ALIAS = "mackey";
+	private static final String SECRET_KEY_ALIAS = "mackey";	
 	private SecretKey secret = null;
 
 	/**

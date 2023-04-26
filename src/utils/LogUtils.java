@@ -31,9 +31,8 @@ import java.util.Arrays;
  * @author David Pereira nº 56361
  * @author Miguel Cut nº 56339
  */
-public class LogUtils implements Serializable {
+public class LogUtils {
 
-	private static final long serialVersionUID = -8914479604836760464L;
 	private static final String LOGS_FOLDER = "server_files/logs";
 	private static final String LOG_FILE = LOGS_FOLDER + "/log.txt";
 	private static LogUtils instance = null;
@@ -216,12 +215,14 @@ public class LogUtils implements Serializable {
 				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
 					return false;
 				}
-
+				
+				/*
 				lastBlock.calculateBlockHash();
 
 				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
 					return false;
 				}
+				*/
 			}
 			
 			lastBlock = block;
@@ -271,6 +272,8 @@ public class LogUtils implements Serializable {
 			block.numTransactions = numTransactions;
 			block.transactions = transactions;
 			block.blockSignature = blockSignature;
+			
+			System.out.println("Previous block hash: " + block.blockId + "-" + Arrays.toString(previousHash));
 			reader.close();
 		} catch (IOException e) {
 			System.out.println("Error reading block from file.");
@@ -356,7 +359,9 @@ public class LogUtils implements Serializable {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			ByteArrayOutputStream bs = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bs);
-
+			
+			System.out.println("Previous block hash: " + this.blockId + ":" + Arrays.toString(previousHash));
+			
 			os.writeObject(this.previousHash);
 			os.writeObject(this.blockId);
 			os.writeObject(this.numTransactions);
