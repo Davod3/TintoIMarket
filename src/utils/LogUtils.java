@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -31,9 +32,8 @@ import java.util.Arrays;
  * @author David Pereira nº 56361
  * @author Miguel Cut nº 56339
  */
-public class LogUtils implements Serializable {
+public class LogUtils {
 
-	private static final long serialVersionUID = -8914479604836760464L;
 	private static final String LOGS_FOLDER = "server_files/logs";
 	private static final String LOG_FILE = LOGS_FOLDER + "/log.txt";
 	private static LogUtils instance = null;
@@ -146,7 +146,7 @@ public class LogUtils implements Serializable {
 		}
 		currentBlock.addTransaction(transaction);
 		if (currentBlock.getNumTransactions() == 5) {
-			currentBlock.calculateBlockHash();
+			currentBlock.signBlock();
 			currentBlock.saveBlockToFile();
 		}
 	}
@@ -202,7 +202,8 @@ public class LogUtils implements Serializable {
 
 		File folder = new File(LOGS_FOLDER);
 		File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
-
+		Arrays.sort(files); //If the sorting strategy of files changes, this whole thing breaks
+		
 		if (files == null || files.length == 0)
 			return true;
 
@@ -211,17 +212,12 @@ public class LogUtils implements Serializable {
 		for (File file : files) {
 			Block block = readBlockFromFile(file.getName(), count);
 			
-			
 			if (count != 0) {
+				
 				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
 					return false;
 				}
-
-				lastBlock.calculateBlockHash();
-
-				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
-					return false;
-				}
+				
 			}
 			
 			lastBlock = block;
@@ -247,8 +243,11 @@ public class LogUtils implements Serializable {
 			long numTransactions = 0;
 			ArrayList<String> transactions = new ArrayList<String>();
 			byte[] blockSignature = null;
-
-			previousHash = reader.readLine().getBytes();
+			
+			String hashString = reader.readLine();
+			previousHash = hashString.getBytes(StandardCharsets.UTF_8);
+			
+			//previousHash = reader.readLine().getBytes();
 			try {
 				numTransactions = Long.parseLong(reader.readLine());
 			} catch (NumberFormatException e) {
@@ -260,17 +259,18 @@ public class LogUtils implements Serializable {
 				if (line != null)
 					transactions.add(line + "\n");
 				else
-					throw new FileIntegrityViolationException("Blockchain integrity was violated!");
+					throw new FileIntegrityViolationException("Blockchain integrity was corrupted!");
 			}
 			blockSignature = reader.readLine().getBytes();
 			if (reader.readLine() != null)
-				throw new FileIntegrityViolationException("Blockchain integrity was violated!");
+				throw new FileIntegrityViolationException("Blockchain integrity was corrupted!");
 			reader.close();
 
 			block = new Block(previousHash, blockId);
 			block.numTransactions = numTransactions;
 			block.transactions = transactions;
 			block.blockSignature = blockSignature;
+			
 			reader.close();
 		} catch (IOException e) {
 			System.out.println("Error reading block from file.");
@@ -336,7 +336,7 @@ public class LogUtils implements Serializable {
 		}
 
 		/**
-		 * Calculates the hash for this block
+		 * Signs the block
 		 * 
 		 * @throws InvalidKeyException       If the key is invalid
 		 * @throws UnrecoverableKeyException If the key cannot be recovered
@@ -350,13 +350,13 @@ public class LogUtils implements Serializable {
 		 * @throws ClassNotFoundException    When trying to find the class of an object
 		 *                                   that does not match/exist
 		 */
-		public synchronized void calculateBlockHash() throws InvalidKeyException, UnrecoverableKeyException,
+		public synchronized void signBlock() throws InvalidKeyException, UnrecoverableKeyException,
 				SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
 
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			ByteArrayOutputStream bs = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bs);
-
+			
 			os.writeObject(this.previousHash);
 			os.writeObject(this.blockId);
 			os.writeObject(this.numTransactions);
@@ -376,6 +376,7 @@ public class LogUtils implements Serializable {
 			byte[] hash = signedBlock.getSignature();
 			String hashStr = Arrays.toString(hash);
 			this.blockSignature = hashStr.getBytes();
+			
 		}
 
 		/**
