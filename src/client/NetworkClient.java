@@ -388,7 +388,7 @@ public class NetworkClient {
 		
 		if(encryptedMsg.length <= 0) {
 			
-			return "Failed to encrypt message!";
+			return "Failed to encrypt message! User not found.";
 		}
 		
 		//Send talk command

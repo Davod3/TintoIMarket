@@ -1,5 +1,6 @@
 package handlers;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -60,8 +61,18 @@ public class GetCertificateHandler {
 			NoSuchPaddingException, InvalidAlgorithmParameterException {
 		String alias = (String) inStream.readObject();
 		
-		Certificate cer = UserCatalog.getInstance().getUserCertificate(alias);
+		try {
+			
+			Certificate cer = UserCatalog.getInstance().getUserCertificate(alias);
+			outStream.writeObject(cer);
+			
+		} catch (FileNotFoundException e) {
+			
+			outStream.writeObject(null);
+			
+		}
 		
-		outStream.writeObject(cer);
+		
+		
 	}
 }
