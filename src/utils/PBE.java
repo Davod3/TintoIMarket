@@ -105,7 +105,6 @@ public class PBE {
 		File param = new File(PARAMS_FILE_PATH);
 		
 		if (param.exists()) {
-			System.out.println("this happens 107 PBE");
 			paramsExists = true;
 			this.params = new byte[(int) param.length()];
 			FileInputStream fis = new FileInputStream(param);

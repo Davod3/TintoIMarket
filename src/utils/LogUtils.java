@@ -202,7 +202,8 @@ public class LogUtils {
 
 		File folder = new File(LOGS_FOLDER);
 		File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
-
+		Arrays.sort(files); //If the sorting strategy of files changes, this whole thing breaks
+		
 		if (files == null || files.length == 0)
 			return true;
 
@@ -213,20 +214,10 @@ public class LogUtils {
 			
 			if (count != 0) {
 				
-				System.out.println("Supposed hash of the previous block: " + new String(block.getPreviousHash()));
-				System.out.println("Actual hash of the previous block: " + new String(lastBlock.getHash()));
-				
 				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
 					return false;
 				}
 				
-				/*
-				lastBlock.calculateBlockHash();
-
-				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
-					return false;
-				}
-				*/
 			}
 			
 			lastBlock = block;
@@ -268,18 +259,17 @@ public class LogUtils {
 				if (line != null)
 					transactions.add(line + "\n");
 				else
-					throw new FileIntegrityViolationException("Blockchain integrity was violated!");
+					throw new FileIntegrityViolationException("Blockchain integrity was corrupted!");
 			}
 			blockSignature = reader.readLine().getBytes();
 			if (reader.readLine() != null)
-				throw new FileIntegrityViolationException("Blockchain integrity was violated!");
+				throw new FileIntegrityViolationException("Blockchain integrity was corrupted!");
 			reader.close();
 
 			block = new Block(previousHash, blockId);
 			block.numTransactions = numTransactions;
 			block.transactions = transactions;
 			block.blockSignature = blockSignature;
-			System.out.println(block.blockId + "-This is the previous hash read from file: " + hashString);
 			
 			reader.close();
 		} catch (IOException e) {
