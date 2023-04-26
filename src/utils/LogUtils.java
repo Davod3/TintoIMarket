@@ -145,7 +145,7 @@ public class LogUtils {
 		}
 		currentBlock.addTransaction(transaction);
 		if (currentBlock.getNumTransactions() == 5) {
-			currentBlock.calculateBlockHash();
+			currentBlock.signBlock();
 			currentBlock.saveBlockToFile();
 		}
 	}
@@ -210,8 +210,11 @@ public class LogUtils {
 		for (File file : files) {
 			Block block = readBlockFromFile(file.getName(), count);
 			
-			
 			if (count != 0) {
+				
+				System.out.println("Supposed hash of the previous block: " + new String(block.getPreviousHash()));
+				System.out.println("Actual hash of the previous block: " + new String(lastBlock.getHash()));
+				
 				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
 					return false;
 				}
@@ -273,7 +276,6 @@ public class LogUtils {
 			block.transactions = transactions;
 			block.blockSignature = blockSignature;
 			
-			System.out.println("Previous block hash: " + block.blockId + "-" + Arrays.toString(previousHash));
 			reader.close();
 		} catch (IOException e) {
 			System.out.println("Error reading block from file.");
@@ -339,7 +341,7 @@ public class LogUtils {
 		}
 
 		/**
-		 * Calculates the hash for this block
+		 * Signs the block
 		 * 
 		 * @throws InvalidKeyException       If the key is invalid
 		 * @throws UnrecoverableKeyException If the key cannot be recovered
@@ -353,14 +355,12 @@ public class LogUtils {
 		 * @throws ClassNotFoundException    When trying to find the class of an object
 		 *                                   that does not match/exist
 		 */
-		public synchronized void calculateBlockHash() throws InvalidKeyException, UnrecoverableKeyException,
+		public synchronized void signBlock() throws InvalidKeyException, UnrecoverableKeyException,
 				SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
 
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			ByteArrayOutputStream bs = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bs);
-			
-			System.out.println("Previous block hash: " + this.blockId + ":" + Arrays.toString(previousHash));
 			
 			os.writeObject(this.previousHash);
 			os.writeObject(this.blockId);
@@ -381,6 +381,7 @@ public class LogUtils {
 			byte[] hash = signedBlock.getSignature();
 			String hashStr = Arrays.toString(hash);
 			this.blockSignature = hashStr.getBytes();
+			
 		}
 
 		/**
