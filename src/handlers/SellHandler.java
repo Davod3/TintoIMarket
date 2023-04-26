@@ -3,13 +3,20 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.security.SignatureException;
 import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.NoSuchPaddingException;
+
+import catalogs.UserCatalog;
 import catalogs.WineCatalog;
 import domain.Sale;
 import utils.FileIntegrityViolationException;
@@ -44,11 +51,15 @@ public class SellHandler {
 	 * @throws UnrecoverableKeyException 		If the key cannot be recovered
 	 * @throws FileIntegrityViolationException 	If the loaded file's is corrupted
 	 * @throws InvalidKeyException 				If the key is invalid
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws CertificateException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
 			throws ClassNotFoundException, IOException, NoSuchAlgorithmException,
 			InvalidKeyException, UnrecoverableKeyException, SignatureException,
-			KeyStoreException, FileIntegrityViolationException {
+			KeyStoreException, FileIntegrityViolationException, CertificateException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Read the name of the wine, the price and the quantity to sell
@@ -56,6 +67,10 @@ public class SellHandler {
 		SignedObject signedWine = (SignedObject) inStream.readObject();
 		SignedObject signedValue = (SignedObject) inStream.readObject();
 		SignedObject signedQuantity = (SignedObject) inStream.readObject();
+		
+		assert(signedWine.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
+		assert(signedValue.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
+		assert(signedQuantity.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
 
 		String wine = (String) signedWine.getObject();
 		double value = (double) signedValue.getObject();

@@ -7,9 +7,11 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.security.SignatureException;
 import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.NoSuchPaddingException;
@@ -54,19 +56,27 @@ public class BuyHandler {
 	 * @throws UnrecoverableKeyException 			If the key cannot be recovered
 	 * @throws InvalidKeyException 					If the key is invalid
 	 * @throws FileIntegrityViolationException 		If the loaded file is corrupted
+	 * @throws CertificateException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
 			throws ClassNotFoundException, IOException, NoSuchAlgorithmException,
 			InvalidKeyException, UnrecoverableKeyException, SignatureException,
 			KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException,
-			NoSuchPaddingException, InvalidAlgorithmParameterException {
+			NoSuchPaddingException, InvalidAlgorithmParameterException, CertificateException {
 		//Read the name of the wine, the seller and the quantity to buy
 		
 		SignedObject signedWine = (SignedObject) inStream.readObject();
-		String wine = (String) signedWine.getObject();
 		SignedObject signedSeller = (SignedObject) inStream.readObject();
-		String seller = (String) signedSeller.getObject();
 		SignedObject signedQuantity = (SignedObject) inStream.readObject();
+		
+		
+		assert(signedWine.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
+		assert(signedSeller.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
+		assert(signedQuantity.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
+		
+		
+		String wine = (String) signedWine.getObject();
+		String seller = (String) signedSeller.getObject();
 		int quantity = (int) signedQuantity.getObject();
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
