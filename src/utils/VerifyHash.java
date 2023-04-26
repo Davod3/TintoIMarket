@@ -86,13 +86,17 @@ public class VerifyHash {
 			
 			byte[] hash = (byte[]) ois.readObject();
 			
-			
 			String[] splitFilePath = filepath.split("hash");
 			
 			String filePathKey = splitFilePath[0] + splitFilePath[1].split("/")[1];
 		
 			map.put(filePathKey, hash);
+			
+			ois.close();
+			fis.close();
 		}
+		
+		br.close();
 		
 		return map;
 	}

@@ -1,5 +1,6 @@
 package utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -206,8 +207,16 @@ public class PBE {
 			
 			StringBuilder sb = new StringBuilder();
 			
-			byte[] b = cis.readAllBytes();
-			sb.append(new String(b,StandardCharsets.UTF_8));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			int len;
+			byte[] buffer = new byte[1024];
+			while((len = cis.read(buffer, 0, buffer.length)) != -1) {
+				baos.write(buffer, 0 , len);
+			}
+			
+			baos.flush();
+			byte[] decryptedBytes = baos.toByteArray();
+			sb.append(new String(decryptedBytes,StandardCharsets.UTF_8));
 			
 		    cis.close();
 		    fis.close();
