@@ -87,7 +87,7 @@ public class PBE {
 	 * 
 	 * @throws IOException	When it is not possible to write into the params file
 	 */
-	public void writeParamsFile() throws IOException {
+	public synchronized void writeParamsFile() throws IOException {
 		File param = new File(PARAMS_FILE_PATH);
 		param.createNewFile();
 		FileOutputStream fos = new FileOutputStream(param);
@@ -101,7 +101,7 @@ public class PBE {
 	 * 
 	 * @throws IOException	When it is not possible to read from the params file
 	 */
-	public void readParamsFile() throws IOException {
+	public synchronized void readParamsFile() throws IOException {
 		File param = new File(PARAMS_FILE_PATH);
 		
 		if (param.exists()) {
@@ -150,7 +150,7 @@ public class PBE {
 	 * @throws IOException					When inStream does not receive input
 	 * 										or the outStream can't send the result message
 	 */
-	public void encryption (String data)
+	public synchronized void encryption (String data)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, InvalidKeySpecException, IOException {
 		SecretKey key = generatePBEKey();
@@ -187,7 +187,7 @@ public class PBE {
 	 * @throws InvalidKeyException					If the key is invalid
 	 * @throws InvalidAlgorithmParameterException	If an invalid algorithm parameter is passed to a method
 	 */
-	public String decryption (File file)
+	public synchronized String decryption (File file)
 			throws NoSuchAlgorithmException, InvalidKeySpecException,
 			IOException, NoSuchPaddingException, InvalidKeyException,
 			InvalidAlgorithmParameterException {
