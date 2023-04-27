@@ -61,7 +61,7 @@ public class VerifyHash {
 	 * @throws ClassNotFoundException	When trying to find the class of an object
 	 * 									that does not match/exist
 	 */
-	private Map<String, byte[]> loadHash()
+	private synchronized Map<String, byte[]> loadHash()
 			throws IOException, ClassNotFoundException {
 		
 		HashMap<String, byte[]> map = new HashMap<>();
@@ -129,7 +129,7 @@ public class VerifyHash {
 	 * @throws FileIntegrityViolationException		If the loaded file is corrupted
 	 * @throws InvalidKeyException					If the key is invalid
 	 */
-	public void verify(File file, String fileName)
+	public synchronized void verify(File file, String fileName)
 			throws IOException, ClassNotFoundException, NoSuchAlgorithmException,
 			FileIntegrityViolationException, InvalidKeyException {
 		
@@ -156,7 +156,7 @@ public class VerifyHash {
 	 * @throws FileIntegrityViolationException		If the loaded file is corrupted
 	 * @throws InvalidKeyException					If the key is invalid 					
 	 */
-	public void verify(byte[] file, String fileName)
+	public synchronized void verify(byte[] file, String fileName)
 			throws NoSuchAlgorithmException, FileIntegrityViolationException,
 			InvalidKeyException {
 			
@@ -190,7 +190,7 @@ public class VerifyHash {
 	 * @throws FileIntegrityViolationException		If the loaded file is corrupted
 	 * @throws InvalidKeyException					If the key is invalid					
 	 */
-	public void updateHash(byte[] file, String fileName)
+	public synchronized void updateHash(byte[] file, String fileName)
 			throws NoSuchAlgorithmException, IOException,
 			ClassNotFoundException, FileIntegrityViolationException,
 			InvalidKeyException {

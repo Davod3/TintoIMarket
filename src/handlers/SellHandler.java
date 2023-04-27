@@ -19,6 +19,7 @@ import javax.crypto.NoSuchPaddingException;
 import catalogs.UserCatalog;
 import catalogs.WineCatalog;
 import domain.Sale;
+import domain.SaleTransaction;
 import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 import utils.LogUtils;
@@ -62,23 +63,17 @@ public class SellHandler {
 			KeyStoreException, FileIntegrityViolationException, CertificateException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
-		//Read the name of the wine, the price and the quantity to sell
 		
-		SignedObject signedWine = (SignedObject) inStream.readObject();
-		SignedObject signedValue = (SignedObject) inStream.readObject();
-		SignedObject signedQuantity = (SignedObject) inStream.readObject();
+		SignedObject signedTransaction = (SignedObject) inStream.readObject();
 		
-		assert(signedWine.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-		assert(signedValue.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-		assert(signedQuantity.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-
-		String wine = (String) signedWine.getObject();
-		double value = (double) signedValue.getObject();
-		int quantity = (int) signedQuantity.getObject();
+		assert(signedTransaction.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
 		
-//		String wine = (String) inStream.readObject();
-//		double value = (double) inStream.readObject();
-//		int quantity = (int) inStream.readObject();
+		SaleTransaction st = (SaleTransaction) signedTransaction.getObject();
+		
+		String wine = st.getWineid();
+		double value = st.getUnitValue();
+		int quantity = st.getNumUnits();
+		
 		//Create result message
 		String result = "";
 		//Check if wine exists
@@ -103,7 +98,7 @@ public class SellHandler {
 				wineCatalog.addSaleToWine(wine, sale);
 			}
 			
-			LogUtils.getInstance().writeSale(wine, value, quantity, loggedUser);
+			LogUtils.getInstance().addTransaction(signedTransaction);
 			
 			result = "Wine " + wine
 					+ " has been successfully put on sale" + FileUtils.EOL;

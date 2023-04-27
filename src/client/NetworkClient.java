@@ -25,7 +25,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
+import domain.BuyTransaction;
 import domain.Message;
+import domain.SaleTransaction;
 import utils.FileUtils;
 
 /**
@@ -228,21 +230,22 @@ public class NetworkClient {
 	 * @throws SignatureException 			When an error occurs while signing an object
 	 * @throws InvalidKeyException 			If the key is invalid
 	 */
-	public String sell(String wine, String value, String quantity)
+	public String sell(String wine, String value, String quantity, String user)
 			throws IOException, ClassNotFoundException, InvalidKeyException,
 			SignatureException, NoSuchAlgorithmException {
 		String result = "";
 		//Send sell command
 		outStream.writeObject("sell");
-		//Send the name of the wine
-		SignedObject signedWine = new SignedObject(wine, this.pk, Signature.getInstance("MD5withRSA"));
-		outStream.writeObject(signedWine);
-		//Send value of each unit
-		SignedObject signedValue = new SignedObject(Double.parseDouble(value), this.pk, Signature.getInstance("MD5withRSA"));
-		outStream.writeObject(signedValue);
-		//Send quantity to sell
-		SignedObject signedQuantity = new SignedObject(Integer.parseInt(quantity), this.pk, Signature.getInstance("MD5withRSA"));
-		outStream.writeObject(signedQuantity);
+		
+		//Create transaction
+		SaleTransaction st = new SaleTransaction(user, wine, Integer.parseInt(quantity), Double.parseDouble(value));
+		
+		//Sign transaction
+		SignedObject signedTransaction = new SignedObject(st, this.pk, Signature.getInstance("MD5withRSA"));
+		
+		//Send transaction
+		outStream.writeObject(signedTransaction);
+		
 		//Get result
 		result = (String) inStream.readObject();
 		return result;
@@ -292,21 +295,29 @@ public class NetworkClient {
 	 * @throws SignatureException 			When an error occurs while signing an object
 	 * @throws InvalidKeyException 			If the key is invalid
 	 */
-	public String buy(String wine, String seller, String quantity)
+	public String buy(String wine, String seller, String quantity, String user)
 			throws IOException, ClassNotFoundException, InvalidKeyException,
 			SignatureException, NoSuchAlgorithmException {
 		String result = "";
-		//Send buy command
+		
+		//Send command
 		outStream.writeObject("buy");
-		//Send the name of the wine
-		SignedObject signedWine = new SignedObject(wine, this.pk, Signature.getInstance("MD5withRSA"));
-		outStream.writeObject(signedWine);
-		//Send the seller
-		SignedObject signedSeller = new SignedObject(seller, this.pk, Signature.getInstance("MD5withRSA"));
-		outStream.writeObject(signedSeller);
-		//Send the quantity to buy
-		SignedObject signedQuantity = new SignedObject(Integer.parseInt(quantity), this.pk, Signature.getInstance("MD5withRSA"));
-		outStream.writeObject(signedQuantity);
+		
+		outStream.writeObject(wine);
+		
+		outStream.writeObject(seller);
+		
+		double value = (double) inStream.readObject();
+		
+		//Create transaction
+		BuyTransaction bt = new BuyTransaction(user, wine, Integer.parseInt(quantity), value, seller);
+		
+		//Sign transaction
+		SignedObject signedTransaction = new SignedObject(bt, this.pk, Signature.getInstance("MD5withRSA"));
+		
+		//Send transaction
+		outStream.writeObject(signedTransaction);
+		
 		//Get result
 		result = (String) inStream.readObject();	 
 		return result;

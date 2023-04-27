@@ -18,6 +18,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
 import catalogs.WineCatalog;
+import domain.BuyTransaction;
 import domain.Sale;
 import utils.FileIntegrityViolationException;
 import utils.FileUtils;
@@ -63,27 +64,39 @@ public class BuyHandler {
 			InvalidKeyException, UnrecoverableKeyException, SignatureException,
 			KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException,
 			NoSuchPaddingException, InvalidAlgorithmParameterException, CertificateException {
-		//Read the name of the wine, the seller and the quantity to buy
 		
-		SignedObject signedWine = (SignedObject) inStream.readObject();
-		SignedObject signedSeller = (SignedObject) inStream.readObject();
-		SignedObject signedQuantity = (SignedObject) inStream.readObject();
-		
-		
-		assert(signedWine.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-		assert(signedSeller.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-		assert(signedQuantity.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-		
-		
-		String wine = (String) signedWine.getObject();
-		String seller = (String) signedSeller.getObject();
-		int quantity = (int) signedQuantity.getObject();
-		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
+		
+		//Read the name of the wine, the seller and the quantity to buy
+		String wine = (String) inStream.readObject();
+		
+		String seller = (String) inStream.readObject();
+		
+		boolean wineExists = wineCatalog.wineExists(wine);
+		if (!wineExists) {
+			outStream.writeObject((double) -1.0);
+		} else {
+			
+			//Get the wine sale of the seller
+			Sale sale = wineCatalog.getWineSaleBySeller(wine, seller);
+			
+			if(sale != null) {
+				outStream.writeObject(sale.getValue());
+			} else {
+				outStream.writeObject((double) -1.0);
+			}
+		}
+		
+		SignedObject signedTransaction = (SignedObject) inStream.readObject();
+		
+		assert(signedTransaction.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
+		
+		BuyTransaction bt = (BuyTransaction) signedTransaction.getObject();
+		
+		int quantity = bt.getUnitsSold();
+
 		//Create the result message
 		String result = "";
-		//Check if wine exists
-		boolean wineExists = wineCatalog.wineExists(wine);
 		if (!wineExists) {
 			outStream.writeObject("Wine " + wine
 					+ " doesn't exist, try again with another wine" + FileUtils.EOL);
@@ -121,7 +134,7 @@ public class BuyHandler {
 			result = "Wine " + wine + " successfully bought!" + FileUtils.EOL;
 			wineCatalog.updateWines();
 			
-			LogUtils.getInstance().writeBuy(wine, quantity, quantity, loggedUser);
+			LogUtils.getInstance().addTransaction(signedTransaction);
 		}
 		//Send result message
 		outStream.writeObject(result);

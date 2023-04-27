@@ -117,7 +117,7 @@ public class UserCatalog {
 	 * @throws ClassNotFoundException 	If the class of a serialized object is not found
 	 */
 	@SuppressWarnings("unchecked")
-	private void loadMessages(User user)
+	private synchronized void loadMessages(User user)
 			throws IOException, ClassNotFoundException {
 		//Create the user path
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
@@ -152,7 +152,7 @@ public class UserCatalog {
 	 * @return			True if user has balance greater than or equal to value,
 	 * 					false otherwise
 	 */
-	public boolean hasEnoughMoney(String user, double value) {
+	public synchronized boolean hasEnoughMoney(String user, double value) {
 		return getUser(user).getBalance() >= value;
 	}
 	
@@ -163,7 +163,7 @@ public class UserCatalog {
 	 * @param seller	The user to which we want to transfer the value
 	 * @param value		The value we want to transfer
 	 */
-	public void transfer(String buyer, String seller, double value) {
+	public synchronized void transfer(String buyer, String seller, double value) {
 		User buyerUser = getUser(buyer);
 		User sellerUser = getUser(seller);
 		buyerUser.setBalance(buyerUser.getBalance() - value);
@@ -269,7 +269,7 @@ public class UserCatalog {
 	 * @return					The unread messages
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
 	 */
-	public Stack<Message> readMessages(String loggedUser)
+	public synchronized Stack<Message> readMessages(String loggedUser)
 			throws IOException {
 		//Get user by username
 		User user = getUser(loggedUser);
@@ -359,7 +359,7 @@ public class UserCatalog {
 	 * @throws FileNotFoundException	When the certificate file for the user is not found
 	 * @throws CertificateException		When an error occurs while generating the certificate from the fileInputStream
 	 */
-	public Certificate getUserCertificate(String user)
+	public synchronized Certificate getUserCertificate(String user)
 			throws FileNotFoundException, CertificateException {
 		
 		FileInputStream fis = new FileInputStream(CERTIFICATE_STORAGE + user + CERTIFICATE_EXTENSION);
