@@ -303,8 +303,14 @@ public class NetworkClient {
 		//Send command
 		outStream.writeObject("buy");
 		
+		outStream.writeObject(wine);
+		
+		outStream.writeObject(seller);
+		
+		double value = (double) inStream.readObject();
+		
 		//Create transaction
-		BuyTransaction bt = new BuyTransaction(user, wine, Integer.parseInt(quantity), seller);
+		BuyTransaction bt = new BuyTransaction(user, wine, Integer.parseInt(quantity), value, seller);
 		
 		//Sign transaction
 		SignedObject signedTransaction = new SignedObject(bt, this.pk, Signature.getInstance("MD5withRSA"));

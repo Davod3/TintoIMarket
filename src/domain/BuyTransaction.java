@@ -7,11 +7,12 @@ public final class BuyTransaction extends Transaction{
 	private double unitValue = 0;
 	private String sellerid;
 	
-	public BuyTransaction(String uid, String wineid, int unitsSold, String sellerid) {
+	public BuyTransaction(String uid, String wineid, int unitsSold, double value,String sellerid) {
 		super(uid, wineid, "buy");
 
 		this.unitsSold = unitsSold;
 		this.sellerid = sellerid;
+		this.unitValue = value;
 	}
 
 	public int getUnitsSold() {

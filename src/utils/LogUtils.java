@@ -310,9 +310,11 @@ public class LogUtils {
 		return instance;
 	}
 	
-	private byte[] parseByteString(String byteStr) throws NumberFormatException{
+	public byte[] parseByteString(String byteStr) throws NumberFormatException{
 		
-		String[] stringValues = byteStr.substring(1, byteStr.length() - 1).split(",\\s*");
+		String byteStrTrimmed = byteStr.trim();
+		
+		String[] stringValues = byteStrTrimmed.substring(1, byteStrTrimmed.length() - 1).split(",\\s*");
 		byte[] byteArray = new byte[stringValues.length];
 		
 		for (int i = 0; i < byteArray.length; i++) {

@@ -64,7 +64,28 @@ public class BuyHandler {
 			InvalidKeyException, UnrecoverableKeyException, SignatureException,
 			KeyStoreException, FileIntegrityViolationException, InvalidKeySpecException,
 			NoSuchPaddingException, InvalidAlgorithmParameterException, CertificateException {
+		
+		WineCatalog wineCatalog = WineCatalog.getInstance();
+		
 		//Read the name of the wine, the seller and the quantity to buy
+		String wine = (String) inStream.readObject();
+		
+		String seller = (String) inStream.readObject();
+		
+		boolean wineExists = wineCatalog.wineExists(wine);
+		if (!wineExists) {
+			outStream.writeObject((double) -1.0);
+		} else {
+			
+			//Get the wine sale of the seller
+			Sale sale = wineCatalog.getWineSaleBySeller(wine, seller);
+			
+			if(sale != null) {
+				outStream.writeObject(sale.getValue());
+			} else {
+				outStream.writeObject((double) -1.0);
+			}
+		}
 		
 		SignedObject signedTransaction = (SignedObject) inStream.readObject();
 		
@@ -72,15 +93,10 @@ public class BuyHandler {
 		
 		BuyTransaction bt = (BuyTransaction) signedTransaction.getObject();
 		
-		String wine = bt.getWineid();
-		String seller = bt.getSellerId();
 		int quantity = bt.getUnitsSold();
-		//Get Wine's Catalog only instance
-		WineCatalog wineCatalog = WineCatalog.getInstance();
+
 		//Create the result message
 		String result = "";
-		//Check if wine exists
-		boolean wineExists = wineCatalog.wineExists(wine);
 		if (!wineExists) {
 			outStream.writeObject("Wine " + wine
 					+ " doesn't exist, try again with another wine" + FileUtils.EOL);

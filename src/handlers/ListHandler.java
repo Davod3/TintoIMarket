@@ -1,5 +1,6 @@
 package handlers;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,8 +9,12 @@ import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
 
+import domain.BuyTransaction;
+import domain.SaleTransaction;
+import domain.Transaction;
 import utils.FileIntegrityViolationException;
 import utils.LogUtils;
 import utils.LogUtils.Block;
@@ -24,6 +29,7 @@ import utils.LogUtils.Block;
 public class ListHandler {
 
 	private static ListHandler instance = null;
+	private static final String EOL = System.lineSeparator();
 
 	/**
 	 * Returns the list of transactions for the current user
@@ -65,7 +71,37 @@ public class ListHandler {
         for (File file : files) {
         	Block block = LogUtils.getInstance().readBlockFromFile(file.getName(), count);
         	for(int i = 0; i < block.getNumTransactions(); i++) {
-        		sb.append(block.getTransactions().get(i));
+        		
+        		System.out.println(block.getTransactions().get(i));
+        		
+        		byte[] signedTransactionBytes = LogUtils.getInstance().parseByteString(block.getTransactions().get(i));
+        		
+        		 ByteArrayInputStream in = new ByteArrayInputStream(signedTransactionBytes);
+        		 ObjectInputStream is = new ObjectInputStream(in);
+        		 
+        		 SignedObject signedTransaction = (SignedObject) is.readObject();
+        		 
+        		 Transaction t = (Transaction) signedTransaction.getObject();
+        		 
+        		 if(t.getType().equals("sell")) {
+        			 
+        			 //sell transaction
+        			 
+        			 SaleTransaction st = (SaleTransaction) t;
+        			 
+        			 sb.append("Sale: " + st.getWineid() + " : " + st.getNumUnits() + " : " + st.getUnitValue() + " : " + st.getUid() + EOL);
+        			 
+        			 
+        		 } else {
+        			 
+        			 //buy transaction
+        			 
+        			 BuyTransaction st = (BuyTransaction) t;
+        			 
+        			 sb.append("Buy: " + st.getWineid() + " : " + st.getUnitsSold() + " : " + st.getUnitValue() + " : " + st.getUid() + EOL);
+        			 
+        		 }
+        		 
         	}
         	lastBlock = block;
         	count++;
