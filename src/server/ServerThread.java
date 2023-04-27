@@ -167,7 +167,7 @@ public class ServerThread extends Thread {
 		
 		boolean isKnown = userCatalog.getUser(user) != null;
 		
-		System.out.println("Checked if user present" + isKnown);
+		System.out.println("Checked if user present: " + isKnown);
 		
 		outStream.writeObject(nonce); //Send nonce
 		System.out.println("Sent nonce");

@@ -72,8 +72,6 @@ public class ListHandler {
         	Block block = LogUtils.getInstance().readBlockFromFile(file.getName(), count);
         	for(int i = 0; i < block.getNumTransactions(); i++) {
         		
-        		System.out.println(block.getTransactions().get(i));
-        		
         		byte[] signedTransactionBytes = LogUtils.getInstance().parseByteString(block.getTransactions().get(i));
         		
         		 ByteArrayInputStream in = new ByteArrayInputStream(signedTransactionBytes);

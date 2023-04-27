@@ -74,7 +74,6 @@ public class TintolMarketServer {
 		Server myServer;
 		try {
 			
-			System.out.println(keystorepw);
 			myServer = new Server(port, cipherpw, keystore, keystorepw);
 			myServer.run();
 		} catch (KeyStoreException e) {
