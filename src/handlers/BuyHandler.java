@@ -18,6 +18,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
 import catalogs.WineCatalog;
+import domain.BuyTransaction;
 import domain.Sale;
 import utils.FileIntegrityViolationException;
 import utils.FileUtils;
@@ -65,19 +66,15 @@ public class BuyHandler {
 			NoSuchPaddingException, InvalidAlgorithmParameterException, CertificateException {
 		//Read the name of the wine, the seller and the quantity to buy
 		
-		SignedObject signedWine = (SignedObject) inStream.readObject();
-		SignedObject signedSeller = (SignedObject) inStream.readObject();
-		SignedObject signedQuantity = (SignedObject) inStream.readObject();
+		SignedObject signedTransaction = (SignedObject) inStream.readObject();
 		
+		assert(signedTransaction.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
 		
-		assert(signedWine.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-		assert(signedSeller.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
-		assert(signedQuantity.verify(UserCatalog.getInstance().getUserCertificate(loggedUser).getPublicKey(), Signature.getInstance("MD5withRSA")));
+		BuyTransaction bt = (BuyTransaction) signedTransaction.getObject();
 		
-		
-		String wine = (String) signedWine.getObject();
-		String seller = (String) signedSeller.getObject();
-		int quantity = (int) signedQuantity.getObject();
+		String wine = bt.getWineid();
+		String seller = bt.getSellerId();
+		int quantity = bt.getUnitsSold();
 		//Get Wine's Catalog only instance
 		WineCatalog wineCatalog = WineCatalog.getInstance();
 		//Create the result message
@@ -121,7 +118,7 @@ public class BuyHandler {
 			result = "Wine " + wine + " successfully bought!" + FileUtils.EOL;
 			wineCatalog.updateWines();
 			
-			LogUtils.getInstance().writeBuy(wine, quantity, quantity, loggedUser);
+			LogUtils.getInstance().addTransaction(signedTransaction);
 		}
 		//Send result message
 		outStream.writeObject(result);

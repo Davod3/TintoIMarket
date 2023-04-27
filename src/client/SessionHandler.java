@@ -29,6 +29,7 @@ public class SessionHandler {
 	private boolean sessionValid;
 	private NetworkClient netClient;
 	public static final String COMMAND_ERROR = "Invalid command.";
+	private String currentUser;
 		
 	/**
 	 * Creates a new SessionHandler given the user, password
@@ -48,7 +49,8 @@ public class SessionHandler {
 			throws IOException, KeyStoreException,
 			NoSuchAlgorithmException, CertificateException {
 		this.netClient = new NetworkClient(serverAdress, truststore, keystore, keystorePassword);
-		sessionValid = netClient.validateSession(getKeyStore(keystore, keystorePassword.toCharArray()), keystorePassword, user);
+		this.sessionValid = netClient.validateSession(getKeyStore(keystore, keystorePassword.toCharArray()), keystorePassword, user);
+		this.currentUser = user;
 	}
 	
 	/**
@@ -188,7 +190,7 @@ public class SessionHandler {
 					if (quantity > 0) {
 						if (command[0].equals("buy") || command[0].equals("b") && command[2].matches("[1-5]+")) {
 							try {
-								result = netClient.buy(command[1], command[2], command[3]);
+								result = netClient.buy(command[1], command[2], command[3], this.currentUser);
 							} catch (ClassNotFoundException | IOException e) {
 								System.out.println("Error buying wine\n");
 								System.exit(-1);
@@ -196,7 +198,7 @@ public class SessionHandler {
 						}
 						else if (command[0].equals("sell") || command[0].equals("s")) {
 							try {
-								result = netClient.sell(command[1], command[2], command[3]);
+								result = netClient.sell(command[1], command[2], command[3], this.currentUser);
 							} catch (ClassNotFoundException | IOException e) {
 								System.out.println("Error selling wine\n");
 								System.exit(-1);

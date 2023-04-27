@@ -39,9 +39,10 @@ public class LogUtils {
 	private static LogUtils instance = null;
 	private File log;
 	private Block currentBlock;
-	private transient KeyStore ks;
+	private KeyStore ks;
 	private String alias;
 	private String pwd;
+	private static final String EOL = System.lineSeparator();
 
 	/**
 	 * This constructor loads the transactions from the log file
@@ -59,63 +60,6 @@ public class LogUtils {
 		}
 	}
 
-	/**
-	 * Writes a new sale into the log file and the blockChain
-	 * 
-	 * @param wine     The wine to put on sale
-	 * @param value    The value for each unit of this wine
-	 * @param quantity The quantity of this wine to put on sale
-	 * @param seller   The seller of the wine
-	 * @throws InvalidKeyException       If the key is invalid
-	 * @throws UnrecoverableKeyException If the key cannot be recovered
-	 * @throws SignatureException        When an error occurs while signing an
-	 *                                   object
-	 * @throws KeyStoreException         If an exception occurs while accessing the
-	 *                                   keystore
-	 * @throws NoSuchAlgorithmException  If the requested algorithm is not available
-	 * @throws IOException               When inStream does not receive input or the
-	 *                                   outStream can't send the result message
-	 * @throws ClassNotFoundException    When trying to find the class of an object
-	 *                                   that does not match/exist
-	 */
-	public synchronized void writeSale(String wine, double value, int quantity, String seller)
-			throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException,
-			NoSuchAlgorithmException, IOException, ClassNotFoundException {
-		String transaction = "sale: " + wine + " " + value + " " + quantity + " " + seller + "\n";
-		BufferedWriter bw = new BufferedWriter(new FileWriter(log, true));
-		bw.append(transaction);
-		bw.close();
-		addTransaction(transaction);
-	}
-
-	/**
-	 * Writes a new buy into the log file and the blockChain
-	 * 
-	 * @param wine     The wine to buy
-	 * @param value    The value for each unit of this wine
-	 * @param quantity The quantity of this wine to buy
-	 * @param buyer    The buyer of the wine
-	 * @throws InvalidKeyException       If the key is invalid
-	 * @throws UnrecoverableKeyException If the key cannot be recovered
-	 * @throws SignatureException        When an error occurs while signing an
-	 *                                   object
-	 * @throws KeyStoreException         If an exception occurs while accessing the
-	 *                                   keystore
-	 * @throws NoSuchAlgorithmException  If the requested algorithm is not available
-	 * @throws IOException               When inStream does not receive input or the
-	 *                                   outStream can't send the result message
-	 * @throws ClassNotFoundException    When trying to find the class of an object
-	 *                                   that does not match/exist
-	 */
-	public synchronized void writeBuy(String wine, double value, int quantity, String buyer)
-			throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException,
-			NoSuchAlgorithmException, IOException, ClassNotFoundException {
-		String transaction = "buy: " + wine + " " + value + " " + quantity + " " + buyer + "\n";
-		BufferedWriter bw = new BufferedWriter(new FileWriter(log, true));
-		bw.append(transaction);
-		bw.close();
-		addTransaction(transaction);
-	}
 
 	/**
 	 * Adds a new transaction to the blockChain
@@ -133,7 +77,7 @@ public class LogUtils {
 	 * @throws ClassNotFoundException    When trying to find the class of an object
 	 *                                   that does not match/exist
 	 */
-	private synchronized void addTransaction(String transaction) throws InvalidKeyException, UnrecoverableKeyException,
+	public synchronized void addTransaction(SignedObject signedTransaction) throws InvalidKeyException, UnrecoverableKeyException,
 			SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException, ClassNotFoundException {
 		if (currentBlock == null)
 			currentBlock = new Block(new byte[32], 0);
@@ -144,7 +88,9 @@ public class LogUtils {
 			byte[] hash = currentBlock.getHash();
 			currentBlock = new Block(hash, blockId);
 		}
-		currentBlock.addTransaction(transaction);
+		
+		currentBlock.addTransaction(signedTransaction);
+		
 		if (currentBlock.getNumTransactions() == 5) {
 			currentBlock.signBlock();
 			currentBlock.saveBlockToFile();
@@ -214,7 +160,7 @@ public class LogUtils {
 			
 			if (count != 0) {
 				
-				if (!new String(block.getPreviousHash()).equals(new String(lastBlock.getHash()))) {
+				if(!MessageDigest.isEqual(block.getPreviousHash(), lastBlock.getHash())) {
 					return false;
 				}
 				
@@ -242,12 +188,12 @@ public class LogUtils {
 			byte[] previousHash = null;
 			long numTransactions = 0;
 			ArrayList<String> transactions = new ArrayList<String>();
-			byte[] blockSignature = null;
+			String blockSignature = null;
 			
 			String hashString = reader.readLine();
-			previousHash = hashString.getBytes(StandardCharsets.UTF_8);
 			
-			//previousHash = reader.readLine().getBytes();
+			previousHash = hashString.getBytes();
+			
 			try {
 				numTransactions = Long.parseLong(reader.readLine());
 			} catch (NumberFormatException e) {
@@ -256,20 +202,26 @@ public class LogUtils {
 
 			for (int i = 0; i < numTransactions; i++) {
 				line = reader.readLine();
+				
 				if (line != null)
-					transactions.add(line + "\n");
+					transactions.add(line + EOL);
 				else
 					throw new FileIntegrityViolationException("Blockchain integrity was corrupted!");
 			}
-			blockSignature = reader.readLine().getBytes();
+			
+			blockSignature = reader.readLine();
+			
+			byte[] signatureBytes = blockSignature.getBytes();
+			
 			if (reader.readLine() != null)
 				throw new FileIntegrityViolationException("Blockchain integrity was corrupted!");
+			
 			reader.close();
 
 			block = new Block(previousHash, blockId);
 			block.numTransactions = numTransactions;
 			block.transactions = transactions;
-			block.blockSignature = blockSignature;
+			block.blockSignature = signatureBytes;
 			
 			reader.close();
 		} catch (IOException e) {
@@ -301,6 +253,20 @@ public class LogUtils {
 		if (instance == null)
 			instance = new LogUtils();
 		return instance;
+	}
+	
+	private byte[] parseByteString(String byteStr) {
+		
+		String[] stringValues = byteStr.substring(1, byteStr.length() - 1).split(",\\s*");
+		byte[] byteArray = new byte[stringValues.length];
+		
+		for (int i = 0; i < byteArray.length; i++) {
+			
+			byteArray[i] = (byte) Integer.parseInt(stringValues[i]);
+			
+		}
+		
+		return byteArray;
 	}
 
 	/**
@@ -408,9 +374,23 @@ public class LogUtils {
 		 * Add a transaction to this block
 		 * 
 		 * @param transaction The transaction to be added
+		 * @throws IOException 
+		 * @throws NoSuchAlgorithmException 
+		 * @throws KeyStoreException 
+		 * @throws SignatureException 
+		 * @throws UnrecoverableKeyException 
+		 * @throws InvalidKeyException 
 		 */
-		public void addTransaction(String transaction) {
-			transactions.add(transaction);
+		public void addTransaction(SignedObject signedTransaction) throws InvalidKeyException, UnrecoverableKeyException, SignatureException, KeyStoreException, NoSuchAlgorithmException, IOException {
+			
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			ObjectOutputStream os = new ObjectOutputStream(bout); 
+			
+			os.writeObject(signedTransaction);
+			
+			byte[] signedTransactionBytes = bout.toByteArray();
+			
+			transactions.add(Arrays.toString(signedTransactionBytes) + EOL);
 			numTransactions++;
 			saveBlockToFile();
 		}
@@ -452,7 +432,10 @@ public class LogUtils {
 			md.update(blockBytes);
 			
 			byte[] hash = md.digest();
+			
 			String hashStr = Arrays.toString(hash);
+			
+			System.out.println(hashStr);
 
 			return hashStr.getBytes();
 
