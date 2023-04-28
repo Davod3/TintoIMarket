@@ -18,13 +18,50 @@ The application consists of two programs:
 The application is distributed, as the server runs on one machine and there can be an unlimited
 number of clients running on different machines on the Internet.
 
-----------------------------HOW TO MANUALLY COMPILE AND RUN THE APPLICATION------------------------
+This application has several security measures implemented, namely communication using SSL sockets, 
+end-to-end message encryption, transactions stored in a blockchain and several integrity checks. 
+As such, to correctly run the application it is assumed both the client and the server have their 
+respective keystores and truststores correctly setup.
+
+This repository already contains all the keystores and truststores setup and they all have the default password "keystorepwd".
+
+Regardless, the process of setting up the keystores is described below:
+
+------------------------------KEYSTORE SETUP FOR SERVER-----------------------------------------
+
+The server keystore must contain one RSA keypair associated to the server with the alias "server":
+
+	keytool -genkeypair -alias server -keyalg RSA -keysize 2048 -keystore keystore.server
+
+The server keystore must also contain one secret key to create hmacs:
+
+	keytool -genseckey -alias mackey -keyalg AES -keysize 256 -keystore keystore.server
+	
+	
+------------------------------KEYSTORE AND TRUSTSTORE SETUP FOR CLIENT---------------------------
+
+The client keystore must contain one RSA keypair associated to the client with the alias "client":
+
+	keytool -genkeypair -alias client -keyalg RSA -keysize 2048 -keystore keystore.client
+	
+The client truststore must contain the Public Key certificate of the server, which must be manually 
+exported from the server and imported into the client:
+	
+	keytool -exportcert -alias server -file certServer.cer -keystore keystore.server
+	
+	keytool -importcert -alias server -file certServer.cer -keystore truststore.client
+	
+The client truststore must also contain the public key certificates of the people you intend to send a message to.
+The application has the ability to automatically import the certificate, but it can also be done manually in a similar 
+way to above.
+
+----------------------------HOW TO MANUALLY COMPILE AND RUN THE APPLICATION---------------------
 	
 
 			IN BOTH CASES PLEASE BE SURE TO BE IN THE REPOSITORY'S ROOT DIRECTORY
 			
 
--------------------------------------------- SERVER ----------------------------------------------------
+-------------------------------------------- SERVER -------------------------------------------
 
 To compile TintolMarket Server:
 
@@ -32,9 +69,14 @@ To compile TintolMarket Server:
 	
 To run TintolMarket Server:
 
-	java -cp bin server.TintolMarketServer <port>
+	java -cp bin server.TintolMarketServer <port> <cifer-password> <keystore> <keystore-password>
 	
-	Where <port> refers to the TCP port number where to accept client connections.
+	Where: 
+		<port> refers to the TCP port number where to accept client connections.
+		<cifer-password> refers to the password used to encrypt files in PBE (must be the same everytime server turns on).
+		<keystore> refers to the path of the keystore.server file.
+		<keystore-password> refers to the password used to acess the store.
+		
 	If you don't give any port, the server will use the port 12345 by default.
 
 
@@ -46,12 +88,20 @@ To compile TintolMarket Client:
 	
 To run TintolMarket Client:
 	
-	java -cp bin client.TintolMarket <serverAddress> <userID> <password>
+	java -cp bin client.TintolMarket <serverAddress> <truststore> <keystore> <keystore-password> <userID> 
+	
+	Where:
+		<serverAddress> identifies the server. The serverAddress format is the following:
+			<IP or Hostname>:<port>. Server IP address or hostname is required and the port is optional.
+			By default, the client connects to the server using the port 12345;
+		<truststore> refers to the path of the truststore.client file.
+		<keystore> refers to the path of the keystore.client file.
+		<keystore-password> refers to the password used to access the keystore.
+		<userID> identifies the local user;
 
 
 
-
----------------------------------- HOW TO RUN THE APPLICATION USING JAR FILES------------------------------------------
+---------------------------------- HOW TO RUN THE APPLICATION USING JAR FILES------------------------
 
 
 		IN BOTH CASES PLEASE BE SURE TO BE IN THE REPOSITORY'S ROOT DIRECTORY
@@ -62,9 +112,14 @@ To run TintolMarket Client:
 To execute TintolMarket Server, you can run the jar file TintolMarketServer.jar with the 
 following argument:
 
-	java -jar TintolMarketServer.jar <port>
+	java -jar TintolMarketServer.jar <port> <cifer-password> <keystore> <keystore-password>
 	
-	Where <port> refers to the TCP port number where to accept client connections.
+	Where: 
+		<port> refers to the TCP port number where to accept client connections.
+		<cifer-password> refers to the password used to encrypt files in PBE (must be the same everytime server turns on).
+		<keystore> refers to the path of the keystore.server file.
+		<keystore-password> refers to the password used to acess the store.
+		
 	If you don't give any port, the server will use the port 12345 by default.
 
 -------------------------------------------- CLIENT ----------------------------------------------------
@@ -72,14 +127,16 @@ following argument:
 To execute TintolMarket client, you can run the jar file TintoIMarketClient.jar with the 
 following arguments:
 
-	java -jar TintolMarket.jar <serverAddress> <userID> <password>
+	java -jar TintolMarket.jar <serverAddress> <truststore> <keystore> <keystore-password> <userID>
 	
 	Where:
-		- <serverAddress> identifies the server. The serverAddress format is the following:
+		<serverAddress> identifies the server. The serverAddress format is the following:
 			<IP or Hostname>:<port>. Server IP address or hostname is required and the port is optional.
 			By default, the client connects to the server using the port 12345;
-		- <userID> identifies the local user;
-		- <password> refers to user's password.
+		<truststore> refers to the path of the truststore.client file.
+		<keystore> refers to the path of the keystore.client file.
+		<keystore-password> refers to the password used to access the keystore.
+		<userID> identifies the local user;
 
 
 Users can add wines, rate them, sell them, buy them, view them, get their balance,
@@ -88,13 +145,14 @@ talk to each other and read their unread messages.
 Registered users must use the client application to interact with the server,
 and must use this commands to make their requests:
 
-	-> add <wine> <image> 			  - adds a new wine identified by <wine> and associated to the image <image> 
+	-> add <wine> <image> 		   - adds a new wine identified by <wine> and associated to the image <image> 
 	-> sell <wine> <value> <quantity>  - puts up for sell <quantity> units of wine with the price <value>
-	-> view <wine> 					  - gets the <wine> information
+	-> view <wine> 			   - gets the <wine> information
 	-> buy <wine> <seller> <quantity>  - buys <quantity> units of wine to user <seller>
-	-> wallet 				  		  - gets the current balance 
-	-> classify <wine> <stars>		  - assign the classification <stars> (1 to 5) to wine <wine>
-	-> talk <user> <message>			  - send a private message <message> to user <user>
-	-> read							  - read new received messages
+	-> wallet 			   - gets the current balance 
+	-> classify <wine> <stars>	   - assign the classification <stars> (1 to 5) to wine <wine>
+	-> talk <user> <message>	   - send a private message <message> to user <user>
+	-> read				   - read new received messages
+	-> list				   - lists all transactions
 
 For each command presented you can use either the full word or the first letter of the command (e.g. a for add)
