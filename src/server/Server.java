@@ -115,11 +115,12 @@ public class Server {
 	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
 	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
 	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run()
 			throws InvalidKeyException, NoSuchAlgorithmException,
 			InvalidKeySpecException, NoSuchPaddingException,
-			InvalidAlgorithmParameterException {
+			InvalidAlgorithmParameterException, FileIntegrityViolationException {
 		//Create socket for server
 		System.setProperty("javax.net.ssl.keyStore", this.keystorePath);
 		System.setProperty("javax.net.ssl.keyStorePassword", this.keystorePwd);

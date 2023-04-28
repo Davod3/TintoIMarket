@@ -10,6 +10,7 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
+import utils.FileIntegrityViolationException;
 
 /**
  * The ReadHandler class represents the action of reading messages sent from all users. 
@@ -36,11 +37,12 @@ public class ReadHandler {
 	 * @throws InvalidKeyException 					If the key is invalid
 	 * @throws ClassNotFoundException 				When trying to find the class of an object
 	 * 												that does not match/exist
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectOutputStream outStream, String loggedUser)
 			throws IOException, InvalidKeyException, NoSuchAlgorithmException,
 			InvalidKeySpecException, NoSuchPaddingException,
-			InvalidAlgorithmParameterException, ClassNotFoundException {
+			InvalidAlgorithmParameterException, ClassNotFoundException, FileIntegrityViolationException {
 		outStream.writeObject(UserCatalog.getInstance().readMessages(loggedUser));
 	}
 	

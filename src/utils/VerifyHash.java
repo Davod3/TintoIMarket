@@ -2,6 +2,7 @@ package utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -86,11 +87,7 @@ public class VerifyHash {
 			
 			byte[] hash = (byte[]) ois.readObject();
 			
-			String[] splitFilePath = filepath.split("hash");
-			
-			String filePathKey = splitFilePath[0] + splitFilePath[1].split("/")[1];
-		
-			map.put(filePathKey, hash);
+			map.put(line, hash);
 			
 			ois.close();
 			fis.close();
@@ -170,12 +167,31 @@ public class VerifyHash {
 				byte[] newHash = mac.doFinal();
 				
 				if(!isEqual(storedHash, newHash)) {
-					throw new FileIntegrityViolationException("File " + fileName + " integrity was violated!");
+					throw new FileIntegrityViolationException("File " + fileName + " integrity was corrupted!");
 				}
 			} else {
 				throw new FileIntegrityViolationException("File " + fileName + " integrity cannot be assessed!");
 			}
 	}
+	
+	public synchronized void updateHash(File file, String fileName)
+			throws IOException, ClassNotFoundException, NoSuchAlgorithmException,
+			FileIntegrityViolationException, InvalidKeyException {
+		
+		int fileLen = (int) file.length();
+		
+		if(fileLen > 0) {
+			
+			byte[] fileBytes = new byte[fileLen];
+			
+			FileInputStream fis = new FileInputStream(file);
+			fis.read(fileBytes);
+			fis.close();
+			
+			this.updateHash(fileBytes, fileName);
+		}
+	}
+	
 	
 	/**
 	 * Updates the hash of the given file
@@ -211,13 +227,7 @@ public class VerifyHash {
 			bw.append(fileName + EOL);
 			bw.close();
 			
-		} else {
-			
-			//If file already hashed, check integrity
-			File oldFile = new File(fileName);
-			this.verify(oldFile, fileName);
-			
-		}
+		} 
 		
 		this.file_hash.put(fileName, hash); 
 		

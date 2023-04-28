@@ -12,6 +12,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
 import domain.Message;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 
 /**
@@ -42,11 +43,12 @@ public class TalkHandler {
 	 * @throws InvalidKeySpecException 				If the requested key specification is invalid
 	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
 	 * @throws InvalidKeyException 					If the key is invalid
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream, String loggedUser)
 			throws ClassNotFoundException, IOException, InvalidKeyException,
 			NoSuchAlgorithmException, InvalidKeySpecException,
-			NoSuchPaddingException, InvalidAlgorithmParameterException {
+			NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException {
 		//Create result message
 		String result = "";
 		//Read user's name and the message to be sent to the user

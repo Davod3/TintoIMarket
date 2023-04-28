@@ -56,11 +56,12 @@ public class ServerThread extends Thread {
 	 * @throws InvalidKeyException 					If the key is invalid
 	 * @throws ClassNotFoundException 				When trying to find the class of an object
 	 * 												that does not match/exist
+	 * @throws FileIntegrityViolationException 
 	 */
 	public ServerThread(Socket inSoc, KeyStore ks)
 			throws IOException, InvalidKeyException, NoSuchAlgorithmException,
 			InvalidKeySpecException, NoSuchPaddingException,
-			InvalidAlgorithmParameterException, ClassNotFoundException {
+			InvalidAlgorithmParameterException, ClassNotFoundException, FileIntegrityViolationException {
 		//Save client's socket
 		this.socket = inSoc;
 		//Get the unique instance of User Catalog

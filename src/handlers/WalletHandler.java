@@ -10,6 +10,7 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 
 /**
@@ -37,11 +38,12 @@ public class WalletHandler {
 	 * @throws InvalidKeyException 					If the key is invalid
 	 * @throws ClassNotFoundException 				When trying to find the class of an object
 	 * 												that does not match/exist
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectOutputStream outStream, String loggedUser)
 			throws IOException, InvalidKeyException, NoSuchAlgorithmException,
 			InvalidKeySpecException, NoSuchPaddingException,
-			InvalidAlgorithmParameterException, ClassNotFoundException {
+			InvalidAlgorithmParameterException, ClassNotFoundException, FileIntegrityViolationException {
 		//Get user's Catalog only instance
 		UserCatalog userCatalog = UserCatalog.getInstance();
 		//Send message with loggedUser's balance

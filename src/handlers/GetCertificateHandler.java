@@ -14,6 +14,7 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.NoSuchPaddingException;
 
 import catalogs.UserCatalog;
+import utils.FileIntegrityViolationException;
 
 /**
  * The GetCertificateHandler class allows you to obtain a certificate. 
@@ -54,11 +55,12 @@ public class GetCertificateHandler {
 	 * @throws InvalidKeySpecException				If the key is invalid
 	 * @throws NoSuchPaddingException				If the padding scheme is not available
 	 * @throws InvalidAlgorithmParameterException	If an invalid algorithm parameter is passed to a method
+	 * @throws FileIntegrityViolationException 
 	 */
 	public void run(ObjectInputStream inStream, ObjectOutputStream outStream)
 			throws ClassNotFoundException, IOException, InvalidKeyException,
 			CertificateException, NoSuchAlgorithmException, InvalidKeySpecException,
-			NoSuchPaddingException, InvalidAlgorithmParameterException {
+			NoSuchPaddingException, InvalidAlgorithmParameterException, FileIntegrityViolationException {
 		String alias = (String) inStream.readObject();
 		
 		try {

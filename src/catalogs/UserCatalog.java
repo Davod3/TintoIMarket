@@ -23,8 +23,10 @@ import javax.crypto.NoSuchPaddingException;
 
 import domain.Message;
 import domain.User;
+import utils.FileIntegrityViolationException;
 import utils.FileUtils;
 import utils.PBE;
+import utils.VerifyHash;
 
 /**
  * The UserCatalog class represents the catalog with all users
@@ -55,12 +57,13 @@ public class UserCatalog {
 	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
 	 * @throws InvalidKeyException 					If the key is invalid for initializing the cipher
 	 * @throws ClassNotFoundException 				If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 
 	 */
 	private UserCatalog()
 			throws IOException, InvalidKeyException,
 			NoSuchAlgorithmException, InvalidKeySpecException,
 			NoSuchPaddingException, InvalidAlgorithmParameterException,
-			ClassNotFoundException {
+			ClassNotFoundException, FileIntegrityViolationException {
 		this.userList = loadUsers();
 	}
 
@@ -75,12 +78,13 @@ public class UserCatalog {
 	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
 	 * @throws InvalidKeyException 					If the key is invalid
 	 * @throws ClassNotFoundException 				If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 
 	 */
 	private synchronized Map<String, User> loadUsers()
 			throws IOException, InvalidKeyException,
 			NoSuchAlgorithmException, InvalidKeySpecException,
 			NoSuchPaddingException, InvalidAlgorithmParameterException,
-			ClassNotFoundException {
+			ClassNotFoundException, FileIntegrityViolationException {
 		//Create a map to load users
 		Map<String, User> users = new HashMap<>();
 		//Open the file that contains all the users information
@@ -115,10 +119,13 @@ public class UserCatalog {
 	 * @param user						The user for who we want to get the unread messages
 	 * @throws IOException				When an I/O error occurs while reading from a file
 	 * @throws ClassNotFoundException 	If the class of a serialized object is not found
+	 * @throws FileIntegrityViolationException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	@SuppressWarnings("unchecked")
 	private synchronized void loadMessages(User user)
-			throws IOException, ClassNotFoundException {
+			throws IOException, ClassNotFoundException, InvalidKeyException, NoSuchAlgorithmException, FileIntegrityViolationException {
 		//Create the user path
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
 		
@@ -130,6 +137,8 @@ public class UserCatalog {
 		FileInputStream fileIn = new FileInputStream(filePath);
 		
 		if(fileIn.available() > 0) {
+			
+			VerifyHash.getInstance().verify(messageDir, filePath);
 			
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			
@@ -183,12 +192,13 @@ public class UserCatalog {
 	 * @throws NoSuchAlgorithmException 			If the requested algorithm is not available
 	 * @throws InvalidKeyException 					If the key is invalid
 	 * @throws ClassNotFoundException 				If the class of a serialized object is not found				
+	 * @throws FileIntegrityViolationException 
 	 */
 	public static UserCatalog getInstance()
 			throws IOException, InvalidKeyException,
 			NoSuchAlgorithmException, InvalidKeySpecException,
 			NoSuchPaddingException, InvalidAlgorithmParameterException,
-			ClassNotFoundException {
+			ClassNotFoundException, FileIntegrityViolationException {
 		if (instance == null)
 			instance = new UserCatalog();
 		return instance;
@@ -268,9 +278,13 @@ public class UserCatalog {
 	 * @param loggedUser		The user for whom we want to get the messages
 	 * @return					The unread messages
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
+	 * @throws FileIntegrityViolationException 
+	 * @throws ClassNotFoundException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	public synchronized Stack<Message> readMessages(String loggedUser)
-			throws IOException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
 		//Get user by username
 		User user = getUser(loggedUser);
 		//Get all unread messages
@@ -313,9 +327,13 @@ public class UserCatalog {
 	 * @param username			The user for whom we want to send a new message
 	 * @param msgToSend			The message to send
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
+	 * @throws FileIntegrityViolationException 
+	 * @throws ClassNotFoundException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	public synchronized void addMessageToUser(String username, Message msgToSend)
-			throws IOException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
 		//Get user by username
 		User user = userList.get(username);
 		//Add message to user
@@ -328,9 +346,13 @@ public class UserCatalog {
 	 * 
 	 * @param user				The user for whom we want to update all unread messages
 	 * @throws IOException		When an I/O error occurs while reading/writing to a file
+	 * @throws FileIntegrityViolationException 
+	 * @throws ClassNotFoundException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	private synchronized void updateMessages(User user)
-			throws IOException {
+			throws IOException, InvalidKeyException, NoSuchAlgorithmException, ClassNotFoundException, FileIntegrityViolationException {
 		//Get path to file with all unread messages
 		String filePath = USER_MESSAGES_PATH + user.getID() + USER_MESSAGES_EXTENSION;
 		//Get file with the specified path
@@ -349,6 +371,8 @@ public class UserCatalog {
 		
 		out.close();
 		fileOut.close();
+		
+		VerifyHash.getInstance().updateHash(messageDir, filePath);;
 	}
 
 	/**
