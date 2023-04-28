@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.SignedObject;
 import java.security.UnrecoverableKeyException;
+import java.util.Arrays;
 
 import domain.BuyTransaction;
 import domain.SaleTransaction;
@@ -53,6 +54,7 @@ public class ListHandler {
 			ClassNotFoundException, FileIntegrityViolationException {
 		File folder = new File("server_files/logs");
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".blk"));
+        Arrays.sort(files);
         
         if (files == null || files.length == 0) {
         	outStream.writeObject("No transactions to show"); 
